@@ -1,0 +1,86 @@
+@import "tailwindcss";
+
+:root {
+  /* Palette High-Tech : Bleu Nuit Minéral & Cobalt Électrique */
+  --bg-page: #F8FAFC;          /* Blanc glacier / gris perle ultra-propre */
+  --bg-card: #FFFFFF;          /* Cartes blanc pur */
+  --text-dark: #0F172A;        /* Bleu nuit très profond pour les titres */
+  --text-body: #475569;        /* Slate / Gris acier pour le texte */
+  --text-muted: #94A3B8;       /* Texte secondaire */
+  --blue-tech: #2563EB;        /* Bleu Cobalt électrique */
+  --blue-tech-hover: #1D4ED8;  /* Bleu Cobalt foncé hover */
+  --navy-deep: #0F172A;        /* Bleu nuit profond bannières */
+  --navy-card: #1E293B;        /* Carte intérieure bannière */
+  --border-subtle: #E2E8F0;    /* Bordures douces */
+  --accent-gold: #F59E0B;      /* Étoiles dorées */
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #F8FAFC;
+  color: #0F172A;
+  min-height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Police Serif élégante pour les titres du site */
+.font-serif-title {
+  font-family: "Playfair Display", Georgia, Cambria, serif;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+/* Scrollbar technique discrète (site public) */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #F8FAFC;
+}
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #2563EB;
+}
+
+/* ── Back Office : scrollbar totalement invisible ── */
+.scrollbar-hidden {
+  scrollbar-width: none;        /* Firefox */
+  -ms-overflow-style: none;     /* IE / Edge legacy */
+}
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none;                /* Chrome / Safari / Webkit */
+}
+
+/* Cartes blanc pur aux coins très arrondis */
+.tech-card {
+  background-color: #FFFFFF;
+  border-radius: 1.5rem;
+  border: 1px solid #E2E8F0;
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.03);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+.tech-card:hover {
+  transform: translateY(-3px);
+  border-color: #CBD5E1;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+}
+
+@keyframes ticker {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-ticker {
+  animation: ticker 25s linear infinite;
+}
