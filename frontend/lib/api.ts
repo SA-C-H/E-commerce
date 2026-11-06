@@ -3,7 +3,17 @@
  * Gère automatiquement le JWT, les en-têtes et le format d'erreurs uniforme
  */
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+function getApiBaseUrl(): string {
+  if (typeof window !== 'undefined') {
+    // Si accédé depuis un smartphone en réseau local (ex: 100.90.x.x ou 192.168.x.x),
+    // on utilise automatiquement l'IP du serveur plutôt que localhost
+    const host = window.location.hostname;
+    if (host && host !== 'localhost' && host !== '127.0.0.1') {
+      return `http://${host}:5000/api`;
+    }
+  }
+  return process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+}
 
 export interface ApiResponse<T = any> {
   success: boolean;
@@ -28,7 +38,8 @@ export class ApiError extends Error {
  * Fonction générique de requête HTTP
  */
 async function request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
-  const url = `${API_BASE_URL}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
+  const baseUrl = getApiBaseUrl();
+  const url = `${baseUrl}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
 
   // Récupération du jeton JWT dans le localStorage si on est côté navigateur
   const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;

@@ -159,67 +159,67 @@ export default function PromoCarouselBanner() {
       </div>
 
       {/* ── 2. Corps de la Banderole ── */}
-      <div className="p-8 sm:p-12 relative">
+      <div className="p-4 sm:p-8 lg:p-12 relative">
         {/* Badge Marque en haut à droite */}
-        <div className="absolute top-6 right-8 sm:right-12">
-          <div className="px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white text-xs font-bold tracking-widest uppercase">
+        <div className="absolute top-4 right-4 sm:top-6 sm:right-8 lg:right-12">
+          <div className="px-3 py-1 sm:px-4 sm:py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white text-[10px] sm:text-xs font-bold tracking-widest uppercase">
             {slide.brand}
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-center pt-6 sm:pt-0">
           {/* Côté gauche : Textes d'appel & Bouton CTA */}
-          <div className="lg:col-span-5 space-y-4">
-            <span className="inline-block text-[11px] font-bold tracking-widest uppercase text-amber-400">
+          <div className="lg:col-span-5 space-y-3 sm:space-y-4">
+            <span className="inline-block text-[10px] sm:text-[11px] font-bold tracking-widest uppercase text-amber-400">
               {slide.badge}
             </span>
 
-            <h2 className="font-serif-title text-2xl sm:text-3xl lg:text-4xl text-white font-normal leading-tight">
+            <h2 className="font-serif-title text-xl sm:text-3xl lg:text-4xl text-white font-normal leading-tight">
               {slide.title}
             </h2>
 
-            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-light">
+            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-light line-clamp-3 sm:line-clamp-none">
               {slide.description}
             </p>
 
-            <div className="pt-2">
+            <div className="pt-1 sm:pt-2">
               <Link
                 href={slide.ctaLink}
-                className="inline-flex items-center gap-2.5 px-7 py-3.5 rounded-full bg-amber-500 hover:bg-amber-400 text-[#0F172A] font-bold text-xs uppercase tracking-wider transition shadow-lg shadow-amber-500/20 group"
+                className="inline-flex items-center gap-2 px-5 py-2.5 sm:px-7 sm:py-3.5 rounded-full bg-amber-500 hover:bg-amber-400 text-[#0F172A] font-bold text-[11px] sm:text-xs uppercase tracking-wider transition shadow-lg shadow-amber-500/20 group"
               >
                 <span>{slide.ctaText}</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition" />
+                <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover:translate-x-1 transition" />
               </Link>
             </div>
           </div>
 
-          {/* Côté droit : 3 Cartes Produits Blanches avec Prix en DH (Exactement comme iris.ma) */}
+          {/* Côté droit : 3 Cartes Produits Blanches avec Prix en DH (Adapté Mobile & Desktop) */}
           <div className="lg:col-span-7">
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="grid grid-cols-3 gap-2 sm:gap-4">
               {slide.items.map((item, idx) => (
                 <Link
                   key={idx}
                   href={item.link}
-                  className="bg-white rounded-2xl p-4 flex flex-col justify-between items-center text-center shadow-lg hover:shadow-2xl hover:scale-[1.02] transition-all duration-300 group"
+                  className="bg-white rounded-xl sm:rounded-2xl p-2.5 sm:p-4 flex flex-col justify-between items-center text-center shadow-lg hover:shadow-2xl hover:scale-[1.02] transition-all duration-300 group"
                 >
                   {/* Image Produit */}
-                  <div className="relative w-full aspect-square mb-3 rounded-xl overflow-hidden bg-slate-50">
+                  <div className="relative w-full aspect-square mb-2 sm:mb-3 rounded-lg sm:rounded-xl overflow-hidden bg-slate-50">
                     <Image
                       src={item.image}
                       alt={item.name}
                       fill
-                      sizes="(max-width: 768px) 100vw, 33vw"
+                      sizes="(max-width: 768px) 33vw, 20vw"
                       className="object-cover group-hover:scale-105 transition duration-500"
                     />
                   </div>
 
                   {/* Titre Produit */}
-                  <h4 className="text-[12px] font-bold text-[#0F172A] line-clamp-1 mb-3 group-hover:text-[#2563EB] transition">
+                  <h4 className="text-[10px] sm:text-[12px] font-bold text-[#0F172A] line-clamp-1 mb-1.5 sm:mb-3 group-hover:text-[#2563EB] transition">
                     {item.name}
                   </h4>
 
                   {/* Étiquette Prix Rouge Iris.ma */}
-                  <div className="w-full py-2 px-3 rounded-full bg-[#DC2626] text-white text-xs font-black tracking-tight text-center shadow-sm">
+                  <div className="w-full py-1 sm:py-2 px-1 sm:px-3 rounded-full bg-[#DC2626] text-white text-[10px] sm:text-xs font-black tracking-tight text-center shadow-sm truncate">
                     {item.price}
                   </div>
                 </Link>

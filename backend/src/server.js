@@ -31,8 +31,16 @@ const allowedOrigins = [
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Autorise les requêtes sans origin (comme Postman, curl ou scripts internes)
-      if (!origin || allowedOrigins.includes(origin)) {
+      // Autorise requêtes sans origin (mobile apps, curl, etc.) ou origines locales
+      if (
+        !origin ||
+        allowedOrigins.includes(origin) ||
+        origin.includes(':3000') ||
+        origin.startsWith('http://192.168.') ||
+        origin.startsWith('http://100.') ||
+        origin.startsWith('http://10.') ||
+        origin.startsWith('http://172.')
+      ) {
         return callback(null, true);
       }
       return callback(new AppError('Non autorisé par CORS', 403));

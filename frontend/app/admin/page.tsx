@@ -36,6 +36,7 @@ import {
   Filter,
   Sparkles,
   SlidersHorizontal,
+  Menu,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
@@ -47,6 +48,7 @@ export default function LuxuryAdminPortal() {
   const [mounted, setMounted] = useState(false);
 
   const [activeTab, setActiveTab] = useState<AdminTab>('dashboard');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const [products, setProducts] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
@@ -552,57 +554,262 @@ export default function LuxuryAdminPortal() {
       </aside>
 
       {/* =========================================================================
+          DRAWER MOBILE BACK OFFICE (Menu coulissant sur smartphone / tablette)
+         ========================================================================= */}
+      {mobileMenuOpen && (
+        <div className="fixed inset-0 z-50 md:hidden flex">
+          <div
+            className="fixed inset-0 bg-black/60 backdrop-blur-xs"
+            onClick={() => setMobileMenuOpen(false)}
+          />
+          <div className="relative w-72 max-w-[85vw] bg-white h-full shadow-2xl flex flex-col justify-between z-10 animate-fade-in">
+            {/* Haut drawer : Logo + fermer */}
+            <div className="p-5 border-b border-[#F1F5F9] flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-[#0F172A] flex items-center justify-center text-white font-serif-title font-bold text-lg shadow-sm">
+                  TN
+                </div>
+                <div>
+                  <span className="font-serif-title font-bold text-base text-[#0F172A] tracking-tight block">
+                    TechNova
+                  </span>
+                  <span className="text-[10px] font-semibold text-[#2563EB] bg-blue-50 px-2 py-0.5 rounded-full border border-blue-100 uppercase tracking-wider">
+                    Back Office
+                  </span>
+                </div>
+              </div>
+              <button
+                onClick={() => setMobileMenuOpen(false)}
+                className="p-1.5 rounded-full text-[#94A3B8] hover:text-[#0F172A]"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Navigation drawer */}
+            <nav className="flex-1 overflow-y-auto p-4 space-y-2">
+              <button
+                onClick={() => { setActiveTab('dashboard'); setMobileMenuOpen(false); }}
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-full text-xs font-semibold transition ${
+                  activeTab === 'dashboard' ? 'bg-[#0F172A] text-white shadow-sm' : 'text-[#64748B] hover:bg-[#F8FAFC]'
+                }`}
+              >
+                <LayoutDashboard className="w-4 h-4" />
+                Vue d&apos;ensemble
+              </button>
+              <button
+                onClick={() => { setActiveTab('products'); setMobileMenuOpen(false); }}
+                className={`w-full flex items-center justify-between px-4 py-3 rounded-full text-xs font-semibold transition ${
+                  activeTab === 'products' ? 'bg-[#0F172A] text-white shadow-sm' : 'text-[#64748B] hover:bg-[#F8FAFC]'
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <Package className="w-4 h-4" />
+                  Catalogue Produits
+                </div>
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 font-bold">
+                  {products.length}
+                </span>
+              </button>
+              <button
+                onClick={() => { setActiveTab('orders'); setMobileMenuOpen(false); }}
+                className={`w-full flex items-center justify-between px-4 py-3 rounded-full text-xs font-semibold transition ${
+                  activeTab === 'orders' ? 'bg-[#0F172A] text-white shadow-sm' : 'text-[#64748B] hover:bg-[#F8FAFC]'
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <ShoppingBag className="w-4 h-4" />
+                  Commandes
+                </div>
+                {pendingOrders > 0 && (
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 font-bold">
+                    {pendingOrders}
+                  </span>
+                )}
+              </button>
+              <button
+                onClick={() => { setActiveTab('categories'); setMobileMenuOpen(false); }}
+                className={`w-full flex items-center justify-between px-4 py-3 rounded-full text-xs font-semibold transition ${
+                  activeTab === 'categories' ? 'bg-[#0F172A] text-white shadow-sm' : 'text-[#64748B] hover:bg-[#F8FAFC]'
+                }`}
+              >
+                <div className="flex items-center gap-3">
+                  <Layers className="w-4 h-4" />
+                  Rayons
+                </div>
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 font-bold">
+                  {categories.length}
+                </span>
+              </button>
+              <button
+                onClick={() => { setActiveTab('users'); setMobileMenuOpen(false); }}
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-full text-xs font-semibold transition ${
+                  activeTab === 'users' ? 'bg-[#0F172A] text-white shadow-sm' : 'text-[#64748B] hover:bg-[#F8FAFC]'
+                }`}
+              >
+                <Users className="w-4 h-4" />
+                Utilisateurs & Rôles
+              </button>
+            </nav>
+
+            {/* Pied drawer */}
+            <div className="p-4 border-t border-[#F1F5F9] space-y-3 bg-[#FAFCFF]">
+              <Link
+                href="/"
+                target="_blank"
+                className="flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-white border border-[#E2E8F0] text-xs font-semibold text-[#0F172A]"
+              >
+                <div className="flex items-center gap-2">
+                  <Store className="w-4 h-4 text-[#2563EB]" />
+                  <span>Voir la boutique</span>
+                </div>
+                <ArrowUpRight className="w-3.5 h-3.5 text-[#94A3B8]" />
+              </Link>
+              <div className="flex items-center justify-between pt-1">
+                <div>
+                  <p className="text-xs font-bold text-[#0F172A]">{user?.name || 'Amine'}</p>
+                  <p className="text-[10px] text-emerald-600 font-semibold">Super Admin</p>
+                </div>
+                <button
+                  onClick={logout}
+                  className="p-2 text-[#64748B] hover:text-red-600 rounded-xl hover:bg-red-50"
+                  title="Déconnexion"
+                >
+                  <LogOut className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* =========================================================================
           ZONE PRINCIPALE (Thème Luxe Blanc & Bleu Nuit - Conteneur Fixe & Scroll Isolé)
          ========================================================================= */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        {/* Header fixe — ne bouge jamais au scroll */}
-        <header className="h-16 shrink-0 bg-white border-b border-[#E2E8F0] px-6 sm:px-8 flex items-center justify-between z-20 shadow-sm">
-          <div>
-            <span className="text-[11px] font-semibold tracking-widest text-[#2563EB] uppercase block">
-              CONSOLE DE GESTION
-            </span>
-            <h1 className="font-serif-title text-xl sm:text-2xl font-bold text-[#0F172A]">
-              {activeTab === 'dashboard' && 'Vue d’ensemble de la Boutique'}
-              {activeTab === 'products' && 'Gestion du Catalogue & Stocks'}
-              {activeTab === 'orders' && 'Suivi des Commandes WhatsApp'}
-              {activeTab === 'categories' && 'Organisation des Rayons'}
-              {activeTab === 'users' && 'Comptes Clients & Permissions'}
-              {activeTab === 'settings' && 'Paramètres du Magasin'}
-            </h1>
+        {/* Header responsive — ne bouge jamais au scroll */}
+        <header className="h-16 shrink-0 bg-white border-b border-[#E2E8F0] px-4 sm:px-8 flex items-center justify-between z-20 shadow-sm gap-2">
+          <div className="flex items-center gap-3 min-w-0">
+            {/* Bouton Menu Burger sur Smartphone */}
+            <button
+              onClick={() => setMobileMenuOpen(true)}
+              className="md:hidden p-2 rounded-xl bg-[#F8FAFC] border border-[#E2E8F0] text-[#0F172A] hover:bg-slate-100 transition shrink-0"
+              title="Ouvrir le menu"
+            >
+              <Menu className="w-4 h-4" />
+            </button>
+
+            <div className="min-w-0">
+              <span className="text-[10px] sm:text-[11px] font-semibold tracking-widest text-[#2563EB] uppercase block truncate">
+                CONSOLE DE GESTION
+              </span>
+              <h1 className="font-serif-title text-base sm:text-2xl font-bold text-[#0F172A] truncate">
+                {activeTab === 'dashboard' && 'Vue d’ensemble'}
+                {activeTab === 'products' && 'Catalogue & Stocks'}
+                {activeTab === 'orders' && 'Commandes WhatsApp'}
+                {activeTab === 'categories' && 'Rayons'}
+                {activeTab === 'users' && 'Utilisateurs & Permissions'}
+                {activeTab === 'settings' && 'Paramètres'}
+              </h1>
+            </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             <button
               onClick={loadData}
               disabled={loading}
-              className="p-2.5 rounded-full bg-[#F8FAFC] border border-[#E2E8F0] text-[#0F172A] hover:bg-white transition shadow-2xs"
+              className="p-2 sm:p-2.5 rounded-full bg-[#F8FAFC] border border-[#E2E8F0] text-[#0F172A] hover:bg-white transition shadow-2xs"
               title="Rafraîchir les données"
             >
-              <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin text-[#2563EB]' : ''}`} />
+              <RefreshCw className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${loading ? 'animate-spin text-[#2563EB]' : ''}`} />
             </button>
 
             {activeTab === 'categories' ? (
               <button
                 onClick={openCreateCategory}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#0F172A] hover:bg-[#2563EB] text-white text-xs font-semibold tracking-wider uppercase transition shadow-sm"
+                className="inline-flex items-center gap-1.5 px-3 py-2 sm:px-5 sm:py-2.5 rounded-full bg-[#0F172A] hover:bg-[#2563EB] text-white text-[11px] sm:text-xs font-semibold tracking-wider uppercase transition shadow-sm"
               >
-                <Plus className="w-4 h-4" />
-                Nouvelle Catégorie
+                <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                <span className="hidden sm:inline">Nouvelle Catégorie</span>
+                <span className="sm:hidden">Ajouter</span>
               </button>
             ) : (
               <button
                 onClick={openCreateProduct}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#0F172A] hover:bg-[#2563EB] text-white text-xs font-semibold tracking-wider uppercase transition shadow-sm"
+                className="inline-flex items-center gap-1.5 px-3 py-2 sm:px-5 sm:py-2.5 rounded-full bg-[#0F172A] hover:bg-[#2563EB] text-white text-[11px] sm:text-xs font-semibold tracking-wider uppercase transition shadow-sm"
               >
-                <Plus className="w-4 h-4" />
-                Nouveau Produit
+                <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                <span className="hidden sm:inline">Nouveau Produit</span>
+                <span className="sm:hidden">Ajouter</span>
               </button>
             )}
           </div>
         </header>
 
+        {/* Barre de navigation rapide en pilules défilantes sur Smartphone (Flexbox scroll horizontal) */}
+        <div className="md:hidden flex items-center gap-1.5 overflow-x-auto px-4 py-2 bg-white border-b border-[#E2E8F0] scrollbar-hidden shrink-0">
+          <button
+            onClick={() => setActiveTab('dashboard')}
+            className={`px-3 py-1 rounded-full text-[11px] font-semibold whitespace-nowrap transition ${
+              activeTab === 'dashboard'
+                ? 'bg-[#0F172A] text-white shadow-xs'
+                : 'bg-[#F8FAFC] text-[#64748B] border border-[#E2E8F0]'
+            }`}
+          >
+            Vue d’ensemble
+          </button>
+          <button
+            onClick={() => setActiveTab('products')}
+            className={`px-3 py-1 rounded-full text-[11px] font-semibold whitespace-nowrap transition flex items-center gap-1 ${
+              activeTab === 'products'
+                ? 'bg-[#0F172A] text-white shadow-xs'
+                : 'bg-[#F8FAFC] text-[#64748B] border border-[#E2E8F0]'
+            }`}
+          >
+            <span>Catalogue</span>
+            <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-slate-200 text-slate-800 font-bold">
+              {products.length}
+            </span>
+          </button>
+          <button
+            onClick={() => setActiveTab('orders')}
+            className={`px-3 py-1 rounded-full text-[11px] font-semibold whitespace-nowrap transition flex items-center gap-1 ${
+              activeTab === 'orders'
+                ? 'bg-[#0F172A] text-white shadow-xs'
+                : 'bg-[#F8FAFC] text-[#64748B] border border-[#E2E8F0]'
+            }`}
+          >
+            <span>Commandes</span>
+            {pendingOrders > 0 && (
+              <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-amber-400 text-black font-bold">
+                {pendingOrders}
+              </span>
+            )}
+          </button>
+          <button
+            onClick={() => setActiveTab('categories')}
+            className={`px-3 py-1 rounded-full text-[11px] font-semibold whitespace-nowrap transition ${
+              activeTab === 'categories'
+                ? 'bg-[#0F172A] text-white shadow-xs'
+                : 'bg-[#F8FAFC] text-[#64748B] border border-[#E2E8F0]'
+            }`}
+          >
+            Rayons ({categories.length})
+          </button>
+          <button
+            onClick={() => setActiveTab('users')}
+            className={`px-3 py-1 rounded-full text-[11px] font-semibold whitespace-nowrap transition ${
+              activeTab === 'users'
+                ? 'bg-[#0F172A] text-white shadow-xs'
+                : 'bg-[#F8FAFC] text-[#64748B] border border-[#E2E8F0]'
+            }`}
+          >
+            Rôles ({usersList.length})
+          </button>
+        </div>
+
         {/* Corps des Onglets — scrollbar invisible au pavé tactile */}
-        <main className="flex-1 min-h-0 overflow-y-auto overscroll-contain scrollbar-hidden p-6 sm:p-8 space-y-8 max-w-7xl w-full mx-auto">
+        <main className="flex-1 min-h-0 overflow-y-auto overscroll-contain scrollbar-hidden p-4 sm:p-6 lg:p-8 space-y-6 sm:space-y-8 max-w-7xl w-full mx-auto">
           {/* ===================== TAB 1 : DASHBOARD ===================== */}
           {activeTab === 'dashboard' && (
             <div className="space-y-8">
@@ -830,7 +1037,7 @@ export default function LuxuryAdminPortal() {
                   <select
                     value={selectedCategoryFilter}
                     onChange={(e) => setSelectedCategoryFilter(e.target.value)}
-                    className="px-4 py-2.5 rounded-full bg-[#F8FAFC] border border-[#E2E8F0] text-xs font-semibold text-[#0F172A] focus:outline-none focus:border-[#2563EB]"
+                    className="w-full sm:w-auto px-4 py-2.5 rounded-full bg-[#F8FAFC] border border-[#E2E8F0] text-xs font-semibold text-[#0F172A] focus:outline-none focus:border-[#2563EB]"
                   >
                     <option value="ALL">Toutes les catégories ({categories.length})</option>
                     {categories.map((c) => (
@@ -843,7 +1050,7 @@ export default function LuxuryAdminPortal() {
                   <select
                     value={stockFilter}
                     onChange={(e) => setStockFilter(e.target.value as any)}
-                    className="px-4 py-2.5 rounded-full bg-[#F8FAFC] border border-[#E2E8F0] text-xs font-semibold text-[#0F172A] focus:outline-none focus:border-[#2563EB]"
+                    className="w-full sm:w-auto px-4 py-2.5 rounded-full bg-[#F8FAFC] border border-[#E2E8F0] text-xs font-semibold text-[#0F172A] focus:outline-none focus:border-[#2563EB]"
                   >
                     <option value="ALL">Tous les stocks ({products.length})</option>
                     <option value="LOW">Stock Faible ({'\u2264'} 5)</option>
@@ -852,7 +1059,7 @@ export default function LuxuryAdminPortal() {
 
                   <button
                     onClick={openCreateProduct}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#0F172A] hover:bg-[#2563EB] text-white text-xs font-semibold uppercase tracking-wider transition shadow-sm"
+                    className="w-full sm:w-auto justify-center inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#0F172A] hover:bg-[#2563EB] text-white text-xs font-semibold uppercase tracking-wider transition shadow-sm"
                   >
                     <Plus className="w-4 h-4" />
                     Ajouter un Produit
