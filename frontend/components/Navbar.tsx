@@ -72,7 +72,9 @@ export default function Navbar() {
   const [megaOpen, setMegaOpen] = useState(false);
   const [hoveredCat, setHoveredCat] = useState(0);
   const [mounted, setMounted] = useState(false);
+  const [navBottom, setNavBottom] = useState(105);
   const megaRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLElement>(null);
 
   const totalCount = useCartStore((state) => state.getTotalCount());
   const { user, isAuthenticated, logout } = useAuthStore();
@@ -88,6 +90,28 @@ export default function Navbar() {
     };
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  /* Fermer le mega menu au scroll */
+  useEffect(() => {
+    const handleScroll = () => {
+      if (megaOpen) setMegaOpen(false);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [megaOpen]);
+
+  /* Mesurer la position basse du header pour positionner le dropdown */
+  useEffect(() => {
+    const measure = () => {
+      if (headerRef.current) {
+        const rect = headerRef.current.getBoundingClientRect();
+        setNavBottom(rect.bottom);
+      }
+    };
+    measure();
+    window.addEventListener('resize', measure);
+    return () => window.removeEventListener('resize', measure);
   }, []);
 
   const activeCat = megaCategories[hoveredCat];
@@ -123,7 +147,7 @@ export default function Navbar() {
       </div>
 
       {/* ── HEADER PRINCIPAL ── */}
-      <header className="sticky top-0 z-50 bg-[var(--bg-card)] border-b border-[var(--border)] shadow-sm"
+      <header ref={headerRef} className="sticky top-0 z-50 bg-[var(--bg-card)] border-b border-[var(--border)] shadow-sm"
         style={{ transition: 'background 0.3s ease, border-color 0.3s ease' }}>
 
         <div className="w-full px-4 sm:px-6 lg:px-10 xl:px-16 py-3">
@@ -208,7 +232,12 @@ export default function Navbar() {
             {/* Bouton "Tous nos produits" → déclenche le mega menu */}
             <div className="flex items-center">
               <button
-                onClick={() => setMegaOpen((v) => !v)}
+                onClick={() => {
+                  if (headerRef.current) {
+                    setNavBottom(headerRef.current.getBoundingClientRect().bottom);
+                  }
+                  setMegaOpen((v) => !v);
+                }}
                 className={`flex items-center gap-2 px-4 py-2.5 font-black text-xs uppercase tracking-widest transition rounded-t-lg ${
                   megaOpen
                     ? 'bg-[var(--bg-page)] text-amber-500 border-x border-t border-[var(--border)]'
@@ -244,8 +273,10 @@ export default function Navbar() {
 
           {/* ── MEGA MENU DROPDOWN ── */}
           {megaOpen && (
-            <div className="absolute left-0 right-0 z-50 bg-[var(--bg-card)] border-t border-[var(--border)] shadow-2xl"
-              style={{ top: '100%' }}>
+            <div
+              className="fixed left-0 right-0 z-40 bg-[var(--bg-card)] border-t border-b border-[var(--border)] shadow-2xl"
+              style={{ top: `${navBottom}px` }}
+            >
               <div className="w-full px-4 sm:px-6 lg:px-10 xl:px-16 py-4">
                 <div className="flex gap-0">
 
