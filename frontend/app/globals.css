@@ -106,16 +106,64 @@ body {
   background-color: var(--bg-page);
   color: var(--text-dark);
   min-height: 100vh;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  /* Iris.ma style : Inter ou police système sans-serif moderne */
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  font-weight: 400;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Police Serif élégante pour les titres du site */
-.font-serif-title {
-  font-family: "Playfair Display", Georgia, Cambria, serif;
-  font-weight: 500;
+/* ── Hiérarchie typographique style Iris.ma ── */
+
+/* Grands titres — bold, sans serif, serré */
+h1 {
+  font-size: clamp(1.5rem, 3vw, 2.5rem);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--text-dark);
+}
+
+h2 {
+  font-size: clamp(1.2rem, 2.5vw, 1.875rem);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+  color: var(--text-dark);
+}
+
+h3 {
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  font-weight: 700;
+  line-height: 1.3;
   letter-spacing: -0.01em;
+  color: var(--text-dark);
+}
+
+/* Labels uppercase — style iris.ma */
+.label-iris {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Prix — tabular nums, bold */
+.price-iris {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+/* Titres principaux — style Iris.ma : sans-serif bold, pas de serif */
+.font-serif-title {
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
 }
 
 /* Scrollbar technique discrète (site public) */

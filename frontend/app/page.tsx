@@ -332,7 +332,7 @@ export default async function HomePage() {
               </div>
 
               {/* Grille : 3 colonnes sur Mobile (comme iris.ma), 4 sur tablette, 8 sur grand écran */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4 lg:gap-5">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-5 lg:gap-6">
                 {categories.map((cat: any) => {
                   const lower = (cat.name || '').toLowerCase();
                   let img = 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=300&auto=format&fit=crop&q=80';
@@ -370,25 +370,25 @@ export default async function HomePage() {
                     <Link
                       key={cat.id}
                       href={`/products?category=${cat.id}`}
-                      className="group bg-[var(--bg-card)] rounded-2xl sm:rounded-3xl p-2.5 sm:p-4 border border-[var(--border)] shadow-2xs hover:shadow-xl hover:border-amber-400 hover:-translate-y-1 transition-all duration-300 flex flex-col items-center justify-between text-center"
+                      className="group bg-[var(--bg-card)] rounded-2xl p-3 sm:p-4 border border-[var(--border)] shadow-sm hover:shadow-lg hover:border-amber-400 hover:-translate-y-1 transition-all duration-300 flex flex-col items-center gap-3 text-center"
                     >
-                      {/* Photo produit de la catégorie */}
-                      <div className="relative w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 mb-2 rounded-xl overflow-hidden bg-slate-50 flex items-center justify-center">
+                      {/* Image grande — style iris.ma */}
+                      <div className="relative w-full aspect-square rounded-xl overflow-hidden bg-[var(--bg-page)]">
                         <Image
                           src={img}
                           alt={cat.name}
                           fill
-                          sizes="(max-width: 640px) 33vw, 15vw"
-                          className="object-cover group-hover:scale-110 transition-transform duration-500"
+                          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 25vw, 16vw"
+                          className="object-cover group-hover:scale-105 transition-transform duration-500"
                         />
                       </div>
 
-                      {/* Nom de la catégorie en gras majuscule Iris.ma */}
+                      {/* Label catégorie */}
                       <div className="w-full">
-                        <h3 className="font-extrabold text-[10px] sm:text-xs text-[var(--text-dark)] uppercase tracking-tight line-clamp-1 group-hover:text-amber-600 transition-colors">
+                        <h3 className="font-black text-xs sm:text-sm text-[var(--text-dark)] uppercase tracking-tight line-clamp-1 group-hover:text-amber-500 transition-colors">
                           {shortLabel}
                         </h3>
-                        <p className="text-[9px] sm:text-[11px] text-[var(--text-body)] font-medium mt-0.5">
+                        <p className="text-[11px] text-[var(--text-muted)] font-medium mt-0.5">
                           {count} produits
                         </p>
                       </div>
