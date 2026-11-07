@@ -74,7 +74,7 @@ export default async function HomePage() {
   ]);
 
   return (
-    <div className="min-h-screen flex flex-col bg-[var(--bg-page)] overflow-x-hidden">
+    <div className="min-h-screen flex flex-col bg-[var(--bg-page)]">
       <Navbar />
 
       {/* ══════════════════════════════════════════════

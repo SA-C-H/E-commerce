@@ -89,6 +89,11 @@
 }
 
 html, body {
+  max-width: 100%;
+}
+
+/* Bloquer l'overflow horizontal sans casser sticky — on utilise un wrapper interne */
+.overflow-guard {
   overflow-x: hidden;
   max-width: 100%;
 }
