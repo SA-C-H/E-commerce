@@ -26,16 +26,17 @@ const allowedOrigins = [
   process.env.FRONTEND_URL || 'http://localhost:3000',
   'http://localhost:3000',
   'http://localhost:3001',
+  'https://backend-production-5ffe3.up.railway.app',
 ];
 
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Autorise requêtes sans origin (mobile apps, curl, etc.) ou origines locales
       if (
         !origin ||
         allowedOrigins.includes(origin) ||
         origin.includes(':3000') ||
+        origin.includes('.vercel.app') ||
         origin.startsWith('http://192.168.') ||
         origin.startsWith('http://100.') ||
         origin.startsWith('http://10.') ||
