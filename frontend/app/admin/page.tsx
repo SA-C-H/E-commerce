@@ -750,61 +750,61 @@ export default function LuxuryAdminPortal() {
         </header>
 
         {/* Barre de navigation rapide en pilules défilantes sur Smartphone (Flexbox scroll horizontal) */}
-        <div className="md:hidden flex items-center gap-1.5 overflow-x-auto px-4 py-2 bg-white border-b border-[#E2E8F0] scrollbar-hidden shrink-0">
+        <div className="flex items-center gap-1.5 overflow-x-auto px-4 sm:px-6 py-3 bg-[#0F172A] border-b border-[#1E293B] scrollbar-hidden shrink-0">
           <button
             onClick={() => setActiveTab('dashboard')}
-            className={`px-3 py-1 rounded-full text-[11px] font-semibold whitespace-nowrap transition ${
+            className={`px-3.5 py-1.5 rounded-full text-[11px] font-bold whitespace-nowrap tracking-wider uppercase transition ${
               activeTab === 'dashboard'
-                ? 'bg-[#0F172A] text-white shadow-xs'
-                : 'bg-[#F8FAFC] text-[#64748B] border border-[#E2E8F0]'
+                ? 'bg-amber-500 text-[#0F172A]'
+                : 'text-slate-300 hover:text-white hover:bg-white/10'
             }`}
           >
             Vue d’ensemble
           </button>
           <button
             onClick={() => setActiveTab('products')}
-            className={`px-3 py-1 rounded-full text-[11px] font-semibold whitespace-nowrap transition flex items-center gap-1 ${
+            className={`px-3.5 py-1.5 rounded-full text-[11px] font-bold whitespace-nowrap tracking-wider uppercase transition flex items-center gap-1 ${
               activeTab === 'products'
-                ? 'bg-[#0F172A] text-white shadow-xs'
-                : 'bg-[#F8FAFC] text-[#64748B] border border-[#E2E8F0]'
+                ? 'bg-amber-500 text-[#0F172A]'
+                : 'text-slate-300 hover:text-white hover:bg-white/10'
             }`}
           >
             <span>Catalogue</span>
-            <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-slate-200 text-slate-800 font-bold">
+            <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-white/20 text-white font-black">
               {products.length}
             </span>
           </button>
           <button
             onClick={() => setActiveTab('orders')}
-            className={`px-3 py-1 rounded-full text-[11px] font-semibold whitespace-nowrap transition flex items-center gap-1 ${
+            className={`px-3.5 py-1.5 rounded-full text-[11px] font-bold whitespace-nowrap tracking-wider uppercase transition flex items-center gap-1 ${
               activeTab === 'orders'
-                ? 'bg-[#0F172A] text-white shadow-xs'
-                : 'bg-[#F8FAFC] text-[#64748B] border border-[#E2E8F0]'
+                ? 'bg-amber-500 text-[#0F172A]'
+                : 'text-slate-300 hover:text-white hover:bg-white/10'
             }`}
           >
             <span>Commandes</span>
             {pendingOrders > 0 && (
-              <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-amber-400 text-black font-bold">
+              <span className="text-[9px] px-1.5 py-0.2 rounded-full bg-[#DC2626] text-white font-black">
                 {pendingOrders}
               </span>
             )}
           </button>
           <button
             onClick={() => setActiveTab('categories')}
-            className={`px-3 py-1 rounded-full text-[11px] font-semibold whitespace-nowrap transition ${
+            className={`px-3.5 py-1.5 rounded-full text-[11px] font-bold whitespace-nowrap tracking-wider uppercase transition ${
               activeTab === 'categories'
-                ? 'bg-[#0F172A] text-white shadow-xs'
-                : 'bg-[#F8FAFC] text-[#64748B] border border-[#E2E8F0]'
+                ? 'bg-amber-500 text-[#0F172A]'
+                : 'text-slate-300 hover:text-white hover:bg-white/10'
             }`}
           >
             Rayons ({categories.length})
           </button>
           <button
             onClick={() => setActiveTab('users')}
-            className={`px-3 py-1 rounded-full text-[11px] font-semibold whitespace-nowrap transition ${
+            className={`px-3.5 py-1.5 rounded-full text-[11px] font-bold whitespace-nowrap tracking-wider uppercase transition ${
               activeTab === 'users'
-                ? 'bg-[#0F172A] text-white shadow-xs'
-                : 'bg-[#F8FAFC] text-[#64748B] border border-[#E2E8F0]'
+                ? 'bg-amber-500 text-[#0F172A]'
+                : 'text-slate-300 hover:text-white hover:bg-white/10'
             }`}
           >
             Rôles ({usersList.length})
