@@ -4,15 +4,20 @@
  */
 
 function getApiBaseUrl(): string {
+  // Priorité absolue à la variable d'environnement (Vercel, Railway, etc.)
+  if (process.env.NEXT_PUBLIC_API_URL) {
+    return process.env.NEXT_PUBLIC_API_URL;
+  }
+
+  // En développement local sur smartphone (réseau local)
   if (typeof window !== 'undefined') {
-    // Si accédé depuis un smartphone en réseau local (ex: 100.90.x.x ou 192.168.x.x),
-    // on utilise automatiquement l'IP du serveur plutôt que localhost
     const host = window.location.hostname;
-    if (host && host !== 'localhost' && host !== '127.0.0.1') {
+    if (host && host !== 'localhost' && host !== '127.0.0.1' && !host.includes('.')) {
       return `http://${host}:5000/api`;
     }
   }
-  return process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+
+  return 'http://localhost:5000/api';
 }
 
 export interface ApiResponse<T = any> {
