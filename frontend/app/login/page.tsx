@@ -44,7 +44,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#F8FAFC]">
+    <div className="min-h-screen flex flex-col bg-[var(--bg-page)]">
       <Navbar />
 
       <main className="flex-1 flex items-center justify-center px-4 py-16">
@@ -53,48 +53,48 @@ export default function LoginPage() {
           {/* Logo centré */}
           <div className="text-center mb-8">
             <div className="w-14 h-14 rounded-2xl bg-[#0F172A] flex items-center justify-center mx-auto mb-4 shadow-md text-white">
-              <Zap className="w-7 h-7 text-[#38BDF8]" />
+              <Zap className="w-7 h-7 text-amber-400" />
             </div>
-            <h1 className="font-serif-title text-2xl font-bold text-[#0F172A]">Connexion à TechNova</h1>
-            <p className="text-sm text-[#64748B] mt-2">
+            <h1 className="font-serif-title text-2xl font-normal text-[var(--text-dark)]">Connexion à TechNova</h1>
+            <p className="text-sm text-[var(--text-body)] mt-2">
               Accédez à votre espace client et à vos commandes
             </p>
           </div>
 
           {/* Card formulaire */}
-          <div className="bg-white rounded-3xl border border-[#E2E8F0] shadow-sm p-8">
+          <div className="bg-[var(--bg-card)] rounded-3xl border border-[var(--border)] shadow-sm p-8">
             <form onSubmit={handleSubmit} className="space-y-5">
 
               <div>
-                <label className="block text-xs font-bold text-[#0F172A] mb-2">
+                <label className="block text-xs font-bold tracking-wider uppercase text-[var(--text-dark)] mb-2">
                   Adresse email
                 </label>
                 <div className="relative">
-                  <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#94A3B8]" />
+                  <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)]" />
                   <input
                     type="email"
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="nom@exemple.com"
-                    className="w-full pl-10 pr-4 py-3 rounded-full bg-[#F8FAFC] border border-[#E2E8F0] text-sm text-[#0F172A] placeholder-[#94A3B8] focus:outline-none focus:border-[#2563EB] focus:bg-white transition"
+                    className="w-full pl-10 pr-4 py-3 rounded-full bg-[var(--bg-page)] border border-[var(--border)] text-sm text-[var(--text-dark)] placeholder-[#94A3B8] focus:outline-none focus:border-amber-500 focus:bg-[var(--bg-card)] transition"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-[#0F172A] mb-2">
+                <label className="block text-xs font-bold tracking-wider uppercase text-[var(--text-dark)] mb-2">
                   Mot de passe
                 </label>
                 <div className="relative">
-                  <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#94A3B8]" />
+                  <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)]" />
                   <input
                     type="password"
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full pl-10 pr-4 py-3 rounded-full bg-[#F8FAFC] border border-[#E2E8F0] text-sm text-[#0F172A] placeholder-[#94A3B8] focus:outline-none focus:border-[#2563EB] focus:bg-white transition"
+                    className="w-full pl-10 pr-4 py-3 rounded-full bg-[var(--bg-page)] border border-[var(--border)] text-sm text-[var(--text-dark)] placeholder-[#94A3B8] focus:outline-none focus:border-amber-500 focus:bg-[var(--bg-card)] transition"
                   />
                 </div>
               </div>
@@ -102,25 +102,25 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3.5 rounded-full bg-[#0F172A] hover:bg-[#2563EB] text-white font-semibold text-xs tracking-wider uppercase flex items-center justify-center gap-2 transition shadow-sm disabled:opacity-50 mt-2"
+                className="w-full py-3.5 rounded-full bg-[#0F172A] hover:bg-amber-500 hover:text-[var(--text-dark)] text-white font-semibold text-xs tracking-wider uppercase flex items-center justify-center gap-2 transition shadow-sm disabled:opacity-50 mt-2"
               >
                 {loading ? 'Connexion en cours...' : 'Se connecter'}
                 <ArrowRight className="w-4 h-4" />
               </button>
             </form>
 
-            <div className="mt-6 pt-5 border-t border-[#F1F5F9] text-center">
-              <p className="text-sm text-[#64748B]">
+            <div className="mt-6 pt-5 border-t border-[var(--border)] text-center">
+              <p className="text-sm text-[var(--text-body)]">
                 Vous n&apos;avez pas encore de compte ?{' '}
-                <Link href="/register" className="text-[#2563EB] font-bold hover:underline">
+                <Link href="/register" className="text-amber-600 font-bold hover:underline">
                   Créer un compte gratuit
                 </Link>
               </p>
             </div>
           </div>
 
-          <div className="flex items-center justify-center gap-2 mt-5 text-xs text-[#94A3B8]">
-            <ShieldCheck className="w-4 h-4 text-[#2563EB]" />
+          <div className="flex items-center justify-center gap-2 mt-5 text-xs text-[var(--text-muted)]">
+            <ShieldCheck className="w-4 h-4 text-amber-500" />
             Connexion sécurisée — vos données sont protégées
           </div>
         </div>

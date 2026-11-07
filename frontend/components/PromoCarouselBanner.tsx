@@ -62,7 +62,7 @@ const slides: Slide[] = [
       'Capteur 200 Mpx, Space Zoom 100x et traduction IA instantanée. Commandez sur WhatsApp et payez en toute sérénité à la livraison.',
     ctaText: 'Voir les offres Galaxy AI',
     ctaLink: '/products?category=cat_1',
-    ribbonColor: 'bg-[#2563EB]', // Bleu cobalt Galaxy
+    ribbonColor: 'bg-[#0F172A]', // Navy TechNova
     items: [
       {
         name: 'Galaxy S24 Ultra 5G (512 Go)',
@@ -135,34 +135,44 @@ export default function PromoCarouselBanner() {
     <div
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
-      className="relative rounded-3xl overflow-hidden bg-[#0A0F1D] border border-slate-800 shadow-2xl transition-all duration-500"
+      className="relative rounded-3xl overflow-hidden bg-[#0A1128] border border-slate-800 shadow-2xl transition-all duration-500"
     >
-      {/* ── 1. Ruban supérieur déroulant animé (inspiré de iris.ma) ── */}
-      <div className={`py-2 px-4 ${slide.ribbonColor} text-white overflow-hidden whitespace-nowrap transition-colors duration-500`}>
-        <div className="inline-flex items-center gap-8 text-[11px] font-black tracking-widest uppercase animate-ticker">
-          <span>★ BLACK FRIDAY TECHNOVA</span>
-          <span>•</span>
-          <span>BLACK WEEK 1 • OFFRES EXCLUSIVES</span>
-          <span>•</span>
-          <span>LIVRAISON EXPRESS 24H PARTOUT AU MAROC</span>
-          <span>•</span>
-          <span>PAIEMENT À LA LIVRAISON (CASH ON DELIVERY)</span>
-          <span>•</span>
-          <span>GARANTIE CONSTRUCTEUR 1 AN</span>
-          <span>•</span>
-          <span>★ BLACK FRIDAY TECHNOVA</span>
-          <span>•</span>
-          <span>BLACK WEEK 1 • OFFRES EXCLUSIVES</span>
-          <span>•</span>
-          <span>LIVRAISON EXPRESS 24H PARTOUT AU MAROC</span>
+      {/* ── Ruban ticker animé ── */}
+      <div className={`py-2 px-0 ${slide.ribbonColor} text-white overflow-hidden transition-colors duration-500`}>
+        <div className="flex whitespace-nowrap animate-ticker">
+          <div className="inline-flex items-center gap-8 text-[11px] font-black tracking-widest uppercase px-8 shrink-0">
+            <span>★ BLACK FRIDAY TECHNOVA</span>
+            <span>•</span>
+            <span>OFFRES EXCLUSIVES</span>
+            <span>•</span>
+            <span>LIVRAISON 24H AU MAROC</span>
+            <span>•</span>
+            <span>PAIEMENT À LA LIVRAISON</span>
+            <span>•</span>
+            <span>GARANTIE 1 AN</span>
+            <span>•</span>
+          </div>
+          {/* Duplicate pour le loop sans coupure */}
+          <div className="inline-flex items-center gap-8 text-[11px] font-black tracking-widest uppercase px-8 shrink-0" aria-hidden>
+            <span>★ BLACK FRIDAY TECHNOVA</span>
+            <span>•</span>
+            <span>OFFRES EXCLUSIVES</span>
+            <span>•</span>
+            <span>LIVRAISON 24H AU MAROC</span>
+            <span>•</span>
+            <span>PAIEMENT À LA LIVRAISON</span>
+            <span>•</span>
+            <span>GARANTIE 1 AN</span>
+            <span>•</span>
+          </div>
         </div>
       </div>
 
       {/* ── 2. Corps de la Banderole ── */}
-      <div className="p-4 sm:p-8 lg:p-12 relative">
+      <div className="p-5 sm:p-8 lg:p-12 relative">
         {/* Badge Marque en haut à droite */}
         <div className="absolute top-4 right-4 sm:top-6 sm:right-8 lg:right-12">
-          <div className="px-3 py-1 sm:px-4 sm:py-1.5 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white text-[10px] sm:text-xs font-bold tracking-widest uppercase">
+          <div className="px-3 py-1 sm:px-4 sm:py-1.5 rounded-full bg-[var(--bg-card)]/10 backdrop-blur-md border border-white/20 text-white text-[10px] sm:text-xs font-bold tracking-widest uppercase">
             {slide.brand}
           </div>
         </div>
@@ -185,7 +195,7 @@ export default function PromoCarouselBanner() {
             <div className="pt-1 sm:pt-2">
               <Link
                 href={slide.ctaLink}
-                className="inline-flex items-center gap-2 px-5 py-2.5 sm:px-7 sm:py-3.5 rounded-full bg-amber-500 hover:bg-amber-400 text-[#0F172A] font-bold text-[11px] sm:text-xs uppercase tracking-wider transition shadow-lg shadow-amber-500/20 group"
+                className="inline-flex items-center gap-2 px-5 py-2.5 sm:px-7 sm:py-3.5 rounded-full bg-amber-500 hover:bg-amber-400 text-[var(--text-dark)] font-bold text-[11px] sm:text-xs uppercase tracking-wider transition shadow-lg shadow-amber-500/20 group"
               >
                 <span>{slide.ctaText}</span>
                 <ArrowRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 group-hover:translate-x-1 transition" />
@@ -193,33 +203,28 @@ export default function PromoCarouselBanner() {
             </div>
           </div>
 
-          {/* Côté droit : 3 Cartes Produits Blanches avec Prix en DH (Adapté Mobile & Desktop) */}
+          {/* Côté droit : Cartes Produits — 2 cols mobile, 3 cols sm+ */}
           <div className="lg:col-span-7">
-            <div className="grid grid-cols-3 gap-2 sm:gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
               {slide.items.map((item, idx) => (
                 <Link
                   key={idx}
                   href={item.link}
-                  className="bg-white rounded-xl sm:rounded-2xl p-2.5 sm:p-4 flex flex-col justify-between items-center text-center shadow-lg hover:shadow-2xl hover:scale-[1.02] transition-all duration-300 group"
+                  className={`bg-[var(--bg-card)] rounded-xl sm:rounded-2xl p-3 sm:p-5 flex flex-col justify-between items-center text-center shadow-lg hover:shadow-2xl hover:scale-[1.02] transition-all duration-300 group ${idx === 2 ? 'hidden sm:flex' : 'flex'}`}
                 >
-                  {/* Image Produit */}
                   <div className="relative w-full aspect-square mb-2 sm:mb-3 rounded-lg sm:rounded-xl overflow-hidden bg-slate-50">
                     <Image
                       src={item.image}
                       alt={item.name}
                       fill
-                      sizes="(max-width: 768px) 33vw, 20vw"
+                      sizes="(max-width: 640px) 45vw, 20vw"
                       className="object-cover group-hover:scale-105 transition duration-500"
                     />
                   </div>
-
-                  {/* Titre Produit */}
-                  <h4 className="text-[10px] sm:text-[12px] font-bold text-[#0F172A] line-clamp-1 mb-1.5 sm:mb-3 group-hover:text-[#2563EB] transition">
+                  <h4 className="text-xs sm:text-sm font-bold text-[var(--text-dark)] line-clamp-2 mb-1.5 sm:mb-3 group-hover:text-amber-500 transition w-full">
                     {item.name}
                   </h4>
-
-                  {/* Étiquette Prix Rouge Iris.ma */}
-                  <div className="w-full py-1 sm:py-2 px-1 sm:px-3 rounded-full bg-[#DC2626] text-white text-[10px] sm:text-xs font-black tracking-tight text-center shadow-sm truncate">
+                  <div className="w-full py-1.5 sm:py-2 px-2 sm:px-3 rounded-full bg-[#DC2626] text-white text-xs sm:text-sm font-black text-center shadow-sm">
                     {item.price}
                   </div>
                 </Link>
@@ -228,47 +233,46 @@ export default function PromoCarouselBanner() {
           </div>
         </div>
 
-        {/* ── 3. Contrôles de navigation (Dots et Flèches) ── */}
-        <div className="flex items-center justify-between pt-8 border-t border-slate-800/80 mt-8">
-          {/* Flèches précédent / suivant */}
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => setCurrent((prev) => (prev - 1 + slides.length) % slides.length)}
-              className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition backdrop-blur-md"
-              title="Slide précédent"
-            >
-              <ChevronLeft className="w-4 h-4" />
-            </button>
-            <button
-              onClick={() => setCurrent((prev) => (prev + 1) % slides.length)}
-              className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white transition backdrop-blur-md"
-              title="Slide suivant"
-            >
-              <ChevronRight className="w-4 h-4" />
-            </button>
-          </div>
-
-          {/* Indicateur de pagination (Dots ronds iris.ma) */}
-          <div className="flex items-center gap-2">
-            {slides.map((_, idx) => (
+          {/* Contrôles navigation */}
+          <div className="flex items-center justify-between pt-6 border-t border-slate-800/80 mt-6">
+            {/* Flèches — min 44px */}
+            <div className="flex items-center gap-2">
               <button
-                key={idx}
-                onClick={() => setCurrent(idx)}
-                className={`transition-all duration-300 rounded-full ${
-                  current === idx
-                    ? 'w-8 h-2.5 bg-amber-400'
-                    : 'w-2.5 h-2.5 bg-white/30 hover:bg-white/60'
-                }`}
-                title={`Aller au slide ${idx + 1}`}
-              />
-            ))}
-          </div>
+                onClick={() => setCurrent((prev) => (prev - 1 + slides.length) % slides.length)}
+                className="w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition"
+                title="Slide précédent"
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+              <button
+                onClick={() => setCurrent((prev) => (prev + 1) % slides.length)}
+                className="w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition"
+                title="Slide suivant"
+              >
+                <ChevronRight className="w-5 h-5" />
+              </button>
+            </div>
 
-          {/* Mention Livraison */}
-          <span className="text-[11px] text-slate-400 hidden sm:inline-block font-medium">
-            Livraison 24h & Paiement Cash à la réception
-          </span>
-        </div>
+            {/* Dots — min 20px pour le tactile */}
+            <div className="flex items-center gap-2">
+              {slides.map((_, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setCurrent(idx)}
+                  className={`transition-all duration-300 rounded-full ${
+                    current === idx
+                      ? 'w-8 h-3 bg-amber-400'
+                      : 'w-5 h-3 bg-white/30 hover:bg-white/60'
+                  }`}
+                  title={`Slide ${idx + 1}`}
+                />
+              ))}
+            </div>
+
+            <span className="text-[11px] text-slate-400 hidden sm:block">
+              Livraison 24h · Paiement à la livraison
+            </span>
+          </div>
       </div>
     </div>
   );

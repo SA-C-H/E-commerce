@@ -1,22 +1,96 @@
 @import "tailwindcss";
 
 :root {
-  /* Palette High-Tech : Bleu Nuit Minéral & Cobalt Électrique */
-  --bg-page: #F8FAFC;          /* Blanc glacier / gris perle ultra-propre */
-  --bg-card: #FFFFFF;          /* Cartes blanc pur */
-  --text-dark: #0F172A;        /* Bleu nuit très profond pour les titres */
-  --text-body: #475569;        /* Slate / Gris acier pour le texte */
-  --text-muted: #94A3B8;       /* Texte secondaire */
-  --blue-tech: #2563EB;        /* Bleu Cobalt électrique */
-  --blue-tech-hover: #1D4ED8;  /* Bleu Cobalt foncé hover */
-  --navy-deep: #0F172A;        /* Bleu nuit profond bannières */
-  --navy-card: #1E293B;        /* Carte intérieure bannière */
-  --border-subtle: #E2E8F0;    /* Bordures douces */
-  --accent-gold: #F59E0B;      /* Étoiles dorées */
+  /* ═══════════════════════════════════════════════════
+     SYSTÈME DE DESIGN TECHNOVA — SOURCE UNIQUE DE VÉRITÉ
+     Palette : Amber (primaire) · Navy (sombre) · Slate (neutre)
+  ═══════════════════════════════════════════════════ */
+
+  /* Fonds */
+  --bg-page:        #F8FAFC;
+  --bg-card:        #FFFFFF;
+  --bg-card-hover:  #F1F5F9;
+  --bg-input:       #F8FAFC;
+
+  /* Texte */
+  --text-dark:      #0F172A;
+  --text-body:      #475569;
+  --text-muted:     #94A3B8;
+
+  /* Couleur Primaire — Amber TechNova */
+  --primary:        #F59E0B;
+  --primary-hover:  #D97706;
+  --primary-light:  #FEF3C7;
+  --primary-text:   #92400E;
+
+  /* Couleur Secondaire — Navy */
+  --navy:           #0F172A;
+  --navy-mid:       #1E293B;
+  --navy-deep:      #0A1128;
+  --navy-border:    #1E293B;
+
+  /* Succès, Erreur */
+  --success:        #10B981;
+  --error:          #DC2626;
+
+  /* Bordures & Séparateurs */
+  --border:         #E2E8F0;
+  --border-dark:    #334155;
+
+  /* Étoiles */
+  --accent-gold:    #F59E0B;
 }
+
+/* ══════════════════════════════════════════
+   DARK MODE — appliqué via data-theme="dark"
+   sur le <html>
+══════════════════════════════════════════ */
+:root[data-theme="dark"] {
+  --bg-page:        #0D1117;
+  --bg-card:        #161B22;
+  --bg-card-hover:  #1C2333;
+  --bg-input:       #0D1117;
+
+  --text-dark:      #F1F5F9;
+  --text-body:      #94A3B8;
+  --text-muted:     #64748B;
+
+  --primary:        #F59E0B;
+  --primary-hover:  #D97706;
+  --primary-light:  #2D1F00;
+  --primary-text:   #FCD34D;
+
+  --navy:           #F1F5F9;
+  --navy-mid:       #1E293B;
+  --navy-deep:      #020409;
+  --navy-border:    #30363D;
+
+  --border:         #30363D;
+  --border-dark:    #30363D;
+
+  --accent-gold:    #F59E0B;
+}
+
+/* ══════════════════════════════════════════
+   CLASSES UTILITAIRES THÈME
+   Utilisées dans les composants à la place
+   des couleurs hard-codées
+══════════════════════════════════════════ */
+.bg-page       { background-color: var(--bg-page); }
+.bg-card       { background-color: var(--bg-card); }
+.bg-input      { background-color: var(--bg-input); }
+.text-primary-t { color: var(--text-dark); }
+.text-body-t    { color: var(--text-body); }
+.text-muted-t   { color: var(--text-muted); }
+.border-t-theme { border-color: var(--border); }
 
 * {
   box-sizing: border-box;
+}
+
+html, body {
+  overflow-x: hidden;
+  max-width: 100%;
 }
 
 html {
@@ -24,11 +98,12 @@ html {
 }
 
 body {
-  background-color: #F8FAFC;
-  color: #0F172A;
+  background-color: var(--bg-page);
+  color: var(--text-dark);
   min-height: 100vh;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* Police Serif élégante pour les titres du site */
@@ -43,14 +118,15 @@ body {
   width: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #F8FAFC;
+  background: var(--bg-page);
+  transition: background 0.3s ease;
 }
 ::-webkit-scrollbar-thumb {
   background: #CBD5E1;
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #2563EB;
+  background: #F59E0B;
 }
 
 /* ── Back Office : scrollbar totalement invisible ── */
@@ -77,10 +153,18 @@ body {
 }
 
 @keyframes ticker {
-  0% { transform: translateX(0); }
+  0%   { transform: translateX(0); }
   100% { transform: translateX(-50%); }
 }
 
 .animate-ticker {
-  animation: ticker 25s linear infinite;
+  animation: ticker 20s linear infinite;
+  will-change: transform;
+}
+
+/* Espace sous le bandeau WhatsApp fixe sur mobile */
+@media (max-width: 639px) {
+  main {
+    padding-bottom: 4rem;
+  }
 }

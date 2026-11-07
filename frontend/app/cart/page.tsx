@@ -25,9 +25,7 @@ export default function CartPage() {
 
   useEffect(() => {
     setMounted(true);
-    if (user?.name) {
-      setCustomerName(user.name);
-    }
+    if (user?.name) setCustomerName(user.name);
   }, [user]);
 
   const defaultImage =
@@ -38,57 +36,30 @@ export default function CartPage() {
 
   const handleCheckout = async (e: React.FormEvent) => {
     e.preventDefault();
-
     if (!isAuthenticated) {
       toast.error('Vous devez être connecté pour valider votre commande', {
-        action: {
-          label: 'Se connecter',
-          onClick: () => router.push('/login?redirect=/cart'),
-        },
+        action: { label: 'Se connecter', onClick: () => router.push('/login?redirect=/cart') },
       });
       return;
     }
-
-    if (items.length === 0) {
-      toast.error('Votre panier est vide');
-      return;
-    }
-
-    if (!customerName.trim()) {
-      toast.error('Veuillez renseigner votre nom pour la livraison');
-      return;
-    }
+    if (items.length === 0) { toast.error('Votre panier est vide'); return; }
+    if (!customerName.trim()) { toast.error('Veuillez renseigner votre nom'); return; }
 
     setLoadingOrder(true);
-
     try {
-      const payload = {
+      const result = await api.post<{ order: any; whatsappUrl: string }>('/orders', {
         customer_name: customerName.trim(),
         customer_phone: customerPhone.trim(),
-        items: items.map((i) => ({
-          product_id: i.id,
-          quantity: i.quantity,
-        })),
-      };
-
-      const result = await api.post<{ order: any; whatsappUrl: string }>('/orders', payload);
-
+        items: items.map((i) => ({ product_id: i.id, quantity: i.quantity })),
+      });
       clearCart();
       toast.success('Commande validée ! Redirection vers WhatsApp...');
-
       setTimeout(() => {
-        if (result.whatsappUrl) {
-          window.location.href = result.whatsappUrl;
-        } else {
-          router.push('/orders');
-        }
+        if (result.whatsappUrl) window.location.href = result.whatsappUrl;
+        else router.push('/orders');
       }, 1000);
     } catch (err: any) {
-      if (err instanceof ApiError) {
-        toast.error(err.message);
-      } else {
-        toast.error('Une erreur est survenue lors de la commande.');
-      }
+      toast.error(err instanceof ApiError ? err.message : 'Une erreur est survenue.');
     } finally {
       setLoadingOrder(false);
     }
@@ -96,10 +67,10 @@ export default function CartPage() {
 
   if (!mounted) {
     return (
-      <div className="min-h-screen flex flex-col bg-[#F8FAFC]">
+      <div className="min-h-screen flex flex-col bg-[var(--bg-page)]">
         <Navbar />
         <main className="flex-1 flex items-center justify-center">
-          <div className="w-8 h-8 border-2 border-[#2563EB] border-t-transparent rounded-full animate-spin" />
+          <div className="w-8 h-8 border-2 border-amber-500 border-t-transparent rounded-full animate-spin" />
         </main>
         <Footer />
       </div>
@@ -107,110 +78,51 @@ export default function CartPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#F8FAFC]">
+    <div className="min-h-screen flex flex-col bg-[var(--bg-page)]">
       <Navbar />
 
-      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full space-y-8">
-        
+      <main className="flex-1 w-full px-4 sm:px-6 lg:px-10 xl:px-16 py-10 sm:py-14 space-y-8">
+
         <div className="space-y-1">
-          <span className="text-[11px] font-semibold tracking-widest text-[#2563EB] uppercase block">
+          <span className="text-xs font-semibold tracking-widest text-amber-500 uppercase">
             FINALISATION
           </span>
-          <h1 className="font-serif-title text-3xl sm:text-4xl text-[#0F172A] font-normal">
+          <h1 className="font-serif-title text-3xl sm:text-4xl text-[var(--text-dark)] font-normal">
             Votre Panier ({totalCount})
           </h1>
         </div>
 
         {items.length === 0 ? (
-          <div className="bg-white rounded-3xl p-16 text-center border border-[#E2E8F0] shadow-sm space-y-4">
-            <div className="w-16 h-16 rounded-full bg-[#F8FAFC] border border-[#E2E8F0] flex items-center justify-center mx-auto text-[#0F172A]">
-              <ShoppingBag className="w-7 h-7" />
+          <div className="bg-[var(--bg-card)] rounded-2xl p-12 sm:p-16 text-center border border-[var(--border)] shadow-sm space-y-4">
+            <div className="w-16 h-16 rounded-full bg-[var(--bg-page)] border border-[var(--border)] flex items-center justify-center mx-auto">
+              <ShoppingBag className="w-7 h-7 text-[var(--text-dark)]" />
             </div>
-            <h2 className="font-serif-title text-2xl text-[#0F172A]">Votre panier est vide</h2>
-            <p className="text-xs text-[#64748B] max-w-sm mx-auto">
-              Découvrez nos chargeurs rapides GaN, coques protectrices et connectique haute performance.
+            <h2 className="font-serif-title text-2xl text-[var(--text-dark)]">Panier vide</h2>
+            <p className="text-sm text-[var(--text-body)] max-w-sm mx-auto">
+              Parcourez notre catalogue de smartphones et laptops.
             </p>
-            <div className="pt-2">
-              <Link
-                href="/products"
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-[#0F172A] hover:bg-[#2563EB] text-white text-xs font-semibold tracking-wider uppercase transition shadow-sm"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                Explorer la boutique
-              </Link>
-            </div>
+            <Link
+              href="/products"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#0F172A] hover:bg-amber-500 hover:text-[#0F172A] text-white text-sm font-semibold transition shadow-sm"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              Explorer la boutique
+            </Link>
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-            
-            {/* Liste des articles */}
-            <div className="lg:col-span-7 space-y-4">
-              <div className="bg-white rounded-3xl p-6 border border-[#E2E8F0] shadow-sm divide-y divide-[#F1F5F9]">
-                {items.map((item) => (
-                  <div key={item.id} className="py-4 first:pt-0 last:pb-0 flex items-center gap-4">
-                    <div className="relative w-20 h-20 rounded-2xl overflow-hidden bg-[#F1F5F9] flex-shrink-0">
-                      <Image
-                        src={item.image_url || defaultImage}
-                        alt={item.name}
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
+          /* Layout : récap EN PREMIER sur mobile (order-first), articles dessous */
+          <div className="flex flex-col lg:grid lg:grid-cols-12 gap-6 lg:gap-8 lg:items-start">
 
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-serif-title font-bold text-sm text-[#0F172A] truncate">
-                        {item.name}
-                      </h3>
-                      <p className="text-xs text-[#2563EB] font-bold mt-1">
-                        {Number(item.price).toFixed(2)} MAD
-                      </p>
-
-                      <div className="flex items-center gap-2 mt-3">
-                        <button
-                          onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                          className="w-7 h-7 rounded-full bg-[#F8FAFC] border border-[#E2E8F0] flex items-center justify-center text-[#0F172A] hover:bg-white transition"
-                        >
-                          <Minus className="w-3.5 h-3.5" />
-                        </button>
-                        <span className="text-xs font-bold text-[#0F172A] w-6 text-center">
-                          {item.quantity}
-                        </span>
-                        <button
-                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                          disabled={item.quantity >= item.stock}
-                          className="w-7 h-7 rounded-full bg-[#F8FAFC] border border-[#E2E8F0] flex items-center justify-center text-[#0F172A] hover:bg-white transition disabled:opacity-40"
-                        >
-                          <Plus className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                    </div>
-
-                    <div className="text-right">
-                      <span className="text-sm font-bold text-[#0F172A] block">
-                        {(item.price * item.quantity).toFixed(2)} MAD
-                      </span>
-                      <button
-                        onClick={() => removeItem(item.id)}
-                        className="mt-2 text-slate-400 hover:text-red-500 transition p-1"
-                        title="Supprimer"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Récapitulatif et validation WhatsApp */}
-            <div className="lg:col-span-5 bg-white rounded-3xl p-6 sm:p-8 border border-[#E2E8F0] shadow-sm space-y-6">
-              <h2 className="font-serif-title text-xl text-[#0F172A] font-bold">
-                Validation de la commande
+            {/* ── RÉCAPITULATIF — order-first sur mobile ── */}
+            <div className="order-first lg:order-last lg:col-span-4 bg-[var(--bg-card)] rounded-2xl p-5 sm:p-7 border border-[var(--border)] shadow-sm space-y-5 lg:sticky lg:top-24">
+              <h2 className="font-serif-title text-xl text-[var(--text-dark)]">
+                Récapitulatif
               </h2>
 
               <form onSubmit={handleCheckout} className="space-y-4">
+
                 <div>
-                  <label className="block text-[11px] font-bold tracking-wider uppercase text-[#0F172A] mb-1.5">
+                  <label className="block text-xs font-bold tracking-wider uppercase text-[var(--text-dark)] mb-2">
                     Nom & Prénom *
                   </label>
                   <input
@@ -219,33 +131,33 @@ export default function CartPage() {
                     value={customerName}
                     onChange={(e) => setCustomerName(e.target.value)}
                     placeholder="Votre nom complet"
-                    className="w-full px-4 py-2.5 rounded-full bg-[#F8FAFC] border border-[#E2E8F0] text-xs text-[#0F172A] placeholder-[#94A3B8] focus:outline-none focus:border-[#2563EB]"
+                    className="w-full px-4 py-3 rounded-xl bg-[var(--bg-page)] border border-[var(--border)] text-sm text-[var(--text-dark)] placeholder-[var(--text-muted)] focus:outline-none focus:border-amber-500 transition min-h-[44px]"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-bold tracking-wider uppercase text-[#0F172A] mb-1.5">
-                    Numéro de Téléphone (WhatsApp)
+                  <label className="block text-xs font-bold tracking-wider uppercase text-[var(--text-dark)] mb-2">
+                    Téléphone WhatsApp
                   </label>
                   <input
                     type="tel"
                     value={customerPhone}
                     onChange={(e) => setCustomerPhone(e.target.value)}
                     placeholder="06 XX XX XX XX"
-                    className="w-full px-4 py-2.5 rounded-full bg-[#F8FAFC] border border-[#E2E8F0] text-xs text-[#0F172A] placeholder-[#94A3B8] focus:outline-none focus:border-[#2563EB]"
+                    className="w-full px-4 py-3 rounded-xl bg-[var(--bg-page)] border border-[var(--border)] text-sm text-[var(--text-dark)] placeholder-[var(--text-muted)] focus:outline-none focus:border-amber-500 transition min-h-[44px]"
                   />
                 </div>
 
-                <div className="pt-4 border-t border-[#F1F5F9] space-y-2 text-xs">
-                  <div className="flex justify-between text-[#64748B]">
+                <div className="pt-4 border-t border-[var(--border)] space-y-2.5 text-sm">
+                  <div className="flex justify-between text-[var(--text-body)]">
                     <span>Sous-total ({totalCount} articles)</span>
-                    <span>{totalPrice.toFixed(2)} MAD</span>
+                    <span className="font-semibold">{totalPrice.toFixed(2)} MAD</span>
                   </div>
-                  <div className="flex justify-between text-[#64748B]">
+                  <div className="flex justify-between text-[var(--text-body)]">
                     <span>Livraison</span>
-                    <span className="text-[#2563EB] font-semibold">Calculée sur WhatsApp</span>
+                    <span className="text-amber-600 font-semibold">Via WhatsApp</span>
                   </div>
-                  <div className="flex justify-between text-base font-bold text-[#0F172A] pt-2 border-t border-[#F1F5F9]">
+                  <div className="flex justify-between text-base font-bold text-[var(--text-dark)] pt-2 border-t border-[var(--border)]">
                     <span>Total estimé</span>
                     <span>{totalPrice.toFixed(2)} MAD</span>
                   </div>
@@ -254,21 +166,98 @@ export default function CartPage() {
                 <button
                   type="submit"
                   disabled={loadingOrder}
-                  className="w-full py-3.5 px-6 rounded-full bg-[#0F172A] hover:bg-[#2563EB] text-white font-semibold text-xs tracking-wider uppercase flex items-center justify-center gap-2 transition shadow-sm disabled:opacity-50"
+                  className="w-full min-h-[48px] px-6 rounded-xl bg-[#0F172A] hover:bg-amber-500 hover:text-[#0F172A] text-white font-bold text-sm tracking-wider uppercase flex items-center justify-center gap-2 transition shadow-sm disabled:opacity-50"
                 >
-                  <MessageSquare className="w-4 h-4" />
+                  <MessageSquare className="w-4 h-4 shrink-0" />
                   {loadingOrder ? 'Validation...' : 'Commander sur WhatsApp'}
                 </button>
 
-                <p className="text-[11px] text-[#94A3B8] text-center leading-relaxed">
-                  Paiement à la livraison. Vous serez redirigé vers WhatsApp avec votre bon de commande prérempli.
+                <p className="text-xs text-[var(--text-muted)] text-center leading-relaxed">
+                  Paiement à la livraison — bon de commande WhatsApp prérempli.
                 </p>
               </form>
             </div>
 
+            {/* ── LISTE DES ARTICLES ── */}
+            <div className="order-last lg:order-first lg:col-span-8 space-y-3">
+              <div className="bg-[var(--bg-card)] rounded-2xl border border-[var(--border)] shadow-sm divide-y divide-[var(--border)]">
+                {items.map((item) => (
+                  <div key={item.id} className="p-4 sm:p-5 flex items-center gap-4">
+
+                    {/* Image */}
+                    <div className="relative w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden bg-[var(--bg-page)] shrink-0">
+                      <Image
+                        src={item.image_url || defaultImage}
+                        alt={item.name}
+                        fill
+                        sizes="80px"
+                        className="object-cover"
+                      />
+                    </div>
+
+                    {/* Infos produit */}
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-sm sm:text-base text-[var(--text-dark)] truncate">
+                        {item.name}
+                      </h3>
+                      <p className="text-sm text-amber-600 font-bold mt-0.5">
+                        {Number(item.price).toFixed(2)} MAD
+                      </p>
+
+                      {/* Contrôles quantité — 44px */}
+                      <div className="flex items-center gap-2 mt-2.5">
+                        <button
+                          onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                          className="w-11 h-11 rounded-xl bg-[var(--bg-page)] border border-[var(--border)] flex items-center justify-center text-[var(--text-dark)] hover:border-amber-500 transition active:scale-95"
+                          aria-label="Diminuer"
+                        >
+                          <Minus className="w-4 h-4" />
+                        </button>
+                        <span className="text-sm font-bold text-[var(--text-dark)] w-8 text-center tabular-nums">
+                          {item.quantity}
+                        </span>
+                        <button
+                          onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                          disabled={item.quantity >= item.stock}
+                          className="w-11 h-11 rounded-xl bg-[var(--bg-page)] border border-[var(--border)] flex items-center justify-center text-[var(--text-dark)] hover:border-amber-500 transition disabled:opacity-40 active:scale-95"
+                          aria-label="Augmenter"
+                        >
+                          <Plus className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Total ligne + supprimer */}
+                    <div className="text-right shrink-0">
+                      <span className="text-sm sm:text-base font-bold text-[var(--text-dark)] block tabular-nums">
+                        {(item.price * item.quantity).toFixed(2)} MAD
+                      </span>
+                      <button
+                        onClick={() => removeItem(item.id)}
+                        className="mt-2 p-2 text-[var(--text-muted)] hover:text-red-500 transition rounded-lg hover:bg-red-50"
+                        title="Supprimer"
+                        aria-label="Supprimer l'article"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+
+                  </div>
+                ))}
+              </div>
+
+              {/* Lien retour boutique */}
+              <Link
+                href="/products"
+                className="inline-flex items-center gap-2 text-sm text-[var(--text-body)] hover:text-amber-500 transition py-2"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                Continuer mes achats
+              </Link>
+            </div>
+
           </div>
         )}
-
       </main>
 
       <Footer />

@@ -28,7 +28,7 @@ async function getProducts(params: Record<string, string | undefined>) {
   try {
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/products?${query.toString()}`,
-      { cache: 'no-store' }
+      { next: { revalidate: 60 } }
     );
     if (!res.ok) return { products: [], pagination: { total: 0, page: 1, totalPages: 1 } };
     const json = await res.json();
@@ -42,7 +42,7 @@ async function getCategories() {
   try {
     const res = await fetch(
       `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/categories`,
-      { cache: 'no-store' }
+      { next: { revalidate: 60 } }
     );
     if (!res.ok) return [];
     const json = await res.json();
@@ -63,35 +63,35 @@ export default async function ProductsPage({ searchParams }: SearchProps) {
   const currentPage = Number(resolvedParams.page || 1);
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#F8FAFC]">
+    <div className="min-h-screen flex flex-col bg-[var(--bg-page)]">
       <Navbar />
 
-      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full space-y-8">
+      <main className="flex-1 w-full px-4 sm:px-6 lg:px-10 xl:px-16 py-10 sm:py-14 w-full space-y-10 sm:space-y-12">
         
         {/* Titre Serif épuré High-Tech */}
         <div className="space-y-1">
-          <span className="text-[11px] font-semibold tracking-widest text-[#2563EB] uppercase block">
+          <span className="text-[11px] font-semibold tracking-widest text-amber-500 uppercase block">
             NOTRE COLLECTION OFFICIELLE
           </span>
-          <h1 className="font-serif-title text-3xl sm:text-4xl text-[#0F172A] font-normal">
+          <h1 className="font-serif-title text-3xl sm:text-4xl text-[var(--text-dark)] font-normal">
             Smartphones & Laptops
           </h1>
-          <p className="text-xs sm:text-sm text-[#64748B]">
+          <p className="text-xs sm:text-sm text-[var(--text-body)]">
             Trouvez votre iPhone, Samsung Galaxy, Google Pixel, MacBook ou Laptop Windows avec garantie constructeur 1 an.
           </p>
         </div>
 
         {/* Barre de recherche et catégories dans une carte blanche élégante */}
-        <div className="bg-white rounded-3xl p-5 border border-[#E2E8F0] shadow-sm space-y-4">
+        <div className="bg-[var(--bg-card)] rounded-3xl p-5 border border-[var(--border)] shadow-sm space-y-4">
           <form method="GET" action="/products" className="grid grid-cols-1 sm:grid-cols-12 gap-3">
             <div className="relative sm:col-span-6">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#94A3B8]" />
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)]" />
               <input
                 type="text"
                 name="search"
                 defaultValue={resolvedParams.search || ''}
                 placeholder="Rechercher iPhone 15 Pro, Galaxy S24, MacBook Pro, Dell XPS..."
-                className="w-full pl-10 pr-4 py-2.5 rounded-full bg-[#F8FAFC] border border-[#E2E8F0] text-xs text-[#0F172A] placeholder-[#94A3B8] focus:outline-none focus:border-[#2563EB]"
+                className="w-full pl-10 pr-4 py-2.5 rounded-full bg-[var(--bg-page)] border border-[var(--border)] text-xs text-[var(--text-dark)] placeholder-[#94A3B8] focus:outline-none focus:border-amber-500"
               />
             </div>
 
@@ -99,7 +99,7 @@ export default async function ProductsPage({ searchParams }: SearchProps) {
               <select
                 name="category"
                 defaultValue={resolvedParams.category || ''}
-                className="w-full px-4 py-2.5 rounded-full bg-[#F8FAFC] border border-[#E2E8F0] text-xs text-[#0F172A] focus:outline-none focus:border-[#2563EB]"
+                className="w-full px-4 py-2.5 rounded-full bg-[var(--bg-page)] border border-[var(--border)] text-xs text-[var(--text-dark)] focus:outline-none focus:border-amber-500"
               >
                 <option value="">Toutes les marques</option>
                 {categories.map((c: any) => (
@@ -111,7 +111,7 @@ export default async function ProductsPage({ searchParams }: SearchProps) {
             <div className="sm:col-span-3">
               <button
                 type="submit"
-                className="w-full py-2.5 rounded-full bg-[#0F172A] hover:bg-[#2563EB] text-white text-xs font-semibold tracking-wider uppercase transition shadow-sm"
+                className="w-full py-2.5 rounded-full bg-[#0F172A] hover:bg-amber-500 hover:text-[var(--text-dark)] text-white text-xs font-semibold tracking-wider uppercase transition shadow-sm"
               >
                 Filtrer
               </button>
@@ -119,13 +119,13 @@ export default async function ProductsPage({ searchParams }: SearchProps) {
           </form>
 
           {/* Pilules de catégories rapides */}
-          <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-[#F1F5F9]">
+          <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-[var(--border)]">
             <Link
               href="/products"
               className={`px-4 py-1.5 rounded-full text-xs font-medium transition ${
                 !resolvedParams.category
                   ? 'bg-[#0F172A] text-white'
-                  : 'bg-[#F8FAFC] text-[#64748B] hover:text-[#0F172A]'
+                  : 'bg-[var(--bg-page)] text-[var(--text-body)] hover:text-[var(--text-dark)]'
               }`}
             >
               Toutes les marques
@@ -139,7 +139,7 @@ export default async function ProductsPage({ searchParams }: SearchProps) {
                   className={`px-4 py-1.5 rounded-full text-xs font-medium transition ${
                     active
                       ? 'bg-[#0F172A] text-white'
-                      : 'bg-[#F8FAFC] text-[#64748B] hover:text-[#0F172A]'
+                      : 'bg-[var(--bg-page)] text-[var(--text-body)] hover:text-[var(--text-dark)]'
                   }`}
                 >
                   {c.name}
@@ -149,10 +149,10 @@ export default async function ProductsPage({ searchParams }: SearchProps) {
           </div>
         </div>
 
-        {/* Grille de produits */}
+        {/* Grille de produits : 2 par ligne sur petit écran (mobile), 3 sur tablette, 4 sur desktop */}
         {products && products.length > 0 ? (
           <div className="space-y-10">
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5 lg:gap-6">
               {products.map((p: Product) => (
                 <ProductCard key={p.id} product={p} />
               ))}
@@ -164,7 +164,7 @@ export default async function ProductsPage({ searchParams }: SearchProps) {
                 {currentPage > 1 ? (
                   <Link
                     href={`/products?${new URLSearchParams({ ...resolvedParams, page: String(currentPage - 1) }).toString()}`}
-                    className="p-2 rounded-full bg-white border border-[#E2E8F0] text-[#0F172A] hover:bg-[#F8FAFC] transition shadow-sm"
+                    className="p-2 rounded-full bg-[var(--bg-card)] border border-[var(--border)] text-[var(--text-dark)] hover:bg-[var(--bg-page)] transition shadow-sm"
                   >
                     <ChevronLeft className="w-4 h-4" />
                   </Link>
@@ -174,14 +174,14 @@ export default async function ProductsPage({ searchParams }: SearchProps) {
                   </span>
                 )}
 
-                <span className="text-xs text-[#64748B] font-medium px-2">
+                <span className="text-xs text-[var(--text-body)] font-medium px-2">
                   Page {currentPage} sur {pagination.totalPages}
                 </span>
 
                 {currentPage < pagination.totalPages ? (
                   <Link
                     href={`/products?${new URLSearchParams({ ...resolvedParams, page: String(currentPage + 1) }).toString()}`}
-                    className="p-2 rounded-full bg-white border border-[#E2E8F0] text-[#0F172A] hover:bg-[#F8FAFC] transition shadow-sm"
+                    className="p-2 rounded-full bg-[var(--bg-card)] border border-[var(--border)] text-[var(--text-dark)] hover:bg-[var(--bg-page)] transition shadow-sm"
                   >
                     <ChevronRight className="w-4 h-4" />
                   </Link>
@@ -194,11 +194,11 @@ export default async function ProductsPage({ searchParams }: SearchProps) {
             )}
           </div>
         ) : (
-          <div className="bg-white rounded-3xl p-16 text-center border border-[#E2E8F0] shadow-sm space-y-3">
-            <h3 className="font-serif-title text-2xl text-[#0F172A]">
+          <div className="bg-[var(--bg-card)] rounded-3xl p-16 text-center border border-[var(--border)] shadow-sm space-y-3">
+            <h3 className="font-serif-title text-2xl text-[var(--text-dark)]">
               Aucun modèle disponible pour le moment
             </h3>
-            <p className="text-xs text-[#64748B] max-w-md mx-auto">
+            <p className="text-xs text-[var(--text-body)] max-w-md mx-auto">
               Exécutez le script SQL seed.sql dans votre espace Supabase pour afficher les smartphones et laptops.
             </p>
           </div>
@@ -210,3 +210,4 @@ export default async function ProductsPage({ searchParams }: SearchProps) {
     </div>
   );
 }
+

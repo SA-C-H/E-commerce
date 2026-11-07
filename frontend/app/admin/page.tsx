@@ -159,30 +159,31 @@ export default function LuxuryAdminPortal() {
 
   if (!isAuthenticated || !isAdmin) {
     return (
-      <div className="min-h-screen bg-[#F8FAFC] flex items-center justify-center p-4">
-        <div className="p-10 rounded-3xl bg-white border border-[#E2E8F0] shadow-xl text-center max-w-md w-full">
-          <div className="w-16 h-16 rounded-full bg-red-50 text-red-600 flex items-center justify-center mx-auto mb-5 border border-red-100">
-            <ShieldAlert className="w-8 h-8" />
+      <div className="min-h-screen bg-[#0A1128] flex items-center justify-center p-4">
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_#1E293B_0%,_#0A1128_70%)] pointer-events-none" />
+        <div className="relative p-10 rounded-2xl bg-[#0F1A2E] border border-[#1E293B] shadow-2xl text-center max-w-md w-full z-10">
+          <div className="w-16 h-16 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center mx-auto mb-5">
+            <ShieldAlert className="w-8 h-8 text-amber-400" />
           </div>
-          <span className="text-[11px] font-bold text-red-600 uppercase tracking-widest">
+          <span className="text-[11px] font-bold text-amber-500 uppercase tracking-widest">
             Accès Réservé
           </span>
-          <h1 className="font-serif-title text-2xl font-bold text-[#0F172A] mt-2">
+          <h1 className="font-black text-2xl text-white mt-2 tracking-tight">
             Console d&apos;Administration
           </h1>
-          <p className="text-xs text-[#64748B] mt-2 leading-relaxed">
-            Cet espace de gestion est réservé aux administrateurs TechNova Store.
+          <p className="text-xs text-slate-400 mt-2 leading-relaxed">
+            Ce portail est réservé aux administrateurs TechNova Store.
           </p>
           <div className="mt-8 flex flex-col gap-3">
             <button
-              onClick={() => router.push('/login')}
-              className="w-full py-3 rounded-full bg-[#0F172A] hover:bg-[#2563EB] text-white text-xs font-semibold uppercase tracking-wider transition shadow-sm"
+              onClick={() => router.push('/admin/login')}
+              className="w-full py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-[#0A1128] text-sm font-bold uppercase tracking-wider transition shadow-lg shadow-amber-500/20"
             >
               Se connecter au portail
             </button>
             <Link
               href="/"
-              className="text-xs text-[#64748B] hover:text-[#0F172A] transition py-2"
+              className="text-xs text-slate-500 hover:text-slate-300 transition py-2"
             >
               ← Retourner à la boutique publique
             </Link>
@@ -365,18 +366,19 @@ export default function LuxuryAdminPortal() {
           SIDEBAR — fixe, ne bouge jamais, indépendante du scroll
          ========================================================================= */}
       <aside className="w-64 h-screen shrink-0 bg-white border-r border-[#E2E8F0] hidden md:flex flex-col z-30 shadow-sm overflow-hidden">
-        {/* Logo Brandé TechNova */}
+        {/* Logo Brandé TechNova.ma — Palette Iris.ma */}
         <div className="p-6 border-b border-[#F1F5F9] shrink-0">
-          <div className="flex items-center gap-3.5">
-            <div className="w-10 h-10 rounded-2xl bg-[#0F172A] flex items-center justify-center text-white font-serif-title font-bold text-lg shadow-sm">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-[#0F172A] border border-amber-500/40 flex items-center justify-center text-amber-500 font-extrabold text-base shadow-sm">
               TN
             </div>
             <div>
-              <span className="font-serif-title font-bold text-base text-[#0F172A] tracking-tight block">
-                TechNova
-              </span>
-              <span className="text-[10px] font-semibold text-[#2563EB] bg-blue-50 px-2 py-0.5 rounded-full border border-blue-100 uppercase tracking-wider">
-                Back Office
+              <div className="flex items-center gap-1">
+                <span className="font-extrabold text-base text-[#0F172A] tracking-tight">TechNova</span>
+                <span className="bg-amber-500 text-slate-950 text-[10px] font-black px-1.5 py-0.2 rounded">.ma</span>
+              </div>
+              <span className="text-[10px] font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200 uppercase tracking-wider inline-block">
+                L&apos;Expert Tech • Back Office
               </span>
             </div>
           </div>
@@ -523,7 +525,7 @@ export default function LuxuryAdminPortal() {
             className="flex items-center justify-between px-4 py-3 rounded-2xl bg-white hover:bg-slate-50 text-xs font-semibold text-[#0F172A] transition border border-[#E2E8F0] shadow-2xs"
           >
             <div className="flex items-center gap-2.5">
-              <Store className="w-4 h-4 text-[#2563EB]" />
+              <Store className="w-4 h-4 text-amber-500" />
               <span>Voir la boutique</span>
             </div>
             <ArrowUpRight className="w-3.5 h-3.5 text-[#94A3B8]" />
@@ -566,15 +568,16 @@ export default function LuxuryAdminPortal() {
             {/* Haut drawer : Logo + fermer */}
             <div className="p-5 border-b border-[#F1F5F9] flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-[#0F172A] flex items-center justify-center text-white font-serif-title font-bold text-lg shadow-sm">
+                <div className="w-10 h-10 rounded-xl bg-[#0F172A] border border-amber-500/40 flex items-center justify-center text-amber-500 font-extrabold text-base shadow-sm">
                   TN
                 </div>
                 <div>
-                  <span className="font-serif-title font-bold text-base text-[#0F172A] tracking-tight block">
-                    TechNova
-                  </span>
-                  <span className="text-[10px] font-semibold text-[#2563EB] bg-blue-50 px-2 py-0.5 rounded-full border border-blue-100 uppercase tracking-wider">
-                    Back Office
+                  <div className="flex items-center gap-1">
+                    <span className="font-extrabold text-base text-[#0F172A] tracking-tight">TechNova</span>
+                    <span className="bg-amber-500 text-slate-950 text-[10px] font-black px-1.5 py-0.2 rounded">.ma</span>
+                  </div>
+                  <span className="text-[10px] font-bold text-amber-800 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200 uppercase tracking-wider inline-block">
+                    Back Office • L&apos;Expert Tech
                   </span>
                 </div>
               </div>
@@ -660,7 +663,7 @@ export default function LuxuryAdminPortal() {
                 className="flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-white border border-[#E2E8F0] text-xs font-semibold text-[#0F172A]"
               >
                 <div className="flex items-center gap-2">
-                  <Store className="w-4 h-4 text-[#2563EB]" />
+                  <Store className="w-4 h-4 text-amber-500" />
                   <span>Voir la boutique</span>
                 </div>
                 <ArrowUpRight className="w-3.5 h-3.5 text-[#94A3B8]" />
@@ -700,10 +703,10 @@ export default function LuxuryAdminPortal() {
             </button>
 
             <div className="min-w-0">
-              <span className="text-[10px] sm:text-[11px] font-semibold tracking-widest text-[#2563EB] uppercase block truncate">
-                CONSOLE DE GESTION
+              <span className="text-[10px] sm:text-[11px] font-bold tracking-widest text-amber-600 uppercase block truncate">
+                CONSOLE DE GESTION • L&apos;EXPERT TECH
               </span>
-              <h1 className="font-serif-title text-base sm:text-2xl font-bold text-[#0F172A] truncate">
+              <h1 className="font-serif-title text-base sm:text-2xl font-normal text-[#0F172A] truncate">
                 {activeTab === 'dashboard' && 'Vue d’ensemble'}
                 {activeTab === 'products' && 'Catalogue & Stocks'}
                 {activeTab === 'orders' && 'Commandes WhatsApp'}
@@ -721,24 +724,24 @@ export default function LuxuryAdminPortal() {
               className="p-2 sm:p-2.5 rounded-full bg-[#F8FAFC] border border-[#E2E8F0] text-[#0F172A] hover:bg-white transition shadow-2xs"
               title="Rafraîchir les données"
             >
-              <RefreshCw className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${loading ? 'animate-spin text-[#2563EB]' : ''}`} />
+              <RefreshCw className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${loading ? 'animate-spin text-amber-500' : ''}`} />
             </button>
 
             {activeTab === 'categories' ? (
               <button
                 onClick={openCreateCategory}
-                className="inline-flex items-center gap-1.5 px-3 py-2 sm:px-5 sm:py-2.5 rounded-full bg-[#0F172A] hover:bg-[#2563EB] text-white text-[11px] sm:text-xs font-semibold tracking-wider uppercase transition shadow-sm"
+                className="inline-flex items-center gap-1.5 px-3 py-2 sm:px-5 sm:py-2.5 rounded-full bg-amber-500 hover:bg-amber-400 text-slate-950 text-[11px] sm:text-xs font-bold tracking-wider uppercase transition shadow-sm hover:shadow-amber-500/20"
               >
-                <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2.5]" />
                 <span className="hidden sm:inline">Nouvelle Catégorie</span>
                 <span className="sm:hidden">Ajouter</span>
               </button>
             ) : (
               <button
                 onClick={openCreateProduct}
-                className="inline-flex items-center gap-1.5 px-3 py-2 sm:px-5 sm:py-2.5 rounded-full bg-[#0F172A] hover:bg-[#2563EB] text-white text-[11px] sm:text-xs font-semibold tracking-wider uppercase transition shadow-sm"
+                className="inline-flex items-center gap-1.5 px-3 py-2 sm:px-5 sm:py-2.5 rounded-full bg-amber-500 hover:bg-amber-400 text-slate-950 text-[11px] sm:text-xs font-bold tracking-wider uppercase transition shadow-sm hover:shadow-amber-500/20"
               >
-                <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                <Plus className="w-3.5 h-3.5 sm:w-4 sm:h-4 stroke-[2.5]" />
                 <span className="hidden sm:inline">Nouveau Produit</span>
                 <span className="sm:hidden">Ajouter</span>
               </button>
@@ -836,7 +839,7 @@ export default function LuxuryAdminPortal() {
                     <span className="text-[11px] font-bold text-[#64748B] uppercase tracking-wider">
                       Chiffre d&apos;Affaires
                     </span>
-                    <div className="w-10 h-10 rounded-2xl bg-blue-50 text-[#2563EB] flex items-center justify-center">
+                    <div className="w-10 h-10 rounded-2xl bg-amber-50 text-amber-600 border border-amber-200 flex items-center justify-center">
                       <DollarSign className="w-5 h-5" />
                     </div>
                   </div>
@@ -909,12 +912,12 @@ export default function LuxuryAdminPortal() {
                 <div className="p-6 sm:p-8 rounded-3xl bg-white border border-[#E2E8F0] shadow-sm space-y-5">
                   <div className="flex items-center justify-between">
                     <h3 className="font-serif-title font-bold text-lg text-[#0F172A] flex items-center gap-2">
-                      <ShoppingBag className="w-5 h-5 text-[#2563EB]" />
+                      <ShoppingBag className="w-5 h-5 text-amber-500" />
                       Dernières Commandes
                     </h3>
                     <button
                       onClick={() => setActiveTab('orders')}
-                      className="text-xs font-semibold text-[#2563EB] hover:underline"
+                      className="text-xs font-bold text-amber-600 hover:text-amber-700 hover:underline"
                     >
                       Voir toutes ({orders.length}) →
                     </button>
@@ -946,7 +949,7 @@ export default function LuxuryAdminPortal() {
                                 ord.status === 'delivered'
                                   ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
                                   : ord.status === 'confirmed'
-                                  ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                                  ? 'bg-amber-50 text-blue-700 border border-blue-200'
                                   : ord.status === 'cancelled'
                                   ? 'bg-red-50 text-red-700 border border-red-200'
                                   : 'bg-amber-50 text-amber-800 border border-amber-200'
@@ -1029,7 +1032,7 @@ export default function LuxuryAdminPortal() {
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder="Recherche par nom, puce (ex: M3 Max, OLED, 16 Pro...)"
-                    className="w-full pl-11 pr-4 py-2.5 rounded-full bg-[#F8FAFC] border border-[#E2E8F0] text-xs text-[#0F172A] placeholder-[#94A3B8] focus:outline-none focus:border-[#2563EB] focus:bg-white transition"
+                    className="w-full pl-11 pr-4 py-2.5 rounded-full bg-[#F8FAFC] border border-[#E2E8F0] text-xs text-[#0F172A] placeholder-[#94A3B8] focus:outline-none focus:border-amber-500 focus:bg-white transition"
                   />
                 </div>
 
@@ -1037,7 +1040,7 @@ export default function LuxuryAdminPortal() {
                   <select
                     value={selectedCategoryFilter}
                     onChange={(e) => setSelectedCategoryFilter(e.target.value)}
-                    className="w-full sm:w-auto px-4 py-2.5 rounded-full bg-[#F8FAFC] border border-[#E2E8F0] text-xs font-semibold text-[#0F172A] focus:outline-none focus:border-[#2563EB]"
+                    className="w-full sm:w-auto px-4 py-2.5 rounded-full bg-[#F8FAFC] border border-[#E2E8F0] text-xs font-semibold text-[#0F172A] focus:outline-none focus:border-amber-500"
                   >
                     <option value="ALL">Toutes les catégories ({categories.length})</option>
                     {categories.map((c) => (
@@ -1050,7 +1053,7 @@ export default function LuxuryAdminPortal() {
                   <select
                     value={stockFilter}
                     onChange={(e) => setStockFilter(e.target.value as any)}
-                    className="w-full sm:w-auto px-4 py-2.5 rounded-full bg-[#F8FAFC] border border-[#E2E8F0] text-xs font-semibold text-[#0F172A] focus:outline-none focus:border-[#2563EB]"
+                    className="w-full sm:w-auto px-4 py-2.5 rounded-full bg-[#F8FAFC] border border-[#E2E8F0] text-xs font-semibold text-[#0F172A] focus:outline-none focus:border-amber-500"
                   >
                     <option value="ALL">Tous les stocks ({products.length})</option>
                     <option value="LOW">Stock Faible ({'\u2264'} 5)</option>
@@ -1059,7 +1062,7 @@ export default function LuxuryAdminPortal() {
 
                   <button
                     onClick={openCreateProduct}
-                    className="w-full sm:w-auto justify-center inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#0F172A] hover:bg-[#2563EB] text-white text-xs font-semibold uppercase tracking-wider transition shadow-sm"
+                    className="w-full sm:w-auto justify-center inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#0F172A] hover:bg-amber-500 text-white text-xs font-semibold uppercase tracking-wider transition shadow-sm"
                   >
                     <Plus className="w-4 h-4" />
                     Ajouter un Produit
@@ -1155,7 +1158,7 @@ export default function LuxuryAdminPortal() {
                               <div className="inline-flex items-center gap-1.5">
                                 <button
                                   onClick={() => openEditProduct(prod)}
-                                  className="p-2 rounded-xl text-[#64748B] hover:text-[#2563EB] hover:bg-blue-50 transition"
+                                  className="p-2 rounded-xl text-[#64748B] hover:text-amber-500 hover:bg-amber-50 transition"
                                   title="Modifier le produit"
                                 >
                                   <Edit2 className="w-4 h-4" />
@@ -1197,7 +1200,7 @@ export default function LuxuryAdminPortal() {
                             setPageSize(Number(e.target.value));
                             setCurrentPage(1);
                           }}
-                          className="px-3 py-1.5 rounded-full bg-white border border-[#E2E8F0] text-xs font-semibold text-[#0F172A] focus:outline-none focus:border-[#2563EB]"
+                          className="px-3 py-1.5 rounded-full bg-white border border-[#E2E8F0] text-xs font-semibold text-[#0F172A] focus:outline-none focus:border-amber-500"
                         >
                           <option value={10}>10 par page</option>
                           <option value={15}>15 par page</option>
@@ -1284,7 +1287,7 @@ export default function LuxuryAdminPortal() {
                                   ord.status === 'delivered'
                                     ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
                                     : ord.status === 'confirmed'
-                                    ? 'bg-blue-50 text-blue-800 border-blue-200'
+                                    ? 'bg-amber-50 text-blue-800 border-blue-200'
                                     : ord.status === 'cancelled'
                                     ? 'bg-red-50 text-red-800 border-red-200'
                                     : 'bg-amber-50 text-amber-900 border-amber-200'
@@ -1372,12 +1375,12 @@ export default function LuxuryAdminPortal() {
                       value={categoryName}
                       onChange={(e) => setCategoryName(e.target.value)}
                       placeholder="Ex: Audio & Casques Bluetooth"
-                      className="w-full px-4 py-2.5 rounded-full bg-[#F8FAFC] border border-[#E2E8F0] text-xs text-[#0F172A] focus:outline-none focus:border-[#2563EB] focus:bg-white transition"
+                      className="w-full px-4 py-2.5 rounded-full bg-[#F8FAFC] border border-[#E2E8F0] text-xs text-[#0F172A] focus:outline-none focus:border-amber-500 focus:bg-white transition"
                     />
                   </div>
                   <button
                     type="submit"
-                    className="w-full py-3 rounded-full font-semibold text-xs text-white bg-[#0F172A] hover:bg-[#2563EB] transition flex items-center justify-center gap-2 shadow-sm uppercase tracking-wider"
+                    className="w-full py-3 rounded-full font-semibold text-xs text-white bg-[#0F172A] hover:bg-amber-500 transition flex items-center justify-center gap-2 shadow-sm uppercase tracking-wider"
                   >
                     <Plus className="w-4 h-4" />
                     Enregistrer la catégorie
@@ -1405,7 +1408,7 @@ export default function LuxuryAdminPortal() {
                           <div className="inline-flex items-center gap-1.5">
                             <button
                               onClick={() => openEditCategory(cat)}
-                              className="p-2 rounded-xl text-[#64748B] hover:text-[#2563EB] hover:bg-blue-50 transition"
+                              className="p-2 rounded-xl text-[#64748B] hover:text-amber-500 hover:bg-amber-50 transition"
                               title="Renommer la catégorie"
                             >
                               <Edit2 className="w-3.5 h-3.5" />
@@ -1447,7 +1450,7 @@ export default function LuxuryAdminPortal() {
                         <td className="p-4 pl-6 font-bold text-[#0F172A]">{user?.name || 'Amine'}</td>
                         <td className="p-4 text-[#64748B] font-mono">{user?.email}</td>
                         <td className="p-4">
-                          <span className="px-3 py-1 rounded-full text-[10px] font-bold bg-blue-50 text-[#2563EB] border border-blue-200">
+                          <span className="px-3 py-1 rounded-full text-[10px] font-bold bg-amber-50 text-amber-600 border border-blue-200">
                             ADMINISTRATEUR
                           </span>
                         </td>
@@ -1463,7 +1466,7 @@ export default function LuxuryAdminPortal() {
                             <span
                               className={`px-3 py-1 rounded-full text-[10px] font-bold border ${
                                 u.role === 'admin'
-                                  ? 'bg-blue-50 text-[#2563EB] border-blue-200'
+                                  ? 'bg-amber-50 text-amber-600 border-blue-200'
                                   : 'bg-slate-100 text-slate-700 border-slate-200'
                               }`}
                             >
@@ -1577,7 +1580,7 @@ export default function LuxuryAdminPortal() {
                   value={productForm.name}
                   onChange={(e) => setProductForm({ ...productForm, name: e.target.value })}
                   placeholder="Ex: Apple iPhone 16 Pro Max (512 Go) - Titane"
-                  className="w-full px-4 py-2.5 rounded-full bg-[#F8FAFC] border border-[#E2E8F0] text-xs text-[#0F172A] focus:outline-none focus:border-[#2563EB] focus:bg-white transition"
+                  className="w-full px-4 py-2.5 rounded-full bg-[#F8FAFC] border border-[#E2E8F0] text-xs text-[#0F172A] focus:outline-none focus:border-amber-500 focus:bg-white transition"
                 />
               </div>
 
@@ -1593,7 +1596,7 @@ export default function LuxuryAdminPortal() {
                     value={productForm.price}
                     onChange={(e) => setProductForm({ ...productForm, price: e.target.value })}
                     placeholder="16490.00"
-                    className="w-full px-4 py-2.5 rounded-full bg-[#F8FAFC] border border-[#E2E8F0] text-xs text-[#0F172A] focus:outline-none focus:border-[#2563EB] focus:bg-white transition font-mono"
+                    className="w-full px-4 py-2.5 rounded-full bg-[#F8FAFC] border border-[#E2E8F0] text-xs text-[#0F172A] focus:outline-none focus:border-amber-500 focus:bg-white transition font-mono"
                   />
                 </div>
                 <div>
@@ -1606,7 +1609,7 @@ export default function LuxuryAdminPortal() {
                     value={productForm.stock}
                     onChange={(e) => setProductForm({ ...productForm, stock: e.target.value })}
                     placeholder="15"
-                    className="w-full px-4 py-2.5 rounded-full bg-[#F8FAFC] border border-[#E2E8F0] text-xs text-[#0F172A] focus:outline-none focus:border-[#2563EB] focus:bg-white transition font-mono"
+                    className="w-full px-4 py-2.5 rounded-full bg-[#F8FAFC] border border-[#E2E8F0] text-xs text-[#0F172A] focus:outline-none focus:border-amber-500 focus:bg-white transition font-mono"
                   />
                 </div>
               </div>
@@ -1618,7 +1621,7 @@ export default function LuxuryAdminPortal() {
                 <select
                   value={productForm.category_id}
                   onChange={(e) => setProductForm({ ...productForm, category_id: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-full bg-[#F8FAFC] border border-[#E2E8F0] text-xs font-semibold text-[#0F172A] focus:outline-none focus:border-[#2563EB]"
+                  className="w-full px-4 py-2.5 rounded-full bg-[#F8FAFC] border border-[#E2E8F0] text-xs font-semibold text-[#0F172A] focus:outline-none focus:border-amber-500"
                 >
                   <option value="">Sélectionner une catégorie</option>
                   {categories.map((cat) => (
@@ -1638,7 +1641,7 @@ export default function LuxuryAdminPortal() {
                   value={productForm.image_url}
                   onChange={(e) => setProductForm({ ...productForm, image_url: e.target.value })}
                   placeholder="https://images.unsplash.com/..."
-                  className="w-full px-4 py-2.5 rounded-full bg-[#F8FAFC] border border-[#E2E8F0] text-xs text-[#0F172A] focus:outline-none focus:border-[#2563EB] focus:bg-white transition"
+                  className="w-full px-4 py-2.5 rounded-full bg-[#F8FAFC] border border-[#E2E8F0] text-xs text-[#0F172A] focus:outline-none focus:border-amber-500 focus:bg-white transition"
                 />
               </div>
 
@@ -1651,7 +1654,7 @@ export default function LuxuryAdminPortal() {
                   value={productForm.description}
                   onChange={(e) => setProductForm({ ...productForm, description: e.target.value })}
                   placeholder="Écran 6.9'' OLED 120Hz, puce A18 Pro, 512 Go NVMe, capteur Fusion 48 Mpx..."
-                  className="w-full px-4 py-3 rounded-2xl bg-[#F8FAFC] border border-[#E2E8F0] text-xs text-[#0F172A] focus:outline-none focus:border-[#2563EB] focus:bg-white transition"
+                  className="w-full px-4 py-3 rounded-2xl bg-[#F8FAFC] border border-[#E2E8F0] text-xs text-[#0F172A] focus:outline-none focus:border-amber-500 focus:bg-white transition"
                 />
               </div>
 
@@ -1665,7 +1668,7 @@ export default function LuxuryAdminPortal() {
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2.5 rounded-full text-xs font-semibold text-white bg-[#0F172A] hover:bg-[#2563EB] uppercase tracking-wider transition shadow-sm"
+                  className="px-6 py-2.5 rounded-full text-xs font-semibold text-white bg-[#0F172A] hover:bg-amber-500 uppercase tracking-wider transition shadow-sm"
                 >
                   {editingProduct ? 'Mettre à jour' : 'Enregistrer'}
                 </button>
@@ -1709,7 +1712,7 @@ export default function LuxuryAdminPortal() {
                   value={categoryName}
                   onChange={(e) => setCategoryName(e.target.value)}
                   placeholder="Ex: Audio & Casques Bluetooth"
-                  className="w-full px-4 py-2.5 rounded-full bg-[#F8FAFC] border border-[#E2E8F0] text-xs text-[#0F172A] focus:outline-none focus:border-[#2563EB] focus:bg-white transition"
+                  className="w-full px-4 py-2.5 rounded-full bg-[#F8FAFC] border border-[#E2E8F0] text-xs text-[#0F172A] focus:outline-none focus:border-amber-500 focus:bg-white transition"
                 />
               </div>
 
@@ -1723,7 +1726,7 @@ export default function LuxuryAdminPortal() {
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2.5 rounded-full text-xs font-semibold text-white bg-[#0F172A] hover:bg-[#2563EB] uppercase tracking-wider transition shadow-sm"
+                  className="px-6 py-2.5 rounded-full text-xs font-semibold text-white bg-[#0F172A] hover:bg-amber-500 uppercase tracking-wider transition shadow-sm"
                 >
                   {editingCategory ? 'Sauvegarder' : 'Créer'}
                 </button>
@@ -1735,3 +1738,4 @@ export default function LuxuryAdminPortal() {
     </div>
   );
 }
+

@@ -1,25 +1,28 @@
 import { supabase } from '../config/supabase.js';
 import { AppError } from '../utils/AppError.js';
+import { cached, invalidate } from '../utils/cache.js';
 
 /**
  * Récupère toutes les catégories avec le nombre de produits associés
+ * Cache TTL : 5 minutes (données peu changeantes)
  */
 export const getAllCategories = async () => {
-  const { data, error } = await supabase
-    .from('categories')
-    .select('*, products(count)')
-    .order('name', { ascending: true });
+  return cached('categories:all', async () => {
+    const { data, error } = await supabase
+      .from('categories')
+      .select('*, products(count)')
+      .order('name', { ascending: true });
 
-  if (error) {
-    throw new AppError(`Erreur lors de la récupération des catégories : ${error.message}`, 500);
-  }
+    if (error) {
+      throw new AppError(`Erreur lors de la récupération des catégories : ${error.message}`, 500);
+    }
 
-  // Formatage du résultat pour simplifier le retour côté client
-  return data.map((cat) => ({
-    id: cat.id,
-    name: cat.name,
-    productCount: cat.products?.[0]?.count || 0,
-  }));
+    return data.map((cat) => ({
+      id: cat.id,
+      name: cat.name,
+      productCount: cat.products?.[0]?.count || 0,
+    }));
+  }, 5 * 60_000); // 5 minutes
 };
 
 /**
@@ -28,7 +31,6 @@ export const getAllCategories = async () => {
 export const createCategory = async ({ name }) => {
   const trimmedName = name.trim();
 
-  // Vérifier les doublons
   const { data: existing } = await supabase
     .from('categories')
     .select('id')
@@ -49,6 +51,7 @@ export const createCategory = async ({ name }) => {
     throw new AppError(`Impossible de créer la catégorie : ${error.message}`, 500);
   }
 
+  invalidate('categories:all');
   return data;
 };
 
@@ -58,7 +61,6 @@ export const createCategory = async ({ name }) => {
 export const updateCategory = async (id, { name }) => {
   const trimmedName = name.trim();
 
-  // Vérifier si la catégorie existe
   const { data: existing, error: checkError } = await supabase
     .from('categories')
     .select('id')
@@ -80,6 +82,7 @@ export const updateCategory = async (id, { name }) => {
     throw new AppError(`Impossible de mettre à jour la catégorie : ${error.message}`, 500);
   }
 
+  invalidate('categories:all');
   return data;
 };
 
@@ -103,6 +106,7 @@ export const deleteCategory = async (id) => {
     throw new AppError(`Impossible de supprimer la catégorie : ${error.message}`, 500);
   }
 
+  invalidate('categories:all', 'products:*');
   return { message: 'Catégorie supprimée avec succès' };
 };
 

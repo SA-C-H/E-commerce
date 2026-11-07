@@ -1,10 +1,18 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Toaster } from 'sonner';
+import ThemeProvider from '@/components/ThemeProvider';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'TechNova | Accessoires High-Tech & Smartphone',
-  description: 'Boutique en ligne premium d\'accessoires pour smartphone, chargeurs rapides GaN, coques et connectique high-tech.',
+  title: 'TechNova | Smartphones & Laptops Haut de Gamme',
+  description: 'Boutique en ligne premium de smartphones et laptops. iPhone, Samsung Galaxy, MacBook, Dell XPS — livrés partout au Maroc.',
+};
+
+/* ← C'est ça qui manquait — sans ça les breakpoints Tailwind sont ignorés sur mobile */
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 5,
 };
 
 export default function RootLayout({
@@ -22,7 +30,8 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="min-h-screen flex flex-col bg-[#F8FAFC] text-[#0F172A]">
+      <body className="min-h-screen flex flex-col overflow-x-hidden">
+        <ThemeProvider />
         {children}
         <Toaster position="top-right" richColors />
       </body>
