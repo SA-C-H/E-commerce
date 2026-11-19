@@ -139,7 +139,7 @@ export default async function HomePage() {
           {/* Image laptop & smartphone haute définition */}
           <div className="absolute inset-0 z-0">
             <Image
-              src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=1600&auto=format&fit=crop&q=85"
+              src="https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=1600&auto=format&fit=crop&q=85"
               alt="Smartphones et Laptops Haut de Gamme"
               fill priority sizes="100vw" className="object-cover object-right-center opacity-80"
             />
@@ -263,7 +263,8 @@ export default async function HomePage() {
             ) : (
               <div className="bg-[var(--bg-card)] rounded-3xl border border-[var(--border)] p-12 text-center shadow-sm">
                 <p className="text-sm text-[var(--text-body)]">
-                  Exécutez le script seed.sql dans Supabase pour afficher les smartphones et laptops.
+                  Aucun produit disponible pour le moment.{' '}
+                  <Link href="/products" className="text-amber-500 font-bold hover:underline">Voir le catalogue</Link>
                 </p>
               </div>
             )}

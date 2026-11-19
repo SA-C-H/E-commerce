@@ -33,6 +33,7 @@ const IMAGE_RULES = [
   { match: /iphone 14 pro/i,     url: 'https://images.unsplash.com/photo-1663499482523-1c0c1bae4ce1?w=800&auto=format&fit=crop&q=85' },
   { match: /iphone 14/i,         url: 'https://images.unsplash.com/photo-1663499482523-1c0c1bae4ce1?w=800&auto=format&fit=crop&q=85' },
   { match: /iphone 13/i,         url: 'https://images.unsplash.com/photo-1632661674596-df8be070a5c5?w=800&auto=format&fit=crop&q=85' },
+  { match: /iphone/i,            url: 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=800&auto=format&fit=crop&q=85' },
 
   // ── APPLE Mac ──
   { match: /macbook pro 16/i,    url: 'https://images.unsplash.com/photo-1541807084-5c52b6b3adef?w=800&auto=format&fit=crop&q=85' },

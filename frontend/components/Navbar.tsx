@@ -17,14 +17,14 @@ const megaCategories = [
   {
     label: 'Smartphones',
     icon: Smartphone,
-    href: '/products?search=Phone',
+    href: '/products?search=iPhone',
     subcats: ['iPhone', 'Samsung Galaxy', 'Google Pixel', 'Xiaomi', 'OnePlus'],
     image: 'https://images.unsplash.com/photo-1695048133142-1a20484d2569?w=400&auto=format&fit=crop&q=80',
   },
   {
     label: 'PC Portables',
     icon: Laptop,
-    href: '/products?search=Laptop',
+    href: '/products?search=MacBook',
     subcats: ['MacBook', 'Dell XPS', 'Asus ROG', 'HP Elite', 'Lenovo ThinkPad'],
     image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400&auto=format&fit=crop&q=80',
   },
@@ -38,7 +38,7 @@ const megaCategories = [
   {
     label: 'Gaming',
     icon: Gamepad2,
-    href: '/products?search=Gaming',
+    href: '/products?search=ROG',
     subcats: ['PC Gaming', 'ROG Strix', 'Razer Blade', 'Alienware'],
     image: 'https://images.unsplash.com/photo-1603302576837-37561b2e2302?w=400&auto=format&fit=crop&q=80',
   },
@@ -52,7 +52,7 @@ const megaCategories = [
   {
     label: 'Samsung',
     icon: Star,
-    href: '/products?search=Galaxy',
+    href: '/products?search=Samsung',
     subcats: ['Galaxy S24', 'Galaxy Z Fold', 'Galaxy Tab', 'Galaxy Watch'],
     image: 'https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?w=400&auto=format&fit=crop&q=80',
   },
@@ -60,11 +60,11 @@ const megaCategories = [
 
 const navLinks = [
   { label: '★ BONS PLANS', href: '/products?sortBy=price_asc', highlight: true },
-  { label: 'PC Portables', href: '/products?search=Laptop' },
-  { label: 'Smartphones', href: '/products?search=Phone' },
+  { label: 'PC Portables', href: '/products?search=MacBook' },
+  { label: 'Smartphones', href: '/products?search=iPhone' },
   { label: 'Apple', href: '/products?search=Apple' },
-  { label: 'Samsung', href: '/products?search=Galaxy' },
-  { label: 'Gaming', href: '/products?search=Gaming' },
+  { label: 'Samsung', href: '/products?search=Samsung' },
+  { label: 'Gaming', href: '/products?search=ROG' },
 ];
 
 export default function Navbar() {
@@ -188,17 +188,31 @@ export default function Navbar() {
 
               {mounted && isAuthenticated ? (
                 <div className="flex items-center gap-1">
-                  <Link href="/orders" className="flex items-center justify-center w-10 h-10 text-[var(--text-dark)] hover:text-amber-500 transition rounded-xl hover:bg-[var(--bg-page)]">
-                    <UserIcon className="w-5 h-5 stroke-[1.8]" />
+                  <Link href="/orders"
+                    className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-[var(--text-dark)] hover:text-amber-500 transition rounded-xl hover:bg-[var(--bg-page)]">
+                    <UserIcon className="w-4 h-4 stroke-[1.8]" />
+                    <span className="hidden sm:inline">{user?.name?.split(' ')[0]}</span>
                   </Link>
-                  <button onClick={logout} className="flex items-center justify-center w-10 h-10 text-[var(--text-muted)] hover:text-red-500 transition rounded-xl hover:bg-[var(--bg-page)]">
+                  <button onClick={logout}
+                    className="flex items-center justify-center w-9 h-9 text-[var(--text-muted)] hover:text-red-500 transition rounded-xl hover:bg-[var(--bg-page)]"
+                    title="Se déconnecter">
                     <LogOut className="w-4 h-4" />
                   </button>
                 </div>
               ) : (
-                <Link href="/login" className="flex items-center justify-center w-10 h-10 text-[var(--text-dark)] hover:text-amber-500 transition rounded-xl hover:bg-[var(--bg-page)]">
-                  <UserIcon className="w-5 h-5 stroke-[1.8]" />
-                </Link>
+                <div className="flex items-center gap-1.5">
+                  {/* Connexion */}
+                  <Link href="/login"
+                    className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-[var(--text-dark)] hover:text-amber-500 transition rounded-xl hover:bg-[var(--bg-page)] border border-[var(--border)]">
+                    <UserIcon className="w-4 h-4 stroke-[1.8]" />
+                    <span className="hidden sm:inline">Connexion</span>
+                  </Link>
+                  {/* S'inscrire */}
+                  <Link href="/register"
+                    className="hidden sm:flex items-center gap-1.5 px-3 py-2 text-xs font-bold bg-amber-500 hover:bg-amber-400 text-white transition rounded-xl shadow-sm">
+                    S&apos;inscrire
+                  </Link>
+                </div>
               )}
 
               <Link href="/cart" className="relative flex items-center justify-center w-10 h-10 text-[var(--text-dark)] hover:text-amber-500 transition rounded-xl hover:bg-[var(--bg-page)]">
@@ -402,6 +416,19 @@ export default function Navbar() {
                   <MessageCircle className="w-4 h-4 fill-white" />
                   Commander sur WhatsApp
                 </a>
+                {!isAuthenticated && (
+                  <div className="grid grid-cols-2 gap-2">
+                    <Link href="/login" onClick={() => setMobileMenuOpen(false)}
+                      className="flex items-center justify-center gap-1.5 py-2.5 rounded-xl border border-[var(--border)] text-xs font-bold text-[var(--text-dark)] hover:border-amber-500 transition">
+                      <UserIcon className="w-3.5 h-3.5" />
+                      Connexion
+                    </Link>
+                    <Link href="/register" onClick={() => setMobileMenuOpen(false)}
+                      className="flex items-center justify-center py-2.5 rounded-xl bg-amber-500 text-white text-xs font-bold transition hover:bg-amber-400">
+                      S&apos;inscrire
+                    </Link>
+                  </div>
+                )}
               </div>
             </div>
           </div>

@@ -1,6 +1,7 @@
 import { supabase } from '../config/supabase.js';
 import { AppError } from '../utils/AppError.js';
 import { generateWhatsAppLink } from '../utils/whatsapp.js';
+import { invalidate } from '../utils/cache.js';
 
 /**
  * Création d'une commande avec vérification de stock et génération du lien WhatsApp
@@ -8,15 +9,27 @@ import { generateWhatsAppLink } from '../utils/whatsapp.js';
 export const createOrder = async (userId, userDefaultName, { customer_name, customer_phone, items }) => {
   const finalCustomerName = customer_name?.trim() || userDefaultName || 'Client';
 
+  // A1 — Fusionner les doublons : additionner les quantités pour un même product_id
+  const mergedMap = new Map();
+  for (const item of items) {
+    const existing = mergedMap.get(item.product_id);
+    if (existing) {
+      existing.quantity += item.quantity;
+    } else {
+      mergedMap.set(item.product_id, { ...item });
+    }
+  }
+  const mergedItems = Array.from(mergedMap.values());
+
   // 1. Récupération et vérification de la disponibilité et du stock pour chaque produit
-  const productIds = items.map((i) => i.product_id);
+  const productIds = mergedItems.map((i) => i.product_id);
   const { data: products, error: prodError } = await supabase
     .from('products')
     .select('id, name, price, stock')
     .in('id', productIds);
 
   if (prodError) {
-    throw new AppError(`Erreur lors de la vérification des articles : ${prodError.message}`, 500);
+    throw new AppError('Erreur lors de la vérification des articles', 500);
   }
 
   const productMap = new Map((products || []).map((p) => [p.id, p]));
@@ -24,7 +37,7 @@ export const createOrder = async (userId, userDefaultName, { customer_name, cust
   let total = 0;
   const enrichedItems = [];
 
-  for (const item of items) {
+  for (const item of mergedItems) {
     const product = productMap.get(item.product_id);
 
     if (!product) {
@@ -46,7 +59,6 @@ export const createOrder = async (userId, userDefaultName, { customer_name, cust
       product_name: product.name,
       quantity: item.quantity,
       unit_price: unitPrice,
-      current_stock: product.stock,
     });
   }
 
@@ -66,7 +78,7 @@ export const createOrder = async (userId, userDefaultName, { customer_name, cust
     .single();
 
   if (orderError) {
-    throw new AppError(`Échec lors de l'enregistrement de la commande : ${orderError.message}`, 500);
+    throw new AppError('Échec lors de l\'enregistrement de la commande', 500);
   }
 
   // 3. Insertion des articles dans `order_items`
@@ -80,19 +92,38 @@ export const createOrder = async (userId, userDefaultName, { customer_name, cust
   const { error: itemsError } = await supabase.from('order_items').insert(orderItemsData);
 
   if (itemsError) {
-    // Si échec sur les items, on annule ou supprime la commande orpheline
+    // Si échec sur les items, on supprime la commande orpheline
     await supabase.from('orders').delete().eq('id', order.id);
-    throw new AppError(`Échec lors de l'enregistrement des articles : ${itemsError.message}`, 500);
+    throw new AppError('Échec lors de l\'enregistrement des articles', 500);
   }
 
-  // 4. Décrémentation du stock pour chaque produit commandé
+  // A2 — Décrémentation atomique : stock = stock - qty seulement si stock >= qty
+  //       Évite la survente en cas de commandes simultanées.
   for (const item of enrichedItems) {
-    const updatedStock = item.current_stock - item.quantity;
-    await supabase
-      .from('products')
-      .update({ stock: Math.max(0, updatedStock) })
-      .eq('id', item.product_id);
+    const { error: stockError } = await supabase.rpc('decrement_stock', {
+      p_product_id: item.product_id,
+      p_quantity: item.quantity,
+    });
+
+    if (stockError) {
+      // Rollback manuel : on annule les décrémentations déjà faites et on supprime la commande
+      for (const done of enrichedItems.slice(0, enrichedItems.indexOf(item))) {
+        await supabase.rpc('increment_stock', {
+          p_product_id: done.product_id,
+          p_quantity: done.quantity,
+        });
+      }
+      await supabase.from('order_items').delete().eq('order_id', order.id);
+      await supabase.from('orders').delete().eq('id', order.id);
+      throw new AppError(
+        `Stock insuffisant ou erreur lors de la réservation pour "${item.product_name}"`,
+        409
+      );
+    }
   }
+
+  // A3 — Invalider le cache produits pour que le stock soit à jour immédiatement
+  invalidate('products:*');
 
   // 5. Génération du lien WhatsApp récapitulatif
   const whatsappUrl = generateWhatsAppLink(order, enrichedItems, finalCustomerName);
@@ -155,16 +186,45 @@ export const getOrderById = async (orderId, user) => {
 
 /**
  * Changement du statut d'une commande (Admin)
+ * A4 — remise en stock sur annulation, transitions valides uniquement
  */
 export const updateOrderStatus = async (orderId, status) => {
+  // Transitions autorisées : on ne peut pas revenir en arrière une fois livré
+  const allowedTransitions = {
+    pending: ['confirmed', 'cancelled'],
+    confirmed: ['delivered', 'cancelled'],
+    delivered: [],       // statut terminal
+    cancelled: [],       // statut terminal
+  };
+
   const { data: existing } = await supabase
     .from('orders')
-    .select('id')
+    .select('id, status, order_items(product_id, quantity)')
     .eq('id', orderId)
     .maybeSingle();
 
   if (!existing) {
     throw new AppError('Commande introuvable', 404);
+  }
+
+  const allowed = allowedTransitions[existing.status] || [];
+  if (!allowed.includes(status)) {
+    throw new AppError(
+      `Transition invalide : impossible de passer de "${existing.status}" à "${status}"`,
+      400
+    );
+  }
+
+  // A4 — Si on annule, remettre le stock en base de manière atomique
+  if (status === 'cancelled' && existing.order_items?.length) {
+    for (const item of existing.order_items) {
+      await supabase.rpc('increment_stock', {
+        p_product_id: item.product_id,
+        p_quantity: item.quantity,
+      });
+    }
+    // Invalider le cache pour que les stocks soient à jour
+    invalidate('products:*');
   }
 
   const { data, error } = await supabase
@@ -175,7 +235,7 @@ export const updateOrderStatus = async (orderId, status) => {
     .single();
 
   if (error) {
-    throw new AppError(`Impossible de mettre à jour le statut : ${error.message}`, 500);
+    throw new AppError('Impossible de mettre à jour le statut', 500);
   }
 
   return data;

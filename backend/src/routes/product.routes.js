@@ -17,6 +17,8 @@ router.get('/:id', httpCache, productController.getProductById);
 // Routes d'administration protégées
 router.post('/', protect, restrictTo('admin'), productController.createProduct);
 router.put('/:id', protect, restrictTo('admin'), productController.updateProduct);
+// D1 — Incrément atomique du stock (+/- delta) — évite l'écrasement avec un stock périmé
+router.patch('/:id/stock', protect, restrictTo('admin'), productController.adjustStock);
 router.delete('/:id', protect, restrictTo('admin'), productController.deleteProduct);
 
 export default router;

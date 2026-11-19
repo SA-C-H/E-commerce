@@ -196,11 +196,15 @@ export default async function ProductsPage({ searchParams }: SearchProps) {
         ) : (
           <div className="bg-[var(--bg-card)] rounded-3xl p-16 text-center border border-[var(--border)] shadow-sm space-y-3">
             <h3 className="font-serif-title text-2xl text-[var(--text-dark)]">
-              Aucun modèle disponible pour le moment
+              Aucun produit trouvé
             </h3>
             <p className="text-xs text-[var(--text-body)] max-w-md mx-auto">
-              Exécutez le script SQL seed.sql dans votre espace Supabase pour afficher les smartphones et laptops.
+              Essayez d&apos;autres mots-clés ou sélectionnez une autre catégorie.
             </p>
+            <Link href="/products"
+              className="inline-block mt-4 px-6 py-2.5 rounded-full bg-amber-500 text-[#0F172A] text-xs font-bold hover:bg-amber-400 transition">
+              Voir tous les produits
+            </Link>
           </div>
         )}
 

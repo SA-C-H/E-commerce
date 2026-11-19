@@ -30,3 +30,17 @@ export const loginSchema = z.object({
     .min(1, 'Le mot de passe est obligatoire'),
 });
 
+/**
+ * C2 — Schéma de validation pour la modification du rôle utilisateur
+ */
+export const updateRoleSchema = z.object({
+  params: z.object({
+    id: z.string().uuid('L\'identifiant utilisateur doit être un UUID valide'),
+  }),
+  body: z.object({
+    role: z.enum(['client', 'admin'], {
+      errorMap: () => ({ message: 'Le rôle doit être "client" ou "admin"' }),
+    }),
+  }),
+});
+

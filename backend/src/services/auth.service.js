@@ -17,7 +17,7 @@ export const registerUser = async ({ name, email, password }) => {
     .maybeSingle();
 
   if (checkError) {
-    throw new AppError(`Erreur lors de la vérification de l'utilisateur : ${checkError.message}`, 500);
+    throw new AppError(`Erreur lors de la vérification de l'utilisateur`, 500);
   }
 
   if (existingUser) {
@@ -43,7 +43,8 @@ export const registerUser = async ({ name, email, password }) => {
     .single();
 
   if (insertError) {
-    throw new AppError(`Échec de la création du compte : ${insertError.message}`, 500);
+    // C1 — Laisser remonter l'erreur brute pour que errorHandler détecte le code 23505
+    throw insertError;
   }
 
   // 4. Génération du token JWT
@@ -70,7 +71,7 @@ export const loginUser = async ({ email, password }) => {
     .maybeSingle();
 
   if (fetchError) {
-    throw new AppError(`Erreur lors de la recherche du compte : ${fetchError.message}`, 500);
+    throw new AppError(`Erreur lors de la recherche du compte`, 500);
   }
 
   if (!user) {
@@ -107,7 +108,7 @@ export const getUserById = async (userId) => {
     .maybeSingle();
 
   if (error) {
-    throw new AppError(`Erreur lors de la récupération du profil : ${error.message}`, 500);
+    throw new AppError(`Erreur lors de la récupération du profil`, 500);
   }
 
   if (!user) {
@@ -127,7 +128,7 @@ export const getAllUsers = async () => {
     .order('created_at', { ascending: false });
 
   if (error) {
-    throw new AppError(`Erreur lors de la récupération des utilisateurs : ${error.message}`, 500);
+    throw new AppError(`Erreur lors de la récupération des utilisateurs`, 500);
   }
 
   return users || [];
@@ -137,10 +138,7 @@ export const getAllUsers = async () => {
  * Service d'authentification : Mise à jour du rôle utilisateur (Admin)
  */
 export const updateUserRole = async (userId, role) => {
-  if (!['client', 'admin'].includes(role)) {
-    throw new AppError('Rôle non valide (doit être client ou admin)', 400);
-  }
-
+  // La validation du rôle et de l'UUID est faite en amont par Zod (auth.controller.js)
   const { data, error } = await supabase
     .from('users')
     .update({ role })
@@ -149,7 +147,11 @@ export const updateUserRole = async (userId, role) => {
     .single();
 
   if (error) {
-    throw new AppError(`Erreur lors du changement de rôle : ${error.message}`, 500);
+    throw new AppError(`Erreur lors du changement de rôle`, 500);
+  }
+
+  if (!data) {
+    throw new AppError('Utilisateur introuvable', 404);
   }
 
   return data;

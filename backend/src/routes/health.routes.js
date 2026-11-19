@@ -14,7 +14,8 @@ router.get('/', async (req, res, next) => {
     // Test de connexion rapide si les identifiants Supabase sont renseignés
     if (process.env.SUPABASE_URL && !process.env.SUPABASE_URL.includes('your-project-id')) {
       const { error } = await supabase.from('categories').select('count', { count: 'exact', head: true });
-      dbStatus = error ? `erreur: ${error.message}` : 'connecté';
+      // B9 — ne pas exposer le message d'erreur Supabase en production
+      dbStatus = error ? 'erreur de connexion' : 'connecté';
     }
 
     res.status(200).json({

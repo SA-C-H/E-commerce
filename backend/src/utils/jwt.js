@@ -1,6 +1,12 @@
 import jwt from 'jsonwebtoken';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'secret_temporaire_dev_ecommerce_2026';
+// B1 — Le serveur refuse de démarrer si JWT_SECRET est absent
+if (!process.env.JWT_SECRET) {
+  console.error('❌ FATAL : La variable JWT_SECRET est absente. Arrêt du serveur.');
+  process.exit(1);
+}
+
+const JWT_SECRET = process.env.JWT_SECRET;
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '7d';
 
 /**

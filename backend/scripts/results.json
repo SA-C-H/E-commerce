@@ -1,0 +1,44 @@
+[
+  {
+    "id": "006525b0-a76d-45c7-b7c8-fb931a09c2d0",
+    "name": "Apple MacBook Air 15\" M2 (8 Go / 256 Go SSD) - Argent",
+    "cleaned_name": "Apple MacBook Air 15\" M2",
+    "kind": "laptop_tablet",
+    "old_image_url": "https://images.unsplash.com/photo-1531297484001-80022131f5a1?w=800&auto=format&fit=crop&q=80",
+    "new_image_url": "https://www.apple.com/v/macbook-air-13-and-15-m2/a/images/overview/design/design-hero_endframe__olurqzgtbh6e_large.jpg",
+    "source": "ddg",
+    "width": 1728,
+    "height": 890,
+    "status": "dry-run",
+    "error": null,
+    "at": "2026-11-09T14:51:37.915Z"
+  },
+  {
+    "id": "00752e78-0fda-45e2-8654-a08789fbfd04",
+    "name": "Apple iPad Air 11\" M2 (512 Go / Wi-Fi + 5G) - Gris Sidéral",
+    "cleaned_name": "Apple iPad Air 11\" M2",
+    "kind": "laptop_tablet",
+    "old_image_url": "https://images.unsplash.com/photo-1589739900243-4b52cd9b104e?w=800&auto=format&fit=crop&q=80",
+    "new_image_url": "https://cdsassets.apple.com/live/7WUAS350/images/tech-specs/ipad-air-11-inch-m2.png",
+    "source": "ddg",
+    "width": 902,
+    "height": 1000,
+    "status": "dry-run",
+    "error": null,
+    "at": "2026-11-09T14:51:44.534Z"
+  },
+  {
+    "id": "007c518f-25db-4f17-8da9-2d883cda0a9d",
+    "name": "OnePlus Nord 4 5G (256 Go / 12 Go) - Argent Mercure",
+    "cleaned_name": "OnePlus Nord 4",
+    "kind": "phone",
+    "old_image_url": "https://images.unsplash.com/photo-1574944985070-8f3ebc6b79d2?w=800&auto=format&fit=crop&q=80",
+    "new_image_url": "https://www.apple.com/v/iphone-18-pro/a/images/meta/iphone-18-pro_specs__cmwbqfe82cb6_og.png?202609110440",
+    "source": "ddg",
+    "width": 1200,
+    "height": 630,
+    "status": "dry-run",
+    "error": null,
+    "at": "2026-11-09T14:51:54.038Z"
+  }
+]

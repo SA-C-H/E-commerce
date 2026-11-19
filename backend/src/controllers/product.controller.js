@@ -56,6 +56,24 @@ export const updateProduct = async (req, res, next) => {
   }
 };
 
+export const adjustStock = async (req, res, next) => {
+  try {
+    // delta : valeur signée (+1 ou -1 par ex.), envoyée par le frontend admin
+    const delta = Number(req.body.delta);
+    if (!Number.isInteger(delta) || delta === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Le champ "delta" doit être un entier non nul (ex: +1 ou -3)',
+        details: [],
+      });
+    }
+    const updated = await productService.adjustStock(req.params.id, delta);
+    res.status(200).json({ success: true, data: updated });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const deleteProduct = async (req, res, next) => {
   try {
     const result = await productService.deleteProduct(req.params.id);

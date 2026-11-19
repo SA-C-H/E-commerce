@@ -40,7 +40,11 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "store.google.com",
       },
-      // GSMArena (images produits)
+      // GSMArena CDN — photos officielles des fabricants
+      {
+        protocol: "https",
+        hostname: "fdn2.gsmarena.com",
+      },
       {
         protocol: "https",
         hostname: "**.gsmarena.com",

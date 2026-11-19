@@ -18,10 +18,37 @@ export interface Product {
   categories?: { id: string; name: string } | null;
 }
 
+// Images fallback fiables par catégorie (Unsplash IDs stables)
+const FALLBACK_IMAGES: Record<string, string> = {
+  iphone:    'https://images.unsplash.com/photo-1510557880182-3d4d3cba35a5?w=800&auto=format&fit=crop&q=80',
+  samsung:   'https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?w=800&auto=format&fit=crop&q=80',
+  pixel:     'https://images.unsplash.com/photo-1565849904461-04a58ad377e0?w=800&auto=format&fit=crop&q=80',
+  macbook:   'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=800&auto=format&fit=crop&q=80',
+  laptop:    'https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?w=800&auto=format&fit=crop&q=80',
+  gaming:    'https://images.unsplash.com/photo-1603481546579-65d935ba9cdd?w=800&auto=format&fit=crop&q=80',
+  ipad:      'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=800&auto=format&fit=crop&q=80',
+  default:   'https://images.unsplash.com/photo-1512054502232-10a0a035d672?w=800&auto=format&fit=crop&q=80',
+};
+
+function getFallbackImage(name: string, categoryName?: string | null): string {
+  const n = (name + ' ' + (categoryName || '')).toLowerCase();
+  if (n.includes('iphone'))             return FALLBACK_IMAGES.iphone;
+  if (n.includes('samsung') || n.includes('galaxy')) return FALLBACK_IMAGES.samsung;
+  if (n.includes('pixel'))              return FALLBACK_IMAGES.pixel;
+  if (n.includes('macbook'))            return FALLBACK_IMAGES.macbook;
+  if (n.includes('rog') || n.includes('gaming') || n.includes('razer') || n.includes('msi') || n.includes('predator')) return FALLBACK_IMAGES.gaming;
+  if (n.includes('laptop') || n.includes('xps') || n.includes('thinkpad') || n.includes('elitebook') || n.includes('surface')) return FALLBACK_IMAGES.laptop;
+  if (n.includes('ipad'))               return FALLBACK_IMAGES.ipad;
+  return FALLBACK_IMAGES.default;
+}
+
 export default function ProductCard({ product }: { product: Product }) {
   const addItem = useCartStore((state) => state.addItem);
   const [added, setAdded] = useState(false);
   const [hovered, setHovered] = useState(false);
+  const [imgSrc, setImgSrc] = useState<string>(
+    product.image_url || getFallbackImage(product.name, product.categories?.name)
+  );
 
   const isOutOfStock = product.stock <= 0;
 
@@ -42,9 +69,6 @@ export default function ProductCard({ product }: { product: Product }) {
     setTimeout(() => setAdded(false), 1600);
   };
 
-  const defaultImage =
-    'https://images.unsplash.com/photo-1583863788434-e58a36330cf0?w=800&auto=format&fit=crop&q=80';
-
   const specs = product.description
     ? product.description.split('.').filter(s => s.trim().length > 0)
     : [];
@@ -59,11 +83,12 @@ export default function ProductCard({ product }: { product: Product }) {
         {/* Image */}
         <div className="relative aspect-square w-full rounded-xl overflow-hidden bg-[var(--bg-page)] mb-3 sm:mb-4">
           <Image
-            src={product.image_url || defaultImage}
+            src={imgSrc}
             alt={product.name}
             fill
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
             className="object-cover object-center group-hover:scale-105 transition-transform duration-500"
+            onError={() => setImgSrc(getFallbackImage(product.name, product.categories?.name))}
           />
 
           {/* Badge Catégorie */}

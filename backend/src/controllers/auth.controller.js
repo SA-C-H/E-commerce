@@ -1,4 +1,4 @@
-import { registerSchema, loginSchema } from '../validations/auth.validation.js';
+import { registerSchema, loginSchema, updateRoleSchema } from '../validations/auth.validation.js';
 import * as authService from '../services/auth.service.js';
 
 /**
@@ -84,8 +84,12 @@ export const getAllUsers = async (req, res, next) => {
  */
 export const updateUserRole = async (req, res, next) => {
   try {
-    const { role } = req.body;
-    const user = await authService.updateUserRole(req.params.id, role);
+    // C2 — Validation Zod sur le body ET l'UUID dans les params
+    const { params, body } = updateRoleSchema.parse({
+      params: req.params,
+      body: req.body,
+    });
+    const user = await authService.updateUserRole(params.id, body.role);
     res.status(200).json({
       success: true,
       data: user,

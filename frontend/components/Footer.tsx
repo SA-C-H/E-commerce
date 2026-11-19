@@ -31,11 +31,11 @@ export default function Footer() {
             </h4>
             <ul className="space-y-2.5">
               {[
-                { label: 'Smartphones', href: '/products?search=Phone' },
-                { label: 'PC Portables', href: '/products?search=Laptop' },
+                { label: 'Smartphones', href: '/products?search=iPhone' },
+                { label: 'PC Portables', href: '/products?search=MacBook' },
                 { label: 'Apple iPhone & Mac', href: '/products?search=Apple' },
-                { label: 'Samsung Galaxy', href: '/products?search=Galaxy' },
-                { label: 'Gaming & ROG', href: '/products?search=Gaming' },
+                { label: 'Samsung Galaxy', href: '/products?search=Samsung' },
+                { label: 'Gaming & ROG', href: '/products?search=ROG' },
                 { label: 'Voir tout', href: '/products' },
               ].map((item) => (
                 <li key={item.label}>

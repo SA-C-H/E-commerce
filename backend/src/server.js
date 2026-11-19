@@ -18,39 +18,41 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// B5 — Faire confiance au proxy Railway/Vercel pour que le rate limiter
+//        voie l'IP réelle du visiteur et non celle du reverse proxy.
+app.set('trust proxy', 1);
+
 // 1. Sécurité HTTP avec Helmet
 app.use(helmet());
 
-// 2. Configuration CORS
-const allowedOrigins = [
-  process.env.FRONTEND_URL || 'http://localhost:3000',
-  'http://localhost:3000',
-  'http://localhost:3001',
-  'https://backend-production-5ffe3.up.railway.app',
-];
+// 2. Configuration CORS — B2 : liste exacte, pas de sous-chaînes permissives
+const buildAllowedOrigins = () => {
+  const origins = new Set([
+    'http://localhost:3000',
+    'http://localhost:3001',
+  ]);
+  // Ajouter les origines déclarées dans les variables d'environnement
+  if (process.env.FRONTEND_URL) origins.add(process.env.FRONTEND_URL);
+  if (process.env.FRONTEND_URL_PROD) origins.add(process.env.FRONTEND_URL_PROD);
+  return origins;
+};
+
+const allowedOrigins = buildAllowedOrigins();
 
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (
-        !origin ||
-        allowedOrigins.includes(origin) ||
-        origin.includes(':3000') ||
-        origin.includes('.vercel.app') ||
-        origin.startsWith('http://192.168.') ||
-        origin.startsWith('http://100.') ||
-        origin.startsWith('http://10.') ||
-        origin.startsWith('http://172.')
-      ) {
-        return callback(null, true);
-      }
+      // Autoriser les requêtes sans origin (Postman, mobile natif, curl)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.has(origin)) return callback(null, true);
       return callback(new AppError('Non autorisé par CORS', 403));
     },
     credentials: true,
   })
 );
 
-// 3. Limitation du débit (Rate Limiting) : 300 requêtes par 15 min par IP
+// 3. Limitation du débit (Rate Limiting)
+// 3a. Limite globale : 300 req / 15 min par IP
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 300,
@@ -64,6 +66,19 @@ const limiter = rateLimit({
 });
 app.use(limiter);
 
+// 3b. B10 — Limite stricte sur les routes d'authentification (anti brute-force)
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 20,
+  message: {
+    success: false,
+    message: 'Trop de tentatives de connexion. Veuillez réessayer dans 15 minutes.',
+    details: [],
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
 // 4. Analyse des corps de requêtes (Body Parsers)
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -75,7 +90,7 @@ if (process.env.NODE_ENV !== 'test') {
 
 // 6. Routes principales
 app.use('/api/health', healthRoutes);
-app.use('/api/auth', authRoutes);
+app.use('/api/auth', authLimiter, authRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/orders', orderRoutes);

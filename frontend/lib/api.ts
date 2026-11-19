@@ -1,3 +1,5 @@
+import { useAuthStore } from '@/store/authStore';
+
 /**
  * Client API centralisé pour communiquer avec le backend Express
  * Gère automatiquement le JWT, les en-têtes et le format d'erreurs uniforme
@@ -68,6 +70,11 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
   }
 
   if (!response.ok || !data.success) {
+    // D5 — Token expiré ou invalide : déconnecter l'utilisateur automatiquement
+    if (response.status === 401 && typeof window !== 'undefined') {
+      useAuthStore.getState().logout();
+      window.location.href = `/login?redirect=${encodeURIComponent(window.location.pathname)}`;
+    }
     throw new ApiError(
       data.message || 'Une erreur est survenue lors de la requête',
       response.status,

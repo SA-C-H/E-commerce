@@ -27,7 +27,11 @@ export const getAllProducts = async ({
 
     if (category) query = query.eq('category_id', category);
     if (search && search.trim() !== '') {
-      const cleanSearch = search.trim();
+      // B7 — Nettoyer la saisie : limiter la longueur et échapper les caractères spéciaux PostgREST
+      const rawSearch = search.trim().slice(0, 100);
+      // Échapper % et _ pour éviter des patterns ILIKE involontaires, et les virgules/parenthèses
+      // qui permettraient d'injecter des filtres supplémentaires dans le paramètre .or()
+      const cleanSearch = rawSearch.replace(/[%_(),]/g, '\\$&');
       query = query.or(`name.ilike.%${cleanSearch}%,description.ilike.%${cleanSearch}%`);
     }
     if (minPrice !== undefined) query = query.gte('price', minPrice);
@@ -46,7 +50,7 @@ export const getAllProducts = async ({
     const { data, count, error } = await query;
 
     if (error) {
-      throw new AppError(`Erreur lors de la récupération des produits : ${error.message}`, 500);
+      throw new AppError(`Erreur lors de la récupération des produits`, 500);
     }
 
     const total = count || 0;
@@ -71,7 +75,7 @@ export const getProductById = async (id) => {
       .eq('id', id)
       .maybeSingle();
 
-    if (error) throw new AppError(`Erreur lors de la récupération du produit : ${error.message}`, 500);
+    if (error) throw new AppError(`Erreur lors de la récupération du produit`, 500);
     if (!data) throw new AppError('Produit introuvable', 404);
 
     return data;
@@ -91,7 +95,7 @@ export const createProduct = async (productData) => {
   const { data, error } = await supabase
     .from('products').insert([productData]).select('*, categories(id, name)').single();
 
-  if (error) throw new AppError(`Impossible de créer le produit : ${error.message}`, 500);
+  if (error) throw new AppError(`Impossible de créer le produit`, 500);
 
   invalidate('products:*', 'categories:all');
   return data;
@@ -113,10 +117,37 @@ export const updateProduct = async (id, updateData) => {
   const { data, error } = await supabase
     .from('products').update(updateData).eq('id', id).select('*, categories(id, name)').single();
 
-  if (error) throw new AppError(`Impossible de mettre à jour le produit : ${error.message}`, 500);
+  if (error) throw new AppError(`Impossible de mettre à jour le produit`, 500);
 
   invalidate('products:*', 'categories:all');
   return data;
+};
+
+/**
+ * D1 — Ajustement atomique du stock (+/- delta) pour l'admin
+ *       Utilise stock = stock + delta au lieu d'un stock absolu
+ *       pour éviter d'écraser une valeur mise à jour entre-temps.
+ */
+export const adjustStock = async (id, delta) => {
+  const { data: existing } = await supabase.from('products').select('id, stock').eq('id', id).maybeSingle();
+  if (!existing) throw new AppError('Produit introuvable', 404);
+
+  const { data, error } = await supabase.rpc('increment_stock', {
+    p_product_id: id,
+    p_quantity: delta,
+  });
+
+  if (error) throw new AppError('Erreur lors de l\'ajustement du stock', 500);
+
+  // Récupérer le produit mis à jour
+  const { data: updated } = await supabase
+    .from('products')
+    .select('*, categories(id, name)')
+    .eq('id', id)
+    .single();
+
+  invalidate('products:*');
+  return updated;
 };
 
 /**
@@ -127,7 +158,7 @@ export const deleteProduct = async (id) => {
   if (!existing) throw new AppError('Produit introuvable', 404);
 
   const { error } = await supabase.from('products').delete().eq('id', id);
-  if (error) throw new AppError(`Impossible de supprimer le produit : ${error.message}`, 500);
+  if (error) throw new AppError(`Impossible de supprimer le produit`, 500);
 
   invalidate('products:*', 'categories:all');
   return { message: 'Produit supprimé avec succès' };
