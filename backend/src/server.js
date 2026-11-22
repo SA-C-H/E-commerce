@@ -26,15 +26,20 @@ app.set('trust proxy', 1);
 // 1. Sécurité HTTP avec Helmet
 app.use(helmet());
 
-// 2. Configuration CORS — B2 : liste exacte, pas de sous-chaînes permissives
+// 2. Configuration CORS
 const buildAllowedOrigins = () => {
   const origins = new Set([
     'http://localhost:3000',
     'http://localhost:3001',
+    'http://localhost:5173',
   ]);
-  // Ajouter les origines déclarées dans les variables d'environnement
-  if (process.env.FRONTEND_URL) origins.add(process.env.FRONTEND_URL);
-  if (process.env.FRONTEND_URL_PROD) origins.add(process.env.FRONTEND_URL_PROD);
+  // Ajouter les origines déclarées dans les variables d'environnement (support virgule)
+  const addEnvOrigins = (val) => {
+    if (!val) return;
+    val.split(',').map((s) => s.trim()).filter(Boolean).forEach((url) => origins.add(url));
+  };
+  addEnvOrigins(process.env.FRONTEND_URL);
+  addEnvOrigins(process.env.FRONTEND_URL_PROD);
   return origins;
 };
 
@@ -43,12 +48,27 @@ const allowedOrigins = buildAllowedOrigins();
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Autoriser les requêtes sans origin (Postman, mobile natif, curl)
+      // Autoriser les requêtes sans origin (Postman, mobile natif, curl, SSR)
       if (!origin) return callback(null, true);
+      
+      // 1. Origines exactes déclarées (localhost, domaine personnalisé)
       if (allowedOrigins.has(origin)) return callback(null, true);
-      return callback(new AppError('Non autorisé par CORS', 403));
+
+      // 2. Autoriser automatiquement les domaines Vercel (*.vercel.app) et Railway (*.up.railway.app)
+      try {
+        const { hostname } = new URL(origin);
+        if (hostname.endsWith('.vercel.app') || hostname.endsWith('.up.railway.app') || hostname === 'localhost') {
+          return callback(null, true);
+        }
+      } catch {
+        // En cas d'URL mal formée
+      }
+
+      return callback(new AppError(`Non autorisé par CORS: ${origin}`, 403));
     },
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
   })
 );
 
