@@ -5,20 +5,26 @@ import { useAuthStore } from '@/store/authStore';
  * Gère automatiquement le JWT, les en-têtes et le format d'erreurs uniforme
  */
 
-function getApiBaseUrl(): string {
-  // Priorité absolue à la variable d'environnement (Vercel, Railway, etc.)
+export function getApiBaseUrl(): string {
+  // 1. Priorité absolue à la variable d'environnement explicite
   if (process.env.NEXT_PUBLIC_API_URL) {
     return process.env.NEXT_PUBLIC_API_URL;
   }
 
-  // En développement local sur smartphone (réseau local)
+  // 2. Contexte client (navigateur)
   if (typeof window !== 'undefined') {
     const host = window.location.hostname;
+    // Si accédé en local réseau via smartphone (ex: 192.168.x.x ou IP unique sans point de domaine)
     if (host && host !== 'localhost' && host !== '127.0.0.1' && !host.includes('.')) {
       return `http://${host}:5000/api`;
     }
+    // Si accédé sur le web en production (ex: *.vercel.app ou domaine en ligne)
+    if (host && host !== 'localhost' && host !== '127.0.0.1') {
+      return 'https://backend-production-5ffe3.up.railway.app/api';
+    }
   }
 
+  // 3. Fallback développement local
   return 'http://localhost:5000/api';
 }
 

@@ -12,6 +12,7 @@ import {
   ChevronDown,
   ExternalLink,
 } from 'lucide-react';
+import { getApiBaseUrl } from '@/lib/api';
 
 interface Message {
   id: string;
@@ -206,7 +207,7 @@ export default function Chatbot() {
 
     // 1. Tentative d'appel à l'API IA via le backend TechNova (/api/chat)
     try {
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+      const baseUrl = getApiBaseUrl();
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 15000); // 15s max (gemini-3.5-flash-lite répond en ~700ms)
 
