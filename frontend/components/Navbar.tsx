@@ -147,7 +147,7 @@ export default function Navbar() {
       </div>
 
       {/* ── HEADER PRINCIPAL ── */}
-      <header ref={headerRef} className="sticky top-0 z-50 bg-[var(--bg-card)] border-b border-[var(--border)] shadow-sm"
+      <header ref={headerRef} className="sticky top-0 z-50 bg-[var(--bg-card)]/95 backdrop-blur-md border-b border-[var(--border)] shadow-xs"
         style={{ transition: 'background 0.3s ease, border-color 0.3s ease' }}>
 
         <div className="w-full px-4 sm:px-6 lg:px-10 xl:px-16 py-3">
@@ -162,10 +162,10 @@ export default function Navbar() {
               <Link href="/" className="flex items-center gap-2 group shrink-0">
                 <div className="flex flex-col leading-none">
                   <div className="flex items-baseline gap-0.5">
-                    <span className="font-black text-xl sm:text-2xl tracking-tight text-amber-500 leading-none">TechNova</span>
-                    <span className="px-1 py-0.5 bg-amber-500 text-white text-[8px] font-black rounded tracking-widest uppercase leading-none">.ma</span>
+                    <span className="font-black text-xl sm:text-2xl tracking-tight text-amber-500 leading-none group-hover:text-amber-400 transition-colors">TechNova</span>
+                    <span className="px-1.5 py-0.5 bg-gradient-to-r from-amber-500 to-orange-500 text-white text-[8px] font-black rounded-md tracking-widest uppercase leading-none shadow-xs">.ma</span>
                   </div>
-                  <span className="text-[8px] font-bold text-[var(--text-muted)] tracking-widest uppercase mt-0.5 hidden sm:block">L&apos;EXPERT TECH</span>
+                  <span className="text-[8px] font-black text-[var(--text-muted)] tracking-widest uppercase mt-0.5 hidden sm:block">L&apos;EXPERT TECH</span>
                 </div>
               </Link>
             </div>
@@ -173,11 +173,11 @@ export default function Navbar() {
             {/* Barre recherche desktop */}
             <form action="/products" method="GET" className="hidden lg:flex items-center flex-1 max-w-2xl relative">
               <input type="text" name="search"
-                placeholder="Rechercher : iPhone, MacBook, Samsung, ROG..."
-                className="w-full min-w-0 pl-5 pr-14 py-3 rounded-xl bg-[var(--bg-page)] border border-[var(--border)] text-sm text-[var(--text-dark)] placeholder-[var(--text-muted)] focus:outline-none focus:border-amber-500 transition"
+                placeholder="Rechercher un modèle : iPhone 16 Pro, MacBook M3, Galaxy S24, ROG..."
+                className="w-full min-w-0 pl-5 pr-14 py-2.5 rounded-xl bg-[var(--bg-page)] border border-[var(--border)] text-sm text-[var(--text-dark)] placeholder-[var(--text-muted)] focus:outline-none focus:border-amber-500 focus:ring-2 focus:ring-amber-500/20 transition-all duration-200"
               />
               <button type="submit"
-                className="absolute right-0 top-0 bottom-0 px-4 bg-amber-500 hover:bg-amber-400 text-white rounded-r-xl flex items-center justify-center transition font-bold">
+                className="absolute right-1 top-1 bottom-1 px-4 bg-slate-900 hover:bg-amber-500 text-white hover:text-slate-950 rounded-lg flex items-center justify-center transition-all duration-200 font-bold">
                 <Search className="w-4 h-4" />
               </button>
             </form>
@@ -190,7 +190,7 @@ export default function Navbar() {
                 <div className="flex items-center gap-1">
                   <Link href="/orders"
                     className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-[var(--text-dark)] hover:text-amber-500 transition rounded-xl hover:bg-[var(--bg-page)]">
-                    <UserIcon className="w-4 h-4 stroke-[1.8]" />
+                    <UserIcon className="w-4 h-4 stroke-[2]" />
                     <span className="hidden sm:inline">{user?.name?.split(' ')[0]}</span>
                   </Link>
                   <button onClick={logout}
@@ -203,22 +203,22 @@ export default function Navbar() {
                 <div className="flex items-center gap-1.5">
                   {/* Connexion */}
                   <Link href="/login"
-                    className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-[var(--text-dark)] hover:text-amber-500 transition rounded-xl hover:bg-[var(--bg-page)] border border-[var(--border)]">
-                    <UserIcon className="w-4 h-4 stroke-[1.8]" />
+                    className="flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold text-[var(--text-dark)] hover:text-amber-500 transition rounded-xl hover:bg-[var(--bg-page)] border border-[var(--border)]">
+                    <UserIcon className="w-4 h-4 stroke-[2]" />
                     <span className="hidden sm:inline">Connexion</span>
                   </Link>
                   {/* S'inscrire */}
                   <Link href="/register"
-                    className="hidden sm:flex items-center gap-1.5 px-3 py-2 text-xs font-bold bg-amber-500 hover:bg-amber-400 text-white transition rounded-xl shadow-sm">
+                    className="hidden sm:flex items-center gap-1.5 px-3.5 py-2 text-xs font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 transition rounded-xl shadow-xs shadow-amber-500/20">
                     S&apos;inscrire
                   </Link>
                 </div>
               )}
 
-              <Link href="/cart" className="relative flex items-center justify-center w-10 h-10 text-[var(--text-dark)] hover:text-amber-500 transition rounded-xl hover:bg-[var(--bg-page)]">
-                <ShoppingBag className="w-5 h-5 stroke-[1.8]" />
+              <Link href="/cart" className="relative flex items-center justify-center w-10 h-10 text-[var(--text-dark)] hover:text-amber-500 transition rounded-xl hover:bg-[var(--bg-page)] border border-[var(--border)] sm:border-transparent">
+                <ShoppingBag className="w-5 h-5 stroke-[2]" />
                 {mounted && totalCount > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-[#DC2626] text-white text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center">
+                  <span className="absolute -top-1 -right-1 bg-amber-500 text-slate-950 text-[10px] font-black w-4.5 h-4.5 rounded-full flex items-center justify-center shadow-xs">
                     {totalCount}
                   </span>
                 )}

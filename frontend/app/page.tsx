@@ -19,6 +19,14 @@ import {
   CreditCard,
   ShieldCheck,
   Zap,
+  Sparkles,
+  BadgeCheck,
+  CheckCircle2,
+  Award,
+  ShoppingBag,
+  PackageCheck,
+  PhoneCall,
+  HelpCircle,
 } from 'lucide-react';
 
 async function getFeaturedProducts(): Promise<Product[]> {
@@ -51,19 +59,28 @@ async function getCategories() {
 
 const testimonials = [
   {
-    name: 'Mehdi B.',
+    name: 'Mehdi Benjelloun',
+    city: 'Casablanca (Maârif)',
+    product: 'iPhone 15 Pro Max 256GB',
     text: 'iPhone 15 Pro Max reçu sous blister en 24h à Casablanca. Boîte scellée, garantie Apple activée le jour même, service au top !',
     stars: 5,
+    initials: 'MB',
   },
   {
-    name: 'Sara E.',
+    name: 'Sara El Amrani',
+    city: 'Rabat (Agdal)',
+    product: 'MacBook Air 15" M3',
     text: 'J\'ai commandé mon MacBook Air M3 sur WhatsApp. Réponse immédiate, livraison soignée et paiement après vérification de l\'appareil.',
     stars: 5,
+    initials: 'SE',
   },
   {
-    name: 'Hamza T.',
+    name: 'Hamza Tazi',
+    city: 'Marrakech (Guéliz)',
+    product: 'Galaxy S24 Ultra Titanium',
     text: 'Le Galaxy S24 Ultra est une pépite. Très bon prix par rapport aux magasins et vendeur très professionnel. Je recommande les yeux fermés !',
     stars: 5,
+    initials: 'HT',
   },
 ];
 
@@ -135,94 +152,132 @@ export default async function HomePage() {
         {/* ══════════════════════════════════════════════
             HERO BANNER : SMARTPHONES & LAPTOPS DE GRANDES MARQUES
         ══════════════════════════════════════════════ */}
-        <section className="relative overflow-hidden bg-[#0A1128] min-h-[360px] sm:min-h-[520px] lg:min-h-[600px] flex items-center">
+        <section className="relative overflow-hidden bg-[#0A1128] min-h-[420px] sm:min-h-[540px] lg:min-h-[620px] flex items-center">
           {/* Image laptop & smartphone haute définition */}
           <div className="absolute inset-0 z-0">
             <Image
               src="https://images.unsplash.com/photo-1593642632823-8f785ba67e45?w=1600&auto=format&fit=crop&q=85"
               alt="Smartphones et Laptops Haut de Gamme"
-              fill priority sizes="100vw" className="object-cover object-right-center opacity-80"
+              fill priority sizes="100vw" className="object-cover object-right-center opacity-75 scale-102 transition-transform duration-1000"
             />
             {/* Dégradé Bleu Nuit profond sur la gauche pour lisibilité optimale */}
-            <div className="absolute inset-0 bg-gradient-to-r from-[#070D1E] via-[#0A1128]/90 to-transparent sm:w-3/4" />
-            {/* Fondu doux vers le bas qui rejoint le fond #F8FAFC */}
-            <div className="absolute bottom-0 left-0 right-0 h-28 bg-gradient-to-t from-[#F8FAFC] to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[#060B18] via-[#0A1128]/95 to-transparent sm:w-4/5" />
+            {/* Fondu doux vers le bas qui rejoint le fond */}
+            <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[var(--bg-page)] to-transparent" />
           </div>
 
           {/* Contenu textuel et boutons */}
-          <div className="relative z-10 w-full px-4 sm:px-6 lg:px-10 xl:px-16 py-20 sm:py-28">
-            <div className="max-w-xl space-y-6">
+          <div className="relative z-10 w-full px-4 sm:px-6 lg:px-10 xl:px-16 py-16 sm:py-24">
+            <div className="max-w-2xl space-y-6">
               
-              {/* Grand Titre Serif Blanc */}
-              <h1 className="font-serif-title text-4xl sm:text-5xl lg:text-6xl text-white font-normal leading-[1.12] tracking-tight">
-                Pour une technologie saine et sans compromis.
+              {/* Badge Premium Lumineux */}
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/15 border border-amber-400/30 backdrop-blur-md text-amber-300 text-[11px] font-black tracking-widest uppercase">
+                <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                <span>NOUVELLE COLLECTION 2026 · HAUTE TECHNOLOGIE</span>
+              </div>
+
+              {/* Grand Titre Ultra-Lisible et Impactant */}
+              <h1 className="text-3xl sm:text-5xl lg:text-6xl text-white font-black leading-[1.08] tracking-tight">
+                L&apos;excellence technologique <span className="text-amber-400">sans compromis.</span>
               </h1>
 
-              {/* Sous-titre fin orienté Marques Phones & Laptops */}
-              <p className="text-slate-300 text-sm sm:text-base leading-relaxed font-light">
-                Les plus grandes marques mondiales : iPhone, Samsung Galaxy, Google Pixel, MacBook et PC portables garantis neufs avec livraison express partout au Maroc.
+              {/* Sous-titre orienté Marques Phones & Laptops */}
+              <p className="text-slate-300 text-sm sm:text-base leading-relaxed font-normal max-w-xl">
+                Les fleurons mondiaux à portée de main : <strong className="text-white font-semibold">iPhone 16 Pro, MacBook M3, Galaxy S24 Ultra</strong> et PC Portables d&apos;exception. 100% neufs sous blister avec livraison 24h partout au Maroc.
               </p>
 
               {/* Deux boutons arrondis en pilule */}
-              <div className="flex flex-wrap items-center gap-4 pt-2">
+              <div className="flex flex-wrap items-center gap-3.5 pt-2">
                 <Link
                   href="/products"
-                  className="px-7 py-3.5 rounded-full bg-[var(--bg-card)] text-[var(--text-dark)] font-semibold text-xs tracking-wider uppercase hover:bg-slate-100 transition shadow-lg"
+                  className="px-8 py-3.5 rounded-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-black text-xs tracking-wider uppercase transition-all duration-200 shadow-lg shadow-amber-500/25 hover:shadow-amber-500/40 hover:-translate-y-0.5 active:translate-y-0 flex items-center gap-2"
                 >
-                  Voir les produits
+                  <span>Découvrir le catalogue</span>
+                  <ArrowRight className="w-4 h-4" />
                 </Link>
-                <Link
-                  href="/#how-it-works"
-                  className="px-7 py-3.5 rounded-full bg-[var(--bg-card)]/15 hover:bg-[var(--bg-card)]/25 backdrop-blur-md border border-white/30 text-white font-semibold text-xs tracking-wider uppercase transition"
+                <a
+                  href="https://wa.me/212600000000?text=Bonjour%20TechNova%2C%20je%20souhaite%20des%20renseignements%20sur%20vos%20produits."
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-7 py-3.5 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md border border-white/25 text-white font-bold text-xs tracking-wider uppercase transition-all hover:-translate-y-0.5 flex items-center gap-2"
                 >
-                  Commander sur WhatsApp
-                </Link>
+                  <MessageCircle className="w-4 h-4 text-[#25D366]" />
+                  <span>Conseil WhatsApp Direct</span>
+                </a>
+              </div>
+
+              {/* 3 piliers de réassurance sous le hero */}
+              <div className="pt-4 border-t border-white/10 flex flex-wrap items-center gap-5 sm:gap-8 text-xs text-slate-300">
+                <div className="flex items-center gap-2 font-medium">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <span>100% Neuf & Scellé</span>
+                </div>
+                <div className="flex items-center gap-2 font-medium">
+                  <Truck className="w-4 h-4 text-amber-400 shrink-0" />
+                  <span>Livraison 24h Express</span>
+                </div>
+                <div className="flex items-center gap-2 font-medium">
+                  <CreditCard className="w-4 h-4 text-amber-400 shrink-0" />
+                  <span>Paiement à la livraison</span>
+                </div>
               </div>
 
             </div>
           </div>
         </section>
 
-        {/* Contenu principal sur fond #F8FAFC */}
+        {/* Contenu principal */}
         <div className="w-full px-4 sm:px-6 lg:px-10 xl:px-16 space-y-12 sm:space-y-20 w-full -mt-6 sm:-mt-10 relative z-20">
 
           {/* ══════════════════════════════════════════════
-              1. LES 4 CARTES D'AVANTAGES (PHONES & LAPTOPS)
+              1. LES 4 CARTES D'AVANTAGES (STYLE PREMIUM)
           ══════════════════════════════════════════════ */}
-          <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 lg:gap-6">
-            <div className="bg-[var(--bg-card)] rounded-3xl p-6 border border-[var(--border)] shadow-sm">
-              <h3 className="font-serif-title text-base text-[var(--text-dark)] mb-2">
+          <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-5">
+            <div className="bg-[var(--bg-card)] rounded-2xl p-5 sm:p-6 border border-[var(--border)] shadow-xs hover:shadow-lg hover:border-amber-400/50 hover:-translate-y-1 transition-all duration-300 group">
+              <div className="w-11 h-11 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                <ShieldCheck className="w-5 h-5 stroke-[2.2]" />
+              </div>
+              <h3 className="font-bold text-sm sm:text-base text-[var(--text-dark)] mb-1.5">
                 Appareils 100% Neufs
               </h3>
               <p className="text-xs text-[var(--text-body)] leading-relaxed">
-                Tous nos smartphones et laptops sont certifiés d&apos;origine, scellés sous blister avec garantie constructeur 1 an.
+                Tous nos smartphones et laptops sont scellés sous blister d&apos;origine avec garantie constructeur officielle de 12 à 24 mois.
               </p>
             </div>
 
-            <div className="bg-[var(--bg-card)] rounded-3xl p-6 border border-[var(--border)] shadow-sm">
-              <h3 className="font-serif-title text-base text-[var(--text-dark)] mb-2">
+            <div className="bg-[var(--bg-card)] rounded-2xl p-5 sm:p-6 border border-[var(--border)] shadow-xs hover:shadow-lg hover:border-blue-400/50 hover:-translate-y-1 transition-all duration-300 group">
+              <div className="w-11 h-11 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                <Cpu className="w-5 h-5 stroke-[2.2]" />
+              </div>
+              <h3 className="font-bold text-sm sm:text-base text-[var(--text-dark)] mb-1.5">
                 Grandes Marques Officielles
               </h3>
               <p className="text-xs text-[var(--text-body)] leading-relaxed">
-                Apple Silicon M3, Snapdragon 8 Gen 3, processeurs Intel & AMD de dernière génération pour des performances ultimes.
+                Apple M3, Snapdragon 8 Gen 3, Intel Core Ultra et AMD Ryzen AI pour des performances de pointe sans compromis.
               </p>
             </div>
 
-            <div className="bg-[var(--bg-card)] rounded-3xl p-6 border border-[var(--border)] shadow-sm">
-              <h3 className="font-serif-title text-base text-[var(--text-dark)] mb-2">
+            <div className="bg-[var(--bg-card)] rounded-2xl p-5 sm:p-6 border border-[var(--border)] shadow-xs hover:shadow-lg hover:border-emerald-400/50 hover:-translate-y-1 transition-all duration-300 group">
+              <div className="w-11 h-11 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                <Truck className="w-5 h-5 stroke-[2.2]" />
+              </div>
+              <h3 className="font-bold text-sm sm:text-base text-[var(--text-dark)] mb-1.5">
                 Livraison Sécurisée 24h
               </h3>
               <p className="text-xs text-[var(--text-body)] leading-relaxed">
-                Expédition avec emballage renforcé et transport sécurisé. Vérification du produit avant règlement partout au Maroc.
+                Colis blindé avec suivi direct. Vous inspectez l&apos;appareil sous blister avant tout règlement au transporteur.
               </p>
             </div>
 
-            <div className="bg-[var(--bg-card)] rounded-3xl p-6 border border-[var(--border)] shadow-sm">
-              <h3 className="font-serif-title text-base text-[var(--text-dark)] mb-2">
-                Commande WhatsApp Directe
+            <div className="bg-[var(--bg-card)] rounded-2xl p-5 sm:p-6 border border-[var(--border)] shadow-xs hover:shadow-lg hover:border-violet-400/50 hover:-translate-y-1 transition-all duration-300 group">
+              <div className="w-11 h-11 rounded-xl bg-violet-500/10 border border-violet-500/20 text-violet-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                <MessageCircle className="w-5 h-5 stroke-[2.2]" />
+              </div>
+              <h3 className="font-bold text-sm sm:text-base text-[var(--text-dark)] mb-1.5">
+                Support & WhatsApp 7j/7
               </h3>
               <p className="text-xs text-[var(--text-body)] leading-relaxed">
-                Sélectionnez votre modèle, validez sur WhatsApp avec nos conseillers et payez en toute sérénité à la réception.
+                Nos conseillers répondent en moins de 15 minutes pour vous guider dans le choix de votre configuration idéale.
               </p>
             </div>
           </section>
@@ -401,36 +456,208 @@ export default async function HomePage() {
           )}
 
           {/* ══════════════════════════════════════════════
-              5. "CE QUE DISENT NOS CLIENTS"
+              SECTION "COMMENT COMMANDER ?" (#how-it-works)
           ══════════════════════════════════════════════ */}
-          <section className="space-y-10 py-6">
-            <div className="text-center space-y-2">
-              <h2 className="font-serif-title text-3xl sm:text-4xl text-[var(--text-dark)]">
-                Ce que disent nos clients
+          <section id="how-it-works" className="scroll-mt-28 space-y-10 py-8">
+            <div className="text-center space-y-3 max-w-2xl mx-auto">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 text-amber-600 text-[10px] font-black tracking-widest uppercase border border-amber-500/25">
+                <HelpCircle className="w-3.5 h-3.5" />
+                <span>GUIDE D&apos;ACHAT SÉCURISÉ</span>
+              </div>
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-[var(--text-dark)] tracking-tight">
+                Comment commander sur TechNova ?
               </h2>
-              <p className="text-xs sm:text-sm text-[var(--text-body)]">
-                Des avis authentiques de clients livrés partout au Maroc.
+              <p className="text-xs sm:text-sm text-[var(--text-body)] leading-relaxed">
+                Une démarche transparente en 4 étapes simples, avec paiement sécurisé uniquement à la réception de votre appareil.
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* 4 Étapes Visuelles */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+              {/* Étape 1 */}
+              <div className="bg-[var(--bg-card)] rounded-2xl p-6 border border-[var(--border)] shadow-xs hover:shadow-xl hover:border-amber-400/50 hover:-translate-y-1 transition-all duration-300 relative group flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="font-black text-2xl text-amber-500/30 group-hover:text-amber-500 transition-colors">
+                      01
+                    </span>
+                    <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center">
+                      <ShoppingBag className="w-5 h-5 stroke-[2]" />
+                    </div>
+                  </div>
+                  <h3 className="font-bold text-sm sm:text-base text-[var(--text-dark)] mb-2">
+                    Sélectionnez votre modèle
+                  </h3>
+                  <p className="text-xs text-[var(--text-body)] leading-relaxed">
+                    Parcourez nos smartphones et laptops neufs scellés d&apos;origine. Comparez les caractéristiques et cliquez sur <strong>Commander</strong>.
+                  </p>
+                </div>
+                <div className="pt-4 mt-4 border-t border-[var(--border)] text-[11px] font-bold text-amber-600">
+                  ✦ Matériel 100% Neuf garanti
+                </div>
+              </div>
+
+              {/* Étape 2 */}
+              <div className="bg-[var(--bg-card)] rounded-2xl p-6 border border-[var(--border)] shadow-xs hover:shadow-xl hover:border-blue-400/50 hover:-translate-y-1 transition-all duration-300 relative group flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="font-black text-2xl text-blue-500/30 group-hover:text-blue-500 transition-colors">
+                      02
+                    </span>
+                    <div className="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-600 flex items-center justify-center">
+                      <CheckCircle2 className="w-5 h-5 stroke-[2]" />
+                    </div>
+                  </div>
+                  <h3 className="font-bold text-sm sm:text-base text-[var(--text-dark)] mb-2">
+                    Validez vos coordonnées
+                  </h3>
+                  <p className="text-xs text-[var(--text-body)] leading-relaxed">
+                    Indiquez votre ville et téléphone. <strong>Aucun paiement par carte bancaire</strong> n&apos;est exigé à la validation du panier.
+                  </p>
+                </div>
+                <div className="pt-4 mt-4 border-t border-[var(--border)] text-[11px] font-bold text-blue-600">
+                  ✦ Zéro risque financier
+                </div>
+              </div>
+
+              {/* Étape 3 */}
+              <div className="bg-[var(--bg-card)] rounded-2xl p-6 border border-[var(--border)] shadow-xs hover:shadow-xl hover:border-emerald-400/50 hover:-translate-y-1 transition-all duration-300 relative group flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="font-black text-2xl text-emerald-500/30 group-hover:text-emerald-500 transition-colors">
+                      03
+                    </span>
+                    <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center">
+                      <Truck className="w-5 h-5 stroke-[2]" />
+                    </div>
+                  </div>
+                  <h3 className="font-bold text-sm sm:text-base text-[var(--text-dark)] mb-2">
+                    Livraison Express 24h/48h
+                  </h3>
+                  <p className="text-xs text-[var(--text-body)] leading-relaxed">
+                    Votre colis renforcé est acheminé directement à votre porte partout au Maroc (Casablanca, Rabat, Marrakech, Tanger, etc.).
+                  </p>
+                </div>
+                <div className="pt-4 mt-4 border-t border-[var(--border)] text-[11px] font-bold text-emerald-600">
+                  ✦ Suivi par SMS & appel
+                </div>
+              </div>
+
+              {/* Étape 4 */}
+              <div className="bg-[var(--bg-card)] rounded-2xl p-6 border border-[var(--border)] shadow-xs hover:shadow-xl hover:border-amber-400/50 hover:-translate-y-1 transition-all duration-300 relative group flex flex-col justify-between">
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="font-black text-2xl text-amber-500/30 group-hover:text-amber-500 transition-colors">
+                      04
+                    </span>
+                    <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-600 flex items-center justify-center">
+                      <ShieldCheck className="w-5 h-5 stroke-[2]" />
+                    </div>
+                  </div>
+                  <h3 className="font-bold text-sm sm:text-base text-[var(--text-dark)] mb-2">
+                    Vérification & Paiement
+                  </h3>
+                  <p className="text-xs text-[var(--text-body)] leading-relaxed">
+                    Inspectez le colis et la boîte scellée avec le livreur. Vous ne réglez qu&apos;après vérification en espèces ou par carte bancaire.
+                  </p>
+                </div>
+                <div className="pt-4 mt-4 border-t border-[var(--border)] text-[11px] font-bold text-amber-600">
+                  ✦ Paiement à la livraison
+                </div>
+              </div>
+            </div>
+
+            {/* Bannière d'assistance VIP par WhatsApp */}
+            <div className="bg-gradient-to-r from-[#0F172A] via-[#1E293B] to-[#0F172A] rounded-2xl p-6 sm:p-8 text-white border border-[#334155] shadow-lg flex flex-col md:flex-row items-center justify-between gap-6">
+              <div className="space-y-2 text-center md:text-left">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#25D366]/20 text-[#25D366] text-[10px] font-black uppercase tracking-wider">
+                  <span className="w-2 h-2 rounded-full bg-[#25D366] animate-ping" />
+                  <span>CONSEILLER DISPONIBLE EN DIRECT</span>
+                </div>
+                <h3 className="text-lg sm:text-xl font-bold">
+                  Vous préférez être conseillé avant de commander ?
+                </h3>
+                <p className="text-xs text-slate-300 max-w-xl leading-relaxed">
+                  Envoyez simplement le modèle recherché sur WhatsApp. Nos spécialistes vérifient le stock instantanément et réservent votre appareil.
+                </p>
+              </div>
+
+              <a
+                href="https://wa.me/212600000000?text=Bonjour%20TechNova%2C%20je%20souhaite%20commander%20un%20appareil%20et%20avoir%20des%20conseils."
+                target="_blank"
+                rel="noopener noreferrer"
+                className="shrink-0 px-6 py-3.5 rounded-full bg-[#25D366] hover:bg-[#1EBE5D] text-white font-bold text-xs tracking-wider uppercase shadow-xl transition-all hover:scale-105 active:scale-95 flex items-center gap-2.5"
+              >
+                <MessageCircle className="w-4 h-4 fill-white" />
+                <span>Commander sur WhatsApp</span>
+              </a>
+            </div>
+          </section>
+
+          {/* ══════════════════════════════════════════════
+              5. "CE QUE DISENT NOS CLIENTS"
+          ══════════════════════════════════════════════ */}
+          <section className="space-y-10 py-6">
+            <div className="text-center space-y-2.5 max-w-xl mx-auto">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 text-amber-600 text-[10px] font-black tracking-widest uppercase border border-amber-500/20">
+                <Award className="w-3.5 h-3.5" />
+                <span>EXPÉRIENCE CLIENT D&apos;EXCELLENCE</span>
+              </div>
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-[var(--text-dark)] tracking-tight">
+                La confiance de nos clients au Maroc
+              </h2>
+              <p className="text-xs sm:text-sm text-[var(--text-body)]">
+                Plus de <strong className="text-[var(--text-dark)] font-bold">1 200 livraisons réussies</strong> à Casablanca, Rabat, Marrakech, Tanger et partout au Royaume.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5 lg:gap-6">
               {testimonials.map((t, i) => (
-                <div key={i} className="bg-[var(--bg-card)] rounded-3xl p-8 border border-[var(--border)] shadow-sm space-y-4 flex flex-col justify-between">
-                  <div>
-                    <div className="flex items-center gap-1 mb-4">
-                      {[...Array(t.stars)].map((_, j) => (
-                        <Star key={j} className="w-3.5 h-3.5 fill-[#F59E0B] text-[#F59E0B]" />
-                      ))}
+                <div
+                  key={i}
+                  className="bg-[var(--bg-card)] rounded-2xl p-6 sm:p-7 border border-[var(--border)] shadow-xs hover:shadow-xl hover:border-amber-400/40 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between space-y-4 group"
+                >
+                  <div className="space-y-3.5">
+                    {/* En-tête de l'avis : étoiles + badge vérifié */}
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-0.5">
+                        {[...Array(t.stars)].map((_, j) => (
+                          <Star key={j} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                        ))}
+                      </div>
+                      <span className="inline-flex items-center gap-1 text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                        <CheckCircle2 className="w-3 h-3 text-emerald-600" />
+                        Vérifié
+                      </span>
                     </div>
 
+                    {/* Texte de l'avis */}
                     <p className="text-xs sm:text-sm text-[var(--text-body)] leading-relaxed italic">
                       &ldquo;{t.text}&rdquo;
                     </p>
+
+                    {/* Badge produit acheté */}
+                    <div className="pt-1">
+                      <span className="inline-block text-[10px] font-semibold text-slate-700 bg-slate-100 px-2.5 py-1 rounded-md">
+                        Appareil : {t.product}
+                      </span>
+                    </div>
                   </div>
 
-                  <p className="font-serif-title text-sm text-[var(--text-dark)] pt-3 font-semibold">
-                    {t.name}
-                  </p>
+                  {/* Profil client avec avatar dégradé */}
+                  <div className="pt-3 border-t border-[var(--border)] flex items-center gap-3">
+                    <div className="w-9 h-9 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 text-slate-950 font-black text-xs flex items-center justify-center shadow-xs shrink-0">
+                      {t.initials}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-xs font-bold text-[var(--text-dark)] leading-tight truncate">
+                        {t.name}
+                      </p>
+                      <p className="text-[10px] text-[var(--text-muted)] font-medium">
+                        {t.city}
+                      </p>
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>

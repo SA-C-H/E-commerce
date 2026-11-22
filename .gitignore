@@ -42,4 +42,6 @@ coverage/
 # ── Divers ────────────────────────────────────────────
 *.zip
 *.tar.gz
+*.mp4
+remotion-video/
 

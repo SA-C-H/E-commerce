@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { Toaster } from 'sonner';
 import ThemeProvider from '@/components/ThemeProvider';
+import Chatbot from '@/components/Chatbot';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -33,6 +34,7 @@ export default function RootLayout({
       <body className="min-h-screen flex flex-col">
         <ThemeProvider />
         {children}
+        <Chatbot />
         <Toaster position="top-right" richColors />
       </body>
     </html>

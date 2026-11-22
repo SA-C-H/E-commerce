@@ -55,11 +55,10 @@ export default function Footer() {
             </h4>
             <ul className="space-y-2.5">
               {[
-                { label: 'Livraison Express 24h/48h', href: '#' },
-                { label: 'Paiement à la livraison', href: '#' },
-                { label: 'Garantie constructeur', href: '#' },
-                { label: 'Mentions légales', href: '#' },
-                { label: 'Politique de confidentialité', href: '#' },
+                { label: 'Livraison Express 24h/48h', href: '/#how-it-works' },
+                { label: 'Paiement à la livraison', href: '/#how-it-works' },
+                { label: 'Garantie constructeur', href: '/#how-it-works' },
+                { label: 'Service Client & WhatsApp', href: '#contact' },
               ].map((item) => (
                 <li key={item.label}>
                   <Link href={item.href}
@@ -101,25 +100,33 @@ export default function Footer() {
 
         </div>
 
-        {/* Barre de réassurance */}
-        <div className="py-5 border-y border-[#1E293B]">
-          <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-10 text-[12px] font-semibold text-slate-400">
+        {/* Barre de réassurance et Moyens de Paiement */}
+        <div className="py-6 border-y border-[#1E293B] space-y-4">
+          <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-10 text-[12px] font-semibold text-slate-300">
             <span className="flex items-center gap-2">
-              <span className="text-amber-400 font-black">✓</span>
+              <span className="w-5 h-5 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center font-black text-xs">✓</span>
               Appareils 100% neufs sous blister
             </span>
             <span className="flex items-center gap-2">
-              <span className="text-amber-400 font-black">✓</span>
-              Paiement à la livraison
+              <span className="w-5 h-5 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center font-black text-xs">✓</span>
+              Paiement à la livraison après vérification
             </span>
             <span className="flex items-center gap-2">
-              <span className="text-amber-400 font-black">✓</span>
-              Livraison partout au Maroc
+              <span className="w-5 h-5 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center font-black text-xs">✓</span>
+              Expédition Express 24h/48h au Maroc
             </span>
             <span className="flex items-center gap-2">
-              <span className="text-amber-400 font-black">✓</span>
-              Garantie constructeur 1 an
+              <span className="w-5 h-5 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center font-black text-xs">✓</span>
+              Garantie constructeur officielle 1 an
             </span>
+          </div>
+
+          <div className="flex flex-wrap items-center justify-center gap-2 pt-2 text-[11px] text-slate-400">
+            <span className="font-bold text-slate-300">Paiements acceptés :</span>
+            <span className="px-2.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700 font-medium">💵 Espèces à la livraison (Cash on Delivery)</span>
+            <span className="px-2.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700 font-medium">💳 Carte bancaire CMI</span>
+            <span className="px-2.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700 font-medium">Visa & Mastercard</span>
+            <span className="px-2.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700 font-medium">🏦 Virement bancaire</span>
           </div>
         </div>
 
