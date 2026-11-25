@@ -638,7 +638,7 @@ export default async function HomePage() {
 
                     {/* Badge produit acheté */}
                     <div className="pt-1">
-                      <span className="inline-block text-[10px] font-semibold text-slate-700 bg-slate-100 px-2.5 py-1 rounded-md">
+                      <span className="inline-block text-[10px] font-semibold text-[var(--text-dark)] bg-[var(--bg-page)] border border-[var(--border)] px-2.5 py-1 rounded-md">
                         Appareil : {t.product}
                       </span>
                     </div>

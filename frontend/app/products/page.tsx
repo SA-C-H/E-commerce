@@ -111,7 +111,7 @@ export default async function ProductsPage({ searchParams }: SearchProps) {
             <div className="sm:col-span-3">
               <button
                 type="submit"
-                className="w-full py-2.5 rounded-full bg-[#0F172A] hover:bg-amber-500 hover:text-[var(--text-dark)] text-white text-xs font-semibold tracking-wider uppercase transition shadow-sm"
+                className="w-full py-2.5 rounded-full bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold tracking-wider uppercase transition shadow-sm"
               >
                 Filtrer
               </button>
@@ -124,8 +124,8 @@ export default async function ProductsPage({ searchParams }: SearchProps) {
               href="/products"
               className={`px-4 py-1.5 rounded-full text-xs font-medium transition ${
                 !resolvedParams.category
-                  ? 'bg-[#0F172A] text-white'
-                  : 'bg-[var(--bg-page)] text-[var(--text-body)] hover:text-[var(--text-dark)]'
+                  ? 'bg-amber-500 text-slate-950 font-bold shadow-sm'
+                  : 'bg-[var(--bg-page)] text-[var(--text-body)] hover:text-[var(--text-dark)] border border-[var(--border)]'
               }`}
             >
               Toutes les marques
@@ -138,8 +138,8 @@ export default async function ProductsPage({ searchParams }: SearchProps) {
                   href={`/products?category=${c.id}`}
                   className={`px-4 py-1.5 rounded-full text-xs font-medium transition ${
                     active
-                      ? 'bg-[#0F172A] text-white'
-                      : 'bg-[var(--bg-page)] text-[var(--text-body)] hover:text-[var(--text-dark)]'
+                      ? 'bg-amber-500 text-slate-950 font-bold shadow-sm'
+                      : 'bg-[var(--bg-page)] text-[var(--text-body)] hover:text-[var(--text-dark)] border border-[var(--border)]'
                   }`}
                 >
                   {c.name}

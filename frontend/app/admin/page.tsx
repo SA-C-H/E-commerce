@@ -6,6 +6,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { useAuthStore } from '@/store/authStore';
 import { api, ApiError } from '@/lib/api';
 import { toast } from 'sonner';
+import ThemeSwitch from '@/components/ThemeSwitch';
 import {
   LayoutDashboard, Package, Layers, ShoppingBag, Users, Settings,
   Plus, Trash2, Edit2, TrendingUp, ShieldAlert, Search, MessageCircle,
@@ -19,10 +20,10 @@ type AdminTab = 'dashboard' | 'products' | 'orders' | 'categories' | 'users' | '
 
 /* ─── Helpers visuels ─── */
 const STATUS_CFG = {
-  pending:   { label: 'En attente', color: 'bg-amber-500/15 text-amber-400 border-amber-500/30',   icon: Clock },
-  confirmed: { label: 'Confirmée',  color: 'bg-blue-500/15 text-blue-400 border-blue-500/30',      icon: CheckCircle2 },
-  delivered: { label: 'Livrée',     color: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30', icon: Truck },
-  cancelled: { label: 'Annulée',    color: 'bg-red-500/15 text-red-400 border-red-500/30',         icon: XCircle },
+  pending:   { label: 'En attente', color: 'bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30',   icon: Clock },
+  confirmed: { label: 'Confirmée',  color: 'bg-blue-500/15 text-blue-600 dark:text-blue-400 border-blue-500/30',      icon: CheckCircle2 },
+  delivered: { label: 'Livrée',     color: 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30', icon: Truck },
+  cancelled: { label: 'Annulée',    color: 'bg-red-500/15 text-red-600 dark:text-red-400 border-red-500/30',         icon: XCircle },
 } as const;
 
 function StatusBadge({ status }: { status: keyof typeof STATUS_CFG }) {
@@ -37,9 +38,9 @@ function StatusBadge({ status }: { status: keyof typeof STATUS_CFG }) {
 }
 
 function StockBadge({ stock }: { stock: number }) {
-  if (stock === 0)  return <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-red-500/15 text-red-400 border border-red-500/30">Rupture</span>;
-  if (stock <= 5)   return <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30">{stock} restants</span>;
-  return <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">{stock} en stock</span>;
+  if (stock === 0)  return <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-red-500/15 text-red-600 dark:text-red-400 border border-red-500/30">Rupture</span>;
+  if (stock <= 5)   return <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-500/30">{stock} restants</span>;
+  return <span className="px-2.5 py-1 rounded-full text-[11px] font-bold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">{stock} en stock</span>;
 }
 
 /* ─── Transitions de statut autorisées (miroir exact du backend) ─── */
@@ -94,24 +95,24 @@ function ConfirmDialog({
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
       onClick={onCancel} role="dialog" aria-modal="true">
-      <div className="w-full max-w-sm bg-[#0D0D20] border border-white/10 rounded-3xl shadow-2xl p-6 space-y-4"
+      <div className="w-full max-w-sm bg-[var(--bg-card)] border border-[var(--border)] rounded-3xl shadow-2xl p-6 space-y-4"
         onClick={(e) => e.stopPropagation()}>
         <div className="flex items-start gap-3">
           <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border ${tone === 'danger' ? 'bg-red-500/10 border-red-500/30' : 'bg-amber-500/10 border-amber-500/30'}`}>
-            <AlertTriangle className={`w-5 h-5 ${tone === 'danger' ? 'text-red-400' : 'text-amber-400'}`} />
+            <AlertTriangle className={`w-5 h-5 ${tone === 'danger' ? 'text-red-500' : 'text-amber-500'}`} />
           </div>
           <div className="min-w-0">
-            <h3 className="font-bold text-white">{title}</h3>
-            {message && <p className="text-xs text-slate-400 mt-1 leading-relaxed">{message}</p>}
+            <h3 className="font-bold text-[var(--text-dark)]">{title}</h3>
+            {message && <p className="text-xs text-[var(--text-body)] mt-1 leading-relaxed">{message}</p>}
           </div>
         </div>
         <div className="flex gap-3 pt-1">
           <button onClick={onCancel}
-            className="flex-1 py-2.5 rounded-xl border border-white/10 text-sm text-slate-300 hover:text-white hover:bg-white/5 transition">
+            className="flex-1 py-2.5 rounded-xl border border-[var(--border)] text-sm text-[var(--text-body)] hover:text-[var(--text-dark)] hover:bg-[var(--bg-card-hover)] transition">
             Annuler
           </button>
           <button onClick={onConfirm}
-            className={`flex-1 py-2.5 rounded-xl text-sm font-bold transition ${tone === 'danger' ? 'bg-red-500 hover:bg-red-400 text-white' : 'bg-amber-500 hover:bg-amber-400 text-[#060614]'}`}>
+            className={`flex-1 py-2.5 rounded-xl text-sm font-bold transition ${tone === 'danger' ? 'bg-red-500 hover:bg-red-600 text-white' : 'bg-amber-500 hover:bg-amber-400 text-slate-950'}`}>
             {confirmLabel}
           </button>
         </div>
@@ -139,16 +140,16 @@ function OrderDetailPanel({
 
   return (
     <div className="fixed inset-0 z-50 flex justify-end bg-black/70 backdrop-blur-sm" onClick={onClose} role="dialog" aria-modal="true">
-      <div className="w-full max-w-md h-full bg-[#0D0D20] border-l border-white/10 shadow-2xl flex flex-col"
+      <div className="w-full max-w-md h-full bg-[var(--bg-card)] border-l border-[var(--border)] shadow-2xl flex flex-col"
         onClick={(e) => e.stopPropagation()}>
 
         {/* En-tête */}
-        <div className="px-5 py-4 border-b border-white/5 flex items-center justify-between shrink-0">
+        <div className="px-5 py-4 border-b border-[var(--border)] flex items-center justify-between shrink-0">
           <div>
             <p className="text-[10px] font-bold text-amber-500 uppercase tracking-widest">Commande</p>
-            <h3 className="font-bold text-white font-mono">#{order.id.slice(0, 8)}</h3>
+            <h3 className="font-bold text-[var(--text-dark)] font-mono">#{order.id.slice(0, 8)}</h3>
           </div>
-          <button onClick={onClose} className="p-1.5 rounded-lg text-slate-500 hover:text-white hover:bg-white/5 transition">
+          <button onClick={onClose} className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-dark)] hover:bg-[var(--bg-card-hover)] transition">
             <X className="w-5 h-5" />
           </button>
         </div>
@@ -156,26 +157,26 @@ function OrderDetailPanel({
         <div className="flex-1 overflow-y-auto scrollbar-hidden p-5 space-y-5">
 
           {/* Client */}
-          <div className="bg-[#060614] border border-white/5 rounded-2xl p-4 space-y-3">
+          <div className="bg-[var(--bg-page)] border border-[var(--border)] rounded-2xl p-4 space-y-3">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full bg-amber-500 text-[#060614] font-black text-sm flex items-center justify-center shrink-0">
+              <div className="w-9 h-9 rounded-full bg-amber-500 text-slate-950 font-black text-sm flex items-center justify-center shrink-0">
                 {order.customer_name?.[0]?.toUpperCase() || '?'}
               </div>
               <div className="min-w-0">
-                <p className="text-sm font-bold text-white truncate">{order.customer_name}</p>
-                <p className="text-[11px] text-slate-500 flex items-center gap-1">
+                <p className="text-sm font-bold text-[var(--text-dark)] truncate">{order.customer_name}</p>
+                <p className="text-[11px] text-[var(--text-muted)] flex items-center gap-1">
                   <Calendar className="w-3 h-3" />
                   {new Date(order.created_at).toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' })}
                 </p>
               </div>
             </div>
-            <div className="flex items-center justify-between pt-2 border-t border-white/5">
-              <span className="text-[11px] text-slate-400 flex items-center gap-1.5">
-                <Phone className="w-3.5 h-3.5 text-slate-500" />
+            <div className="flex items-center justify-between pt-2 border-t border-[var(--border)]">
+              <span className="text-[11px] text-[var(--text-body)] flex items-center gap-1.5">
+                <Phone className="w-3.5 h-3.5 text-[var(--text-muted)]" />
                 {order.customer_phone || 'Aucun numéro'}
               </span>
               <button onClick={() => openWhatsApp(order.customer_phone, order.id, order.customer_name)}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-400 text-[11px] font-semibold border border-emerald-500/30 transition">
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-600 dark:text-emerald-400 text-[11px] font-semibold border border-emerald-500/30 transition">
                 <MessageCircle className="w-3.5 h-3.5" />Contacter
               </button>
             </div>
@@ -183,7 +184,7 @@ function OrderDetailPanel({
 
           {/* Chronologie du statut */}
           <div>
-            <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-3">Progression</p>
+            <p className="text-[11px] font-bold text-[var(--text-muted)] uppercase tracking-wider mb-3">Progression</p>
             <div className="flex items-center">
               {steps.map((s, i) => {
                 const cfg = STATUS_CFG[s];
@@ -191,12 +192,12 @@ function OrderDetailPanel({
                 return (
                   <div key={s} className="flex items-center flex-1 last:flex-none">
                     <div className={`flex items-center justify-center w-7 h-7 rounded-full border shrink-0 ${
-                      done ? 'bg-amber-500 border-amber-500 text-[#060614]' : 'border-white/15 text-slate-600'
+                      done ? 'bg-amber-500 border-amber-500 text-slate-950' : 'border-[var(--border)] text-[var(--text-muted)]'
                     }`}>
                       <cfg.icon className="w-3.5 h-3.5" />
                     </div>
                     {i < steps.length - 1 && (
-                      <div className={`h-0.5 flex-1 mx-1 ${done && i < currentStep ? 'bg-amber-500' : 'bg-white/10'}`} />
+                      <div className={`h-0.5 flex-1 mx-1 ${done && i < currentStep ? 'bg-amber-500' : 'bg-[var(--border)]'}`} />
                     )}
                   </div>
                 );
@@ -209,24 +210,24 @@ function OrderDetailPanel({
 
           {/* Articles */}
           <div>
-            <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-3">
+            <p className="text-[11px] font-bold text-[var(--text-muted)] uppercase tracking-wider mb-3">
               Articles ({items.length})
             </p>
             <div className="space-y-2">
               {items.map((it: any) => (
-                <div key={it.id} className="flex items-center gap-3 bg-[#060614] border border-white/5 rounded-2xl p-3">
-                  <div className="relative w-12 h-12 rounded-xl overflow-hidden bg-white/5 shrink-0 border border-white/5">
+                <div key={it.id} className="flex items-center gap-3 bg-[var(--bg-page)] border border-[var(--border)] rounded-2xl p-3">
+                  <div className="relative w-12 h-12 rounded-xl overflow-hidden bg-[var(--bg-card)] shrink-0 border border-[var(--border)]">
                     {it.products?.image_url
                       ? <Image src={it.products.image_url} alt={it.products?.name || ''} fill className="object-cover" sizes="48px" />
-                      : <div className="w-full h-full flex items-center justify-center"><Package className="w-4 h-4 text-slate-600" /></div>}
+                      : <div className="w-full h-full flex items-center justify-center"><Package className="w-4 h-4 text-[var(--text-muted)]" /></div>}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-semibold text-white truncate">{it.products?.name || 'Article supprimé'}</p>
-                    <p className="text-[11px] text-slate-500 mt-0.5">
+                    <p className="text-xs font-semibold text-[var(--text-dark)] truncate">{it.products?.name || 'Article supprimé'}</p>
+                    <p className="text-[11px] text-[var(--text-muted)] mt-0.5">
                       {it.quantity} × {Number(it.unit_price).toLocaleString('fr-FR')} MAD
                     </p>
                   </div>
-                  <span className="text-xs font-bold text-white font-mono shrink-0">
+                  <span className="text-xs font-bold text-[var(--text-dark)] font-mono shrink-0">
                     {(it.quantity * Number(it.unit_price)).toLocaleString('fr-FR')} MAD
                   </span>
                 </div>
@@ -236,28 +237,28 @@ function OrderDetailPanel({
 
           {/* Total */}
           <div className="flex items-center justify-between bg-amber-500/10 border border-amber-500/20 rounded-2xl px-4 py-3.5">
-            <span className="text-xs font-bold text-amber-400 uppercase tracking-wider">Total</span>
-            <span className="text-lg font-black text-white font-mono">
+            <span className="text-xs font-bold text-amber-500 uppercase tracking-wider">Total</span>
+            <span className="text-lg font-black text-[var(--text-dark)] font-mono">
               {Number(order.total).toLocaleString('fr-FR')} MAD
             </span>
           </div>
         </div>
 
         {/* Pied : changement de statut */}
-        <div className="p-5 border-t border-white/5 shrink-0 space-y-2">
+        <div className="p-5 border-t border-[var(--border)] shrink-0 space-y-2">
           {allowed.length === 0 ? (
-            <p className="text-center text-[11px] text-slate-500 py-1">
+            <p className="text-center text-[11px] text-[var(--text-muted)] py-1">
               {order.status === 'delivered' ? 'Commande livrée — statut final.' : 'Commande annulée — statut final.'}
             </p>
           ) : (
             <>
-              <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Faire évoluer</p>
+              <p className="text-[11px] font-bold text-[var(--text-muted)] uppercase tracking-wider">Faire évoluer</p>
               <div className="flex gap-2">
                 {allowed.map((s) => {
                   const cfg = STATUS_CFG[s as keyof typeof STATUS_CFG];
                   return (
                     <button key={s} onClick={() => onStatusChange(order.id, s)}
-                      className={`flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-bold border transition ${cfg.color} hover:brightness-125`}>
+                      className={`flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-xs font-bold border transition ${cfg.color} hover:brightness-110`}>
                       <cfg.icon className="w-3.5 h-3.5" />{cfg.label}
                     </button>
                   );
@@ -451,21 +452,21 @@ export default function AdminPage() {
   /* ── Accès refusé ── */
   if (!isAuthenticated || !isAdmin) {
     return (
-      <div className="min-h-screen bg-[#060614] flex items-center justify-center p-4">
+      <div className="min-h-screen bg-[var(--bg-page)] flex items-center justify-center p-4">
         <div className="text-center max-w-sm space-y-5">
           <div className="w-16 h-16 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center mx-auto">
-            <ShieldAlert className="w-8 h-8 text-amber-400" />
+            <ShieldAlert className="w-8 h-8 text-amber-500" />
           </div>
           <div>
             <p className="text-[11px] font-bold text-amber-500 uppercase tracking-widest mb-2">Accès réservé</p>
-            <h1 className="text-2xl font-black text-white">Console Admin</h1>
-            <p className="text-sm text-slate-400 mt-2">Connectez-vous avec un compte administrateur.</p>
+            <h1 className="text-2xl font-black text-[var(--text-dark)]">Console Admin</h1>
+            <p className="text-sm text-[var(--text-body)] mt-2">Connectez-vous avec un compte administrateur.</p>
           </div>
           <button onClick={() => router.push('/login?redirect=/admin')}
-            className="w-full py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-[#060614] text-sm font-bold transition">
+            className="w-full py-3 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-sm font-bold transition">
             Se connecter
           </button>
-          <Link href="/" className="block text-xs text-slate-500 hover:text-slate-300 transition">← Retour boutique</Link>
+          <Link href="/" className="block text-xs text-[var(--text-muted)] hover:text-[var(--text-dark)] transition">← Retour boutique</Link>
         </div>
       </div>
     );
@@ -506,14 +507,14 @@ export default function AdminPage() {
       <nav className="flex-1 overflow-y-auto scrollbar-hidden p-3 space-y-5">
         {NAV_SECTIONS.map(section => (
           <div key={section.title}>
-            <p className="px-3 mb-1 text-[10px] font-black text-slate-600 uppercase tracking-widest">{section.title}</p>
+            <p className="px-3 mb-1 text-[10px] font-black text-[var(--text-muted)] uppercase tracking-widest">{section.title}</p>
             <div className="space-y-0.5">
               {section.items.map(({ tab, label, icon: Icon, badge }) => (
                 <button key={tab} onClick={() => { setActiveTab(tab); onSelect?.(); }}
                   className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-sm font-semibold transition ${
                     activeTab === tab
-                      ? 'bg-amber-500 text-[#060614]'
-                      : 'text-slate-400 hover:text-white hover:bg-white/5'
+                      ? 'bg-amber-500 text-slate-950 font-bold shadow-xs'
+                      : 'text-[var(--text-body)] hover:text-[var(--text-dark)] hover:bg-[var(--bg-card-hover)]'
                   }`}>
                   <div className="flex items-center gap-3">
                     <Icon className="w-4 h-4 shrink-0" />
@@ -521,9 +522,9 @@ export default function AdminPage() {
                   </div>
                   {badge !== undefined && badge > 0 && (
                     <span className={`text-[10px] px-2 py-0.5 rounded-full font-black ${
-                      activeTab === tab ? 'bg-[#060614]/20 text-[#060614]'
-                      : tab === 'orders' && pendingOrders > 0 ? 'bg-red-500/20 text-red-400'
-                      : 'bg-white/10 text-slate-400'
+                      activeTab === tab ? 'bg-slate-950/20 text-slate-950'
+                      : tab === 'orders' && pendingOrders > 0 ? 'bg-red-500/20 text-red-500'
+                      : 'bg-[var(--bg-page)] text-[var(--text-body)] border border-[var(--border)]'
                     }`}>{badge}</span>
                   )}
                 </button>
@@ -536,17 +537,17 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="flex h-screen bg-[#060614] text-white overflow-hidden">
+    <div className="flex h-screen bg-[var(--bg-page)] text-[var(--text-dark)] overflow-hidden transition-colors duration-300">
 
       {/* ══════════ SIDEBAR DESKTOP ══════════ */}
-      <aside className="hidden md:flex w-60 shrink-0 flex-col bg-[#0A0A1A] border-r border-white/5 overflow-hidden">
+      <aside className="hidden md:flex w-60 shrink-0 flex-col bg-[var(--bg-card)] border-r border-[var(--border)] overflow-hidden transition-colors duration-300">
         {/* Logo */}
-        <div className="px-5 py-5 border-b border-white/5">
+        <div className="px-5 py-5 border-b border-[var(--border)]">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-amber-500 flex items-center justify-center font-black text-[#060614] text-sm shadow">TN</div>
+            <div className="w-9 h-9 rounded-xl bg-amber-500 flex items-center justify-center font-black text-slate-950 text-sm shadow">TN</div>
             <div>
-              <p className="font-black text-sm text-white leading-none">TechNova<span className="text-amber-500">.ma</span></p>
-              <p className="text-[10px] text-slate-500 mt-0.5">L&apos;Expert Tech</p>
+              <p className="font-black text-sm text-[var(--text-dark)] leading-none">TechNova<span className="text-amber-500">.ma</span></p>
+              <p className="text-[10px] text-[var(--text-muted)] mt-0.5">L&apos;Expert Tech</p>
             </div>
           </div>
         </div>
@@ -554,26 +555,32 @@ export default function AdminPage() {
         <SidebarNav />
 
         {/* Pied sidebar */}
-        <div className="p-3 border-t border-white/5 space-y-1">
+        <div className="p-3 border-t border-[var(--border)] space-y-1.5">
+          {/* Switch thème dans la barre latérale */}
+          <div className="flex items-center justify-between px-3 py-1.5 rounded-xl bg-[var(--bg-page)] border border-[var(--border)]">
+            <span className="text-xs font-semibold text-[var(--text-body)]">Thème</span>
+            <ThemeSwitch compact />
+          </div>
+
           <Link href="/" target="_blank"
-            className="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold text-slate-400 hover:text-white hover:bg-white/5 transition">
+            className="flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold text-[var(--text-body)] hover:text-[var(--text-dark)] hover:bg-[var(--bg-card-hover)] transition">
             <div className="flex items-center gap-2.5"><Store className="w-4 h-4 text-amber-500" /><span>Voir la boutique</span></div>
             <ArrowUpRight className="w-3.5 h-3.5" />
           </Link>
-          <div className="flex items-center justify-between px-3.5 py-2 rounded-xl bg-white/[0.03] border border-white/5 mt-1">
+          <div className="flex items-center justify-between px-3.5 py-2 rounded-xl bg-[var(--bg-page)] border border-[var(--border)]">
             <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-8 h-8 rounded-full bg-amber-500 text-[#060614] font-black text-xs flex items-center justify-center shrink-0">
+              <div className="w-8 h-8 rounded-full bg-amber-500 text-slate-950 font-black text-xs flex items-center justify-center shrink-0">
                 {user?.name?.[0]?.toUpperCase() || 'A'}
               </div>
               <div className="min-w-0">
-                <p className="text-xs font-bold text-white truncate">{user?.name || 'Admin'}</p>
-                <p className="text-[10px] text-emerald-400 flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block animate-pulse" />Super Admin
+                <p className="text-xs font-bold text-[var(--text-dark)] truncate">{user?.name || 'Admin'}</p>
+                <p className="text-[10px] text-emerald-500 flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block animate-pulse" />Super Admin
                 </p>
               </div>
             </div>
             <button onClick={logout} title="Déconnexion"
-              className="p-1.5 rounded-lg text-slate-500 hover:text-red-400 hover:bg-red-500/10 transition">
+              className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-red-500 hover:bg-red-500/10 transition">
               <LogOut className="w-4 h-4" />
             </button>
           </div>
@@ -584,13 +591,16 @@ export default function AdminPage() {
       {mobileOpen && (
         <div className="fixed inset-0 z-50 md:hidden flex">
           <div className="fixed inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setMobileOpen(false)} />
-          <div className="relative w-64 bg-[#0A0A1A] h-full border-r border-white/5 flex flex-col z-10">
-            <div className="px-5 py-5 border-b border-white/5 flex items-center justify-between">
+          <div className="relative w-64 bg-[var(--bg-card)] h-full border-r border-[var(--border)] flex flex-col z-10">
+            <div className="px-5 py-5 border-b border-[var(--border)] flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-amber-500 flex items-center justify-center font-black text-[#060614] text-xs">TN</div>
-                <p className="font-black text-sm text-white">TechNova<span className="text-amber-500">.ma</span></p>
+                <div className="w-8 h-8 rounded-xl bg-amber-500 flex items-center justify-center font-black text-slate-950 text-xs">TN</div>
+                <p className="font-black text-sm text-[var(--text-dark)]">TechNova<span className="text-amber-500">.ma</span></p>
               </div>
-              <button onClick={() => setMobileOpen(false)} className="p-1 text-slate-500 hover:text-white"><X className="w-4 h-4" /></button>
+              <div className="flex items-center gap-1">
+                <ThemeSwitch compact />
+                <button onClick={() => setMobileOpen(false)} className="p-1 text-[var(--text-muted)] hover:text-[var(--text-dark)]"><X className="w-4 h-4" /></button>
+              </div>
             </div>
             <SidebarNav onSelect={() => setMobileOpen(false)} />
           </div>
@@ -600,17 +610,17 @@ export default function AdminPage() {
       {/* ══════════ ZONE PRINCIPALE ══════════ */}
       <div className="flex-1 flex flex-col overflow-hidden">
 
-        {/* Header avec barre de recherche centrée (style modèle) */}
-        <header className="h-14 shrink-0 bg-[#0A0A1A] border-b border-white/5 px-4 flex items-center gap-3">
+        {/* Header avec barre de recherche centrée + ThemeSwitch */}
+        <header className="h-14 shrink-0 bg-[var(--bg-card)] border-b border-[var(--border)] px-4 flex items-center gap-3 transition-colors duration-300">
           {/* Burger mobile */}
-          <button onClick={() => setMobileOpen(true)} className="md:hidden p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 shrink-0">
+          <button onClick={() => setMobileOpen(true)} className="md:hidden p-2 rounded-lg text-[var(--text-body)] hover:text-[var(--text-dark)] hover:bg-[var(--bg-card-hover)] shrink-0">
             <Menu className="w-4 h-4" />
           </button>
 
           {/* Barre de recherche centrée */}
           <div className="flex-1 max-w-xl mx-auto">
             <div className="relative">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)]" />
               <input
                 type="text"
                 placeholder="Rechercher un produit, une commande…"
@@ -619,22 +629,25 @@ export default function AdminPage() {
                   if (activeTab === 'products') setSearchQuery(e.target.value);
                   else if (activeTab === 'orders') setOrderSearch(e.target.value);
                 }}
-                className="w-full pl-10 pr-4 py-2 rounded-xl bg-white/5 border border-white/10 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-amber-500/50 transition"
+                className="w-full pl-10 pr-4 py-2 rounded-xl bg-[var(--bg-page)] border border-[var(--border)] text-xs text-[var(--text-dark)] placeholder-[var(--text-muted)] focus:outline-none focus:border-amber-500 transition"
               />
             </div>
           </div>
 
-          {/* Icônes droite */}
-          <div className="flex items-center gap-1 shrink-0">
+          {/* Icônes droite avec Switch Thème intégré */}
+          <div className="flex items-center gap-2 shrink-0">
+            {/* Bouton de bascule thème clair / sombre */}
+            <ThemeSwitch />
+
             <button onClick={loadData} disabled={loading} title="Rafraîchir"
-              className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 transition">
+              className="p-2 rounded-lg text-[var(--text-body)] hover:text-[var(--text-dark)] hover:bg-[var(--bg-card-hover)] transition">
               <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin text-amber-500' : ''}`} />
             </button>
-            <button className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-white/5 relative">
+            <button className="p-2 rounded-lg text-[var(--text-body)] hover:text-[var(--text-dark)] hover:bg-[var(--bg-card-hover)] relative">
               <ShoppingBag className="w-4 h-4" />
               {pendingOrders > 0 && <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-red-500" />}
             </button>
-            <div className="w-8 h-8 rounded-full bg-amber-500 text-[#060614] font-black text-xs flex items-center justify-center ml-1">
+            <div className="w-8 h-8 rounded-full bg-amber-500 text-slate-950 font-black text-xs flex items-center justify-center ml-1">
               {user?.name?.[0]?.toUpperCase() || 'A'}
             </div>
           </div>
@@ -647,53 +660,53 @@ export default function AdminPage() {
           {activeTab === 'dashboard' && (
             <div className="space-y-6">
               {/* Breadcrumb */}
-              <div className="flex items-center gap-2 text-[11px] text-slate-500">
+              <div className="flex items-center gap-2 text-[11px] text-[var(--text-muted)]">
                 <span className="text-amber-500 font-semibold">Console</span>
                 <ChevronRight className="w-3 h-3" />
-                <span className="text-white font-semibold">Vue d&apos;ensemble</span>
+                <span className="text-[var(--text-dark)] font-semibold">Vue d&apos;ensemble</span>
               </div>
 
               {/* 6 KPI cards — style modèle */}
               <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3">
                 {[
-                  { label: 'Chiffre d\'affaires', value: `${totalRevenue.toLocaleString('fr-FR')} MAD`, sub: `↑ Confirmées + livrées`, icon: DollarSign, iconBg: 'bg-amber-500/15 border-amber-500/30', iconColor: 'text-amber-400' },
-                  { label: 'Commandes totales',   value: orders.length,     sub: `↑ ${orders.length} au total`, icon: ShoppingBag, iconBg: 'bg-blue-500/15 border-blue-500/30', iconColor: 'text-blue-400' },
-                  { label: 'En attente',           value: pendingOrders,     sub: `À traiter maintenant`,  icon: Clock,       iconBg: 'bg-orange-500/15 border-orange-500/30', iconColor: 'text-orange-400' },
-                  { label: 'Livrées',              value: deliveredOrders,   sub: `Commandes finalisées`,  icon: Truck,       iconBg: 'bg-emerald-500/15 border-emerald-500/30', iconColor: 'text-emerald-400' },
-                  { label: 'Produits référencés',  value: products.length,   sub: `${categories.length} catégories`, icon: Package, iconBg: 'bg-purple-500/15 border-purple-500/30', iconColor: 'text-purple-400' },
-                  { label: 'Alertes stock',        value: lowStock.length,   sub: `Produits ≤ 5 unités`,  icon: AlertTriangle, iconBg: lowStock.length > 0 ? 'bg-red-500/15 border-red-500/30' : 'bg-slate-500/15 border-slate-500/30', iconColor: lowStock.length > 0 ? 'text-red-400' : 'text-slate-500' },
+                  { label: 'Chiffre d\'affaires', value: `${totalRevenue.toLocaleString('fr-FR')} MAD`, sub: `↑ Confirmées + livrées`, icon: DollarSign, iconBg: 'bg-amber-500/15 border-amber-500/30', iconColor: 'text-amber-500' },
+                  { label: 'Commandes totales',   value: orders.length,     sub: `↑ ${orders.length} au total`, icon: ShoppingBag, iconBg: 'bg-blue-500/15 border-blue-500/30', iconColor: 'text-blue-500' },
+                  { label: 'En attente',           value: pendingOrders,     sub: `À traiter maintenant`,  icon: Clock,       iconBg: 'bg-orange-500/15 border-orange-500/30', iconColor: 'text-orange-500' },
+                  { label: 'Livrées',              value: deliveredOrders,   sub: `Commandes finalisées`,  icon: Truck,       iconBg: 'bg-emerald-500/15 border-emerald-500/30', iconColor: 'text-emerald-500' },
+                  { label: 'Produits référencés',  value: products.length,   sub: `${categories.length} catégories`, icon: Package, iconBg: 'bg-purple-500/15 border-purple-500/30', iconColor: 'text-purple-500' },
+                  { label: 'Alertes stock',        value: lowStock.length,   sub: `Produits ≤ 5 unités`,  icon: AlertTriangle, iconBg: lowStock.length > 0 ? 'bg-red-500/15 border-red-500/30' : 'bg-slate-500/15 border-slate-500/30', iconColor: lowStock.length > 0 ? 'text-red-500' : 'text-slate-400' },
                 ].map(({ label, value, sub, icon: Icon, iconBg, iconColor }) => (
-                  <div key={label} className="bg-[#0D0D20] border border-white/5 rounded-2xl p-4 flex flex-col gap-3">
+                  <div key={label} className="bg-[var(--bg-card)] border border-[var(--border)] rounded-2xl p-4 flex flex-col gap-3 shadow-xs">
                     <div className="flex items-start justify-between gap-2">
-                      <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider leading-tight">{label}</p>
+                      <p className="text-[10px] font-bold text-[var(--text-muted)] uppercase tracking-wider leading-tight">{label}</p>
                       <div className={`w-9 h-9 rounded-full flex items-center justify-center border shrink-0 ${iconBg}`}>
                         <Icon className={`w-4 h-4 ${iconColor}`} />
                       </div>
                     </div>
-                    <p className="text-xl font-black text-white">{value}</p>
-                    <p className="text-[10px] text-slate-600 leading-tight">{sub}</p>
+                    <p className="text-xl font-black text-[var(--text-dark)]">{value}</p>
+                    <p className="text-[10px] text-[var(--text-body)] leading-tight">{sub}</p>
                   </div>
                 ))}
               </div>
 
               {/* Dernières commandes + stock faible */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="bg-[#0D0D20] border border-white/5 rounded-2xl overflow-hidden">
-                  <div className="px-5 py-4 border-b border-white/5 flex items-center justify-between">
-                    <h3 className="font-bold text-sm text-white flex items-center gap-2"><ShoppingBag className="w-4 h-4 text-amber-500" />Dernières commandes</h3>
+                <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-2xl overflow-hidden shadow-xs">
+                  <div className="px-5 py-4 border-b border-[var(--border)] flex items-center justify-between">
+                    <h3 className="font-bold text-sm text-[var(--text-dark)] flex items-center gap-2"><ShoppingBag className="w-4 h-4 text-amber-500" />Dernières commandes</h3>
                     <button onClick={() => setActiveTab('orders')} className="text-[11px] text-amber-500 hover:underline font-semibold">Voir tout →</button>
                   </div>
                   {orders.length === 0
-                    ? <p className="p-8 text-center text-sm text-slate-500">Aucune commande</p>
-                    : <div className="divide-y divide-white/5">
+                    ? <p className="p-8 text-center text-sm text-[var(--text-muted)]">Aucune commande</p>
+                    : <div className="divide-y divide-[var(--border)]">
                         {orders.slice(0, 5).map(o => (
-                          <div key={o.id} className="px-5 py-3.5 flex items-center justify-between gap-3">
+                          <div key={o.id} className="px-5 py-3.5 flex items-center justify-between gap-3 hover:bg-[var(--bg-card-hover)] transition">
                             <div className="min-w-0">
-                              <p className="text-xs font-bold text-white truncate">{o.customer_name}</p>
-                              <p className="text-[11px] text-slate-500 font-mono">#{o.id.slice(0,8)}</p>
+                              <p className="text-xs font-bold text-[var(--text-dark)] truncate">{o.customer_name}</p>
+                              <p className="text-[11px] text-[var(--text-muted)] font-mono">#{o.id.slice(0,8)}</p>
                             </div>
                             <div className="flex items-center gap-3 shrink-0">
-                              <span className="text-xs font-bold text-white font-mono">{Number(o.total).toLocaleString('fr-FR')} MAD</span>
+                              <span className="text-xs font-bold text-[var(--text-dark)] font-mono">{Number(o.total).toLocaleString('fr-FR')} MAD</span>
                               <StatusBadge status={o.status} />
                             </div>
                           </div>
@@ -702,20 +715,20 @@ export default function AdminPage() {
                   }
                 </div>
 
-                <div className="bg-[#0D0D20] border border-white/5 rounded-2xl overflow-hidden">
-                  <div className="px-5 py-4 border-b border-white/5 flex items-center justify-between">
-                    <h3 className="font-bold text-sm text-white flex items-center gap-2"><AlertTriangle className="w-4 h-4 text-amber-400" />Alertes réapprovisionnement</h3>
+                <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-2xl overflow-hidden shadow-xs">
+                  <div className="px-5 py-4 border-b border-[var(--border)] flex items-center justify-between">
+                    <h3 className="font-bold text-sm text-[var(--text-dark)] flex items-center gap-2"><AlertTriangle className="w-4 h-4 text-amber-500" />Alertes réapprovisionnement</h3>
                     <button onClick={() => { setStockFilter('LOW'); setActiveTab('products'); }} className="text-[11px] text-amber-500 hover:underline font-semibold">Filtrer →</button>
                   </div>
                   {lowStock.length === 0
-                    ? <p className="p-8 text-center text-sm text-emerald-400">✅ Tous les stocks sont optimaux</p>
-                    : <div className="divide-y divide-white/5">
+                    ? <p className="p-8 text-center text-sm text-emerald-500">✅ Tous les stocks sont optimaux</p>
+                    : <div className="divide-y divide-[var(--border)]">
                         {lowStock.slice(0, 5).map(p => (
-                          <div key={p.id} className="px-5 py-3.5 flex items-center justify-between gap-3">
-                            <p className="text-xs font-bold text-white truncate flex-1">{p.name}</p>
+                          <div key={p.id} className="px-5 py-3.5 flex items-center justify-between gap-3 hover:bg-[var(--bg-card-hover)] transition">
+                            <p className="text-xs font-bold text-[var(--text-dark)] truncate flex-1">{p.name}</p>
                             <div className="flex items-center gap-2 shrink-0">
                               <StockBadge stock={Number(p.stock)} />
-                              <button onClick={() => openEdit(p)} className="p-1.5 rounded-lg text-slate-500 hover:text-amber-400 hover:bg-amber-500/10 transition"><Edit2 className="w-3.5 h-3.5" /></button>
+                              <button onClick={() => openEdit(p)} className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-amber-500 hover:bg-amber-500/10 transition"><Edit2 className="w-3.5 h-3.5" /></button>
                             </div>
                           </div>
                         ))}
@@ -732,48 +745,48 @@ export default function AdminPage() {
               {/* En-tête section style modèle : titre + breadcrumb + bouton */}
               <div className="flex items-center justify-between">
                 <div>
-                  <div className="flex items-center gap-2 text-[11px] text-slate-500 mb-1">
+                  <div className="flex items-center gap-2 text-[11px] text-[var(--text-muted)] mb-1">
                     <span className="text-amber-500 font-semibold">Console</span>
                     <ChevronRight className="w-3 h-3" />
-                    <span className="text-white font-semibold">Catalogue</span>
+                    <span className="text-[var(--text-dark)] font-semibold">Catalogue</span>
                     <ChevronRight className="w-3 h-3" />
                     <span>Liste des produits</span>
                   </div>
-                  <h2 className="text-lg font-black text-white">Liste des produits</h2>
+                  <h2 className="text-lg font-black text-[var(--text-dark)]">Liste des produits</h2>
                 </div>
                 <button onClick={openCreate}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-[#060614] text-xs font-black transition shadow-lg shadow-amber-500/20">
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-black transition shadow-lg shadow-amber-500/20">
                   <Plus className="w-4 h-4" /> Ajouter un produit +
                 </button>
               </div>
 
               {/* Barre filtres compacte */}
-              <div className="bg-[#0D0D20] border border-white/5 rounded-2xl px-4 py-3 flex flex-wrap gap-3 items-center">
+              <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-2xl px-4 py-3 flex flex-wrap gap-3 items-center shadow-xs">
                 <select value={catFilter} onChange={e => setCatFilter(e.target.value)}
-                  className="px-3 py-2 rounded-xl bg-[#060614] border border-white/10 text-xs text-white focus:outline-none focus:border-amber-500">
+                  className="px-3 py-2 rounded-xl bg-[var(--bg-page)] border border-[var(--border)] text-xs text-[var(--text-dark)] focus:outline-none focus:border-amber-500">
                   <option value="ALL">Toutes catégories</option>
                   {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                 </select>
                 <select value={stockFilter} onChange={e => setStockFilter(e.target.value as any)}
-                  className="px-3 py-2 rounded-xl bg-[#060614] border border-white/10 text-xs text-white focus:outline-none focus:border-amber-500">
+                  className="px-3 py-2 rounded-xl bg-[var(--bg-page)] border border-[var(--border)] text-xs text-[var(--text-dark)] focus:outline-none focus:border-amber-500">
                   <option value="ALL">Tous les stocks</option>
                   <option value="LOW">Stock faible (≤5)</option>
                   <option value="OUT">Rupture (0)</option>
                 </select>
-                <span className="text-[11px] text-slate-500 ml-auto">{filteredProducts.length} produit(s)</span>
+                <span className="text-[11px] text-[var(--text-muted)] ml-auto">{filteredProducts.length} produit(s)</span>
               </div>
 
               {/* Tableau style modèle — avec checkbox + image + catégorie + prix + stock badge + actions */}
-              <div className="bg-[#0D0D20] border border-white/5 rounded-2xl overflow-hidden">
+              <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-2xl overflow-hidden shadow-xs">
                 {/* Sous-titre table + compteur */}
-                <div className="px-5 py-3.5 border-b border-white/5 flex items-center justify-between">
-                  <h3 className="text-sm font-bold text-white">Tous les produits</h3>
-                  <span className="text-[11px] text-slate-500">{filteredProducts.length} résultats</span>
+                <div className="px-5 py-3.5 border-b border-[var(--border)] flex items-center justify-between">
+                  <h3 className="text-sm font-bold text-[var(--text-dark)]">Tous les produits</h3>
+                  <span className="text-[11px] text-[var(--text-muted)]">{filteredProducts.length} résultats</span>
                 </div>
                 <div className="overflow-x-auto">
                   <table className="w-full text-xs">
                     <thead>
-                      <tr className="border-b border-white/5 text-slate-500 uppercase tracking-wider">
+                      <tr className="border-b border-[var(--border)] text-[var(--text-muted)] uppercase tracking-wider">
                         <th className="p-4 pl-5 w-8"><input type="checkbox" className="rounded accent-amber-500" /></th>
                         <th className="text-left p-4 font-bold">Produit</th>
                         <th className="text-left p-4 font-bold">Catégorie</th>
@@ -783,58 +796,53 @@ export default function AdminPage() {
                         <th className="text-right p-4 pr-5 font-bold">Actions</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-white/[0.04]">
+                    <tbody className="divide-y divide-[var(--border)]">
                       {pagedProducts.length === 0
-                        ? <tr><td colSpan={7} className="p-12 text-center text-slate-500">Aucun produit</td></tr>
+                        ? <tr><td colSpan={7} className="p-12 text-center text-[var(--text-muted)]">Aucun produit</td></tr>
                         : pagedProducts.map(p => (
-                          <tr key={p.id} className="hover:bg-white/[0.02] transition group">
+                          <tr key={p.id} className="hover:bg-[var(--bg-card-hover)] transition group">
                             <td className="p-4 pl-5"><input type="checkbox" className="rounded accent-amber-500" /></td>
                             <td className="p-4">
                               <div className="flex items-center gap-3">
-                                <div className="w-11 h-11 rounded-xl overflow-hidden bg-white/5 shrink-0 relative border border-white/5">
+                                <div className="w-11 h-11 rounded-xl overflow-hidden bg-[var(--bg-page)] shrink-0 relative border border-[var(--border)]">
                                   {p.image_url
                                     ? <Image src={p.image_url} alt={p.name} fill className="object-cover" sizes="44px"
                                         onError={(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1512054502232-10a0a035d672?w=100&auto=format&fit=crop'; }} />
-                                    : <div className="w-full h-full flex items-center justify-center"><Package className="w-4 h-4 text-slate-600" /></div>
+                                    : <div className="w-full h-full flex items-center justify-center"><Package className="w-4 h-4 text-[var(--text-muted)]" /></div>
                                   }
                                 </div>
                                 <div className="min-w-0">
-                                  <p className="font-semibold text-white truncate max-w-[180px]">{p.name}</p>
-                                  <p className="text-slate-600 truncate max-w-[180px] mt-0.5 text-[11px]">{p.description || '—'}</p>
+                                  <p className="font-semibold text-[var(--text-dark)] truncate max-w-[180px]">{p.name}</p>
+                                  <p className="text-[var(--text-muted)] truncate max-w-[180px] mt-0.5 text-[11px]">{p.description || '—'}</p>
                                 </div>
                               </div>
                             </td>
                             <td className="p-4">
-                              <span className="px-2.5 py-1 rounded-lg bg-white/5 border border-white/10 text-slate-400 font-medium">
+                              <span className="px-2.5 py-1 rounded-lg bg-[var(--bg-page)] border border-[var(--border)] text-[var(--text-body)] font-medium">
                                 {p.categories?.name || '—'}
                               </span>
                             </td>
-                            <td className="p-4 font-black text-white font-mono">{Number(p.price).toLocaleString('fr-FR')} <span className="text-slate-500 font-normal text-[11px]">MAD</span></td>
+                            <td className="p-4 font-black text-[var(--text-dark)] font-mono">{Number(p.price).toLocaleString('fr-FR')} <span className="text-[var(--text-muted)] font-normal text-[11px]">MAD</span></td>
                             <td className="p-4">
                               <div className="flex items-center gap-1.5">
                                 <button onClick={() => handleQuickStock(p, -1)} disabled={Number(p.stock) <= 0}
-                                  className="w-5 h-5 rounded-md bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center disabled:opacity-30 transition text-slate-400">
+                                  className="w-5 h-5 rounded-md bg-[var(--bg-page)] hover:bg-[var(--bg-card-hover)] border border-[var(--border)] flex items-center justify-center disabled:opacity-30 transition text-[var(--text-body)]">
                                   <Minus className="w-2.5 h-2.5" />
                                 </button>
-                                <span className="text-white font-mono font-bold text-xs w-8 text-center">{p.stock}</span>
+                                <span className="text-[var(--text-dark)] font-mono font-bold text-xs w-8 text-center">{p.stock}</span>
                                 <button onClick={() => handleQuickStock(p, +1)}
-                                  className="w-5 h-5 rounded-md bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-center transition text-slate-400">
+                                  className="w-5 h-5 rounded-md bg-[var(--bg-page)] hover:bg-[var(--bg-card-hover)] border border-[var(--border)] flex items-center justify-center transition text-[var(--text-body)]">
                                   <Plus className="w-2.5 h-2.5" />
                                 </button>
                               </div>
                             </td>
                             <td className="p-4">
-                              {Number(p.stock) === 0
-                                ? <span className="px-3 py-1 rounded-full text-[11px] font-bold border border-red-500/40 text-red-400">Rupture</span>
-                                : Number(p.stock) <= 5
-                                ? <span className="px-3 py-1 rounded-full text-[11px] font-bold border border-amber-500/40 text-amber-400">Stock faible</span>
-                                : <span className="px-3 py-1 rounded-full text-[11px] font-bold border border-emerald-500/40 text-emerald-400">Disponible</span>
-                              }
+                              <StockBadge stock={Number(p.stock)} />
                             </td>
                             <td className="p-4 pr-5 text-right">
                               <div className="inline-flex items-center gap-1">
-                                <button onClick={() => openEdit(p)} className="p-2 rounded-lg text-slate-500 hover:text-amber-400 hover:bg-amber-500/10 transition" title="Modifier"><Edit2 className="w-3.5 h-3.5" /></button>
-                                <button onClick={() => handleDelete(p.id, p.name)} className="p-2 rounded-lg text-slate-500 hover:text-red-400 hover:bg-red-500/10 transition" title="Supprimer"><Trash2 className="w-3.5 h-3.5" /></button>
+                                <button onClick={() => openEdit(p)} className="p-2 rounded-lg text-[var(--text-muted)] hover:text-amber-500 hover:bg-amber-500/10 transition" title="Modifier"><Edit2 className="w-3.5 h-3.5" /></button>
+                                <button onClick={() => handleDelete(p.id, p.name)} className="p-2 rounded-lg text-[var(--text-muted)] hover:text-red-500 hover:bg-red-500/10 transition" title="Supprimer"><Trash2 className="w-3.5 h-3.5" /></button>
                               </div>
                             </td>
                           </tr>
@@ -845,18 +853,18 @@ export default function AdminPage() {
                 </div>
                 {/* Pagination */}
                 {filteredProducts.length > pageSize && (
-                  <div className="px-5 py-3.5 border-t border-white/5 flex items-center justify-between">
-                    <span className="text-[11px] text-slate-500">{(currentPage-1)*pageSize+1}–{Math.min(currentPage*pageSize, filteredProducts.length)} / {filteredProducts.length}</span>
+                  <div className="px-5 py-3.5 border-t border-[var(--border)] flex items-center justify-between">
+                    <span className="text-[11px] text-[var(--text-muted)]">{(currentPage-1)*pageSize+1}–{Math.min(currentPage*pageSize, filteredProducts.length)} / {filteredProducts.length}</span>
                     <div className="flex items-center gap-2">
                       <select value={pageSize} onChange={e => { setPageSize(Number(e.target.value)); setCurrentPage(1); }}
-                        className="px-3 py-1.5 rounded-lg bg-[#060614] border border-white/10 text-xs text-white focus:outline-none">
+                        className="px-3 py-1.5 rounded-lg bg-[var(--bg-page)] border border-[var(--border)] text-xs text-[var(--text-dark)] focus:outline-none">
                         {[10,25,50].map(n => <option key={n} value={n}>{n} / page</option>)}
                       </select>
                       <button onClick={() => setCurrentPage(p => Math.max(1, p-1))} disabled={currentPage <= 1}
-                        className="px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-xs text-white disabled:opacity-30 hover:bg-white/10 transition">Préc.</button>
-                      <span className="text-xs text-slate-400 px-2">{currentPage} / {totalPages}</span>
+                        className="px-3 py-1.5 rounded-lg bg-[var(--bg-page)] border border-[var(--border)] text-xs text-[var(--text-dark)] disabled:opacity-30 hover:bg-[var(--bg-card-hover)] transition">Préc.</button>
+                      <span className="text-xs text-[var(--text-body)] px-2">{currentPage} / {totalPages}</span>
                       <button onClick={() => setCurrentPage(p => Math.min(totalPages, p+1))} disabled={currentPage >= totalPages}
-                        className="px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-xs text-white disabled:opacity-30 hover:bg-white/10 transition">Suiv.</button>
+                        className="px-3 py-1.5 rounded-lg bg-[var(--bg-page)] border border-[var(--border)] text-xs text-[var(--text-dark)] disabled:opacity-30 hover:bg-[var(--bg-card-hover)] transition">Suiv.</button>
                     </div>
                   </div>
                 )}
@@ -870,16 +878,16 @@ export default function AdminPage() {
               {/* En-tête */}
               <div className="flex items-center justify-between">
                 <div>
-                  <div className="flex items-center gap-2 text-[11px] text-slate-500 mb-1">
+                  <div className="flex items-center gap-2 text-[11px] text-[var(--text-muted)] mb-1">
                     <span className="text-amber-500 font-semibold">Console</span>
                     <ChevronRight className="w-3 h-3" />
-                    <span className="text-white font-semibold">Commandes</span>
+                    <span className="text-[var(--text-dark)] font-semibold">Commandes</span>
                   </div>
-                  <h2 className="text-lg font-black text-white">Commandes WhatsApp</h2>
+                  <h2 className="text-lg font-black text-[var(--text-dark)]">Commandes WhatsApp</h2>
                 </div>
                 {/* Filtre statut commandes */}
                 <select value={orderStatusFilter} onChange={e => setOrderStatusFilter(e.target.value as any)}
-                  className="px-3 py-2 rounded-xl bg-[#0D0D20] border border-white/10 text-xs text-white focus:outline-none focus:border-amber-500">
+                  className="px-3 py-2 rounded-xl bg-[var(--bg-card)] border border-[var(--border)] text-xs text-[var(--text-dark)] focus:outline-none focus:border-amber-500">
                   <option value="ALL">Tous les statuts</option>
                   <option value="pending">En attente</option>
                   <option value="confirmed">Confirmées</option>
@@ -888,11 +896,11 @@ export default function AdminPage() {
                 </select>
               </div>
 
-            <div className="bg-[#0D0D20] border border-white/5 rounded-2xl overflow-hidden">
+            <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-2xl overflow-hidden shadow-xs">
               <div className="overflow-x-auto">
                 <table className="w-full text-xs">
                   <thead>
-                    <tr className="border-b border-white/5 text-slate-500 uppercase tracking-wider">
+                    <tr className="border-b border-[var(--border)] text-[var(--text-muted)] uppercase tracking-wider">
                       <th className="text-left p-4 pl-5 font-bold">N° commande</th>
                       <th className="text-left p-4 font-bold">Date</th>
                       <th className="text-left p-4 font-bold">Client</th>
@@ -902,27 +910,27 @@ export default function AdminPage() {
                       <th className="text-right p-4 pr-5 font-bold">Action</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-white/[0.04]">
+                  <tbody className="divide-y divide-[var(--border)]">
                     {pagedOrders.length === 0
-                      ? <tr><td colSpan={7} className="p-12 text-center text-slate-500">Aucune commande</td></tr>
+                      ? <tr><td colSpan={7} className="p-12 text-center text-[var(--text-muted)]">Aucune commande</td></tr>
                       : pagedOrders.map(o => (
-                        <tr key={o.id} className="hover:bg-white/[0.02] transition">
+                        <tr key={o.id} className="hover:bg-[var(--bg-card-hover)] transition">
                           <td className="p-4 pl-5 font-mono font-bold text-amber-500">#{o.id.slice(0,8)}</td>
-                          <td className="p-4 text-slate-400">{new Date(o.created_at).toLocaleDateString('fr-FR')}</td>
+                          <td className="p-4 text-[var(--text-muted)]">{new Date(o.created_at).toLocaleDateString('fr-FR')}</td>
                           <td className="p-4">
                             <div className="flex items-center gap-2">
-                              <div className="w-7 h-7 rounded-full bg-amber-500/20 border border-amber-500/30 flex items-center justify-center font-bold text-amber-400 text-[10px] shrink-0">
+                              <div className="w-7 h-7 rounded-full bg-amber-500/20 border border-amber-500/30 flex items-center justify-center font-bold text-amber-500 text-[10px] shrink-0">
                                 {o.customer_name?.[0]?.toUpperCase() || '?'}
                               </div>
-                              <span className="font-semibold text-white">{o.customer_name}</span>
+                              <span className="font-semibold text-[var(--text-dark)]">{o.customer_name}</span>
                             </div>
                           </td>
-                          <td className="p-4 text-slate-400 font-mono">{o.customer_phone || '—'}</td>
-                          <td className="p-4 font-black text-white font-mono">{Number(o.total).toLocaleString('fr-FR')} <span className="text-slate-500 font-normal">MAD</span></td>
+                          <td className="p-4 text-[var(--text-body)] font-mono">{o.customer_phone || '—'}</td>
+                          <td className="p-4 font-black text-[var(--text-dark)] font-mono">{Number(o.total).toLocaleString('fr-FR')} <span className="text-[var(--text-muted)] font-normal">MAD</span></td>
                           <td className="p-4"><StatusBadge status={o.status} /></td>
                           <td className="p-4 pr-5 text-right">
                             <button onClick={() => openWhatsApp(o.customer_phone, o.id, o.customer_name)}
-                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-400 text-[11px] font-semibold border border-emerald-500/30 transition">
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-600 dark:text-emerald-400 text-[11px] font-semibold border border-emerald-500/30 transition">
                               <MessageCircle className="w-3.5 h-3.5" />WhatsApp
                             </button>
                           </td>
@@ -933,12 +941,12 @@ export default function AdminPage() {
                 </table>
               </div>
               {orders.length > ORDER_PAGE_SIZE && (
-                <div className="px-5 py-3.5 border-t border-white/5 flex items-center justify-between">
-                  <span className="text-[11px] text-slate-500">{(orderPage-1)*ORDER_PAGE_SIZE+1}–{Math.min(orderPage*ORDER_PAGE_SIZE, orders.length)} / {orders.length}</span>
+                <div className="px-5 py-3.5 border-t border-[var(--border)] flex items-center justify-between">
+                  <span className="text-[11px] text-[var(--text-muted)]">{(orderPage-1)*ORDER_PAGE_SIZE+1}–{Math.min(orderPage*ORDER_PAGE_SIZE, orders.length)} / {orders.length}</span>
                   <div className="flex items-center gap-2">
-                    <button onClick={() => setOrderPage(p => Math.max(1,p-1))} disabled={orderPage<=1} className="px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-xs text-white disabled:opacity-30 hover:bg-white/10 transition">Préc.</button>
-                    <span className="text-xs text-slate-400 px-2">{orderPage} / {totalOrdPages}</span>
-                    <button onClick={() => setOrderPage(p => Math.min(totalOrdPages,p+1))} disabled={orderPage>=totalOrdPages} className="px-3 py-1.5 rounded-lg bg-white/5 border border-white/10 text-xs text-white disabled:opacity-30 hover:bg-white/10 transition">Suiv.</button>
+                    <button onClick={() => setOrderPage(p => Math.max(1,p-1))} disabled={orderPage<=1} className="px-3 py-1.5 rounded-lg bg-[var(--bg-page)] border border-[var(--border)] text-xs text-[var(--text-dark)] disabled:opacity-30 hover:bg-[var(--bg-card-hover)] transition">Préc.</button>
+                    <span className="text-xs text-[var(--text-body)] px-2">{orderPage} / {totalOrdPages}</span>
+                    <button onClick={() => setOrderPage(p => Math.min(totalOrdPages,p+1))} disabled={orderPage>=totalOrdPages} className="px-3 py-1.5 rounded-lg bg-[var(--bg-page)] border border-[var(--border)] text-xs text-[var(--text-dark)] disabled:opacity-30 hover:bg-[var(--bg-card-hover)] transition">Suiv.</button>
                   </div>
                 </div>
               )}
@@ -949,31 +957,31 @@ export default function AdminPage() {
           {/* ═══════ CATÉGORIES ═══════ */}
           {activeTab === 'categories' && (
             <div className="grid grid-cols-1 md:grid-cols-5 gap-6 items-start">
-              <div className="md:col-span-2 bg-[#0D0D20] border border-white/5 rounded-2xl p-6 space-y-4">
-                <h3 className="font-bold text-sm text-white">{editCat ? 'Renommer' : 'Nouvelle catégorie'}</h3>
+              <div className="md:col-span-2 bg-[var(--bg-card)] border border-[var(--border)] rounded-2xl p-6 space-y-4 shadow-xs">
+                <h3 className="font-bold text-sm text-[var(--text-dark)]">{editCat ? 'Renommer' : 'Nouvelle catégorie'}</h3>
                 <form onSubmit={handleSaveCat} className="space-y-3">
                   <input type="text" required value={catName} onChange={e => setCatName(e.target.value)}
                     placeholder="Ex: Apple iPhone"
-                    className="w-full px-4 py-2.5 rounded-xl bg-[#060614] border border-white/10 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-amber-500 transition" />
+                    className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-page)] border border-[var(--border)] text-xs text-[var(--text-dark)] placeholder-[var(--text-muted)] focus:outline-none focus:border-amber-500 transition" />
                   <div className="flex gap-2">
-                    {editCat && <button type="button" onClick={() => { setEditCat(null); setCatName(''); }} className="flex-1 py-2.5 rounded-xl border border-white/10 text-xs text-slate-400 hover:text-white hover:bg-white/5 transition">Annuler</button>}
-                    <button type="submit" className="flex-1 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-[#060614] text-xs font-bold transition">
+                    {editCat && <button type="button" onClick={() => { setEditCat(null); setCatName(''); }} className="flex-1 py-2.5 rounded-xl border border-[var(--border)] text-xs text-[var(--text-body)] hover:text-[var(--text-dark)] hover:bg-[var(--bg-card-hover)] transition">Annuler</button>}
+                    <button type="submit" className="flex-1 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-bold transition">
                       {editCat ? 'Sauvegarder' : 'Créer'}
                     </button>
                   </div>
                 </form>
               </div>
-              <div className="md:col-span-3 bg-[#0D0D20] border border-white/5 rounded-2xl overflow-hidden">
+              <div className="md:col-span-3 bg-[var(--bg-card)] border border-[var(--border)] rounded-2xl overflow-hidden shadow-xs">
                 <table className="w-full text-xs">
-                  <thead><tr className="border-b border-white/5 text-slate-500 uppercase tracking-wider"><th className="text-left p-4 pl-5 font-bold">Catégorie</th><th className="text-right p-4 pr-5 font-bold">Actions</th></tr></thead>
-                  <tbody className="divide-y divide-white/[0.04]">
+                  <thead><tr className="border-b border-[var(--border)] text-[var(--text-muted)] uppercase tracking-wider"><th className="text-left p-4 pl-5 font-bold">Catégorie</th><th className="text-right p-4 pr-5 font-bold">Actions</th></tr></thead>
+                  <tbody className="divide-y divide-[var(--border)]">
                     {categories.map(c => (
-                      <tr key={c.id} className="hover:bg-white/[0.02] transition">
-                        <td className="p-4 pl-5 font-semibold text-white">{c.name}</td>
+                      <tr key={c.id} className="hover:bg-[var(--bg-card-hover)] transition">
+                        <td className="p-4 pl-5 font-semibold text-[var(--text-dark)]">{c.name}</td>
                         <td className="p-4 pr-5 text-right">
                           <div className="inline-flex gap-1">
-                            <button onClick={() => { setEditCat(c); setCatName(c.name); }} className="p-2 rounded-lg text-slate-500 hover:text-amber-400 hover:bg-amber-500/10 transition"><Edit2 className="w-3.5 h-3.5" /></button>
-                            <button onClick={() => handleDeleteCat(c.id, c.name)} className="p-2 rounded-lg text-slate-500 hover:text-red-400 hover:bg-red-500/10 transition"><Trash2 className="w-3.5 h-3.5" /></button>
+                            <button onClick={() => { setEditCat(c); setCatName(c.name); }} className="p-2 rounded-lg text-[var(--text-muted)] hover:text-amber-500 hover:bg-amber-500/10 transition"><Edit2 className="w-3.5 h-3.5" /></button>
+                            <button onClick={() => handleDeleteCat(c.id, c.name)} className="p-2 rounded-lg text-[var(--text-muted)] hover:text-red-500 hover:bg-red-500/10 transition"><Trash2 className="w-3.5 h-3.5" /></button>
                           </div>
                         </td>
                       </tr>
@@ -986,38 +994,38 @@ export default function AdminPage() {
 
           {/* ═══════ UTILISATEURS ═══════ */}
           {activeTab === 'users' && (
-            <div className="bg-[#0D0D20] border border-white/5 rounded-2xl overflow-hidden">
+            <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-2xl overflow-hidden shadow-xs">
               <table className="w-full text-xs">
-                <thead><tr className="border-b border-white/5 text-slate-500 uppercase tracking-wider">
+                <thead><tr className="border-b border-[var(--border)] text-[var(--text-muted)] uppercase tracking-wider">
                   <th className="text-left p-4 pl-5 font-bold">Utilisateur</th>
                   <th className="text-left p-4 font-bold">Email</th>
                   <th className="text-left p-4 font-bold">Rôle</th>
                   <th className="text-left p-4 font-bold">Inscrit le</th>
                   <th className="text-right p-4 pr-5 font-bold">Action</th>
                 </tr></thead>
-                <tbody className="divide-y divide-white/[0.04]">
+                <tbody className="divide-y divide-[var(--border)]">
                   {usersList.length === 0
-                    ? <tr><td colSpan={5} className="p-8 text-center text-slate-500">Aucun utilisateur chargé</td></tr>
+                    ? <tr><td colSpan={5} className="p-8 text-center text-[var(--text-muted)]">Aucun utilisateur chargé</td></tr>
                     : usersList.map(u => (
-                      <tr key={u.id} className="hover:bg-white/[0.02] transition">
+                      <tr key={u.id} className="hover:bg-[var(--bg-card-hover)] transition">
                         <td className="p-4 pl-5">
                           <div className="flex items-center gap-2.5">
-                            <div className="w-8 h-8 rounded-full bg-amber-500/20 border border-amber-500/30 flex items-center justify-center font-bold text-amber-400 text-xs shrink-0">
+                            <div className="w-8 h-8 rounded-full bg-amber-500/20 border border-amber-500/30 flex items-center justify-center font-bold text-amber-500 text-xs shrink-0">
                               {u.name?.[0]?.toUpperCase() || '?'}
                             </div>
-                            <span className="font-semibold text-white">{u.name}</span>
+                            <span className="font-semibold text-[var(--text-dark)]">{u.name}</span>
                           </div>
                         </td>
-                        <td className="p-4 text-slate-400 font-mono">{u.email}</td>
+                        <td className="p-4 text-[var(--text-body)] font-mono">{u.email}</td>
                         <td className="p-4">
-                          <span className={`px-2.5 py-1 rounded-full text-[10px] font-black border ${u.role === 'admin' ? 'bg-amber-500/15 text-amber-400 border-amber-500/30' : 'bg-slate-500/15 text-slate-400 border-slate-500/30'}`}>
+                          <span className={`px-2.5 py-1 rounded-full text-[10px] font-black border ${u.role === 'admin' ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30' : 'bg-slate-500/15 text-[var(--text-body)] border-slate-500/30'}`}>
                             {u.role.toUpperCase()}
                           </span>
                         </td>
-                        <td className="p-4 text-slate-500">{new Date(u.created_at).toLocaleDateString('fr-FR')}</td>
+                        <td className="p-4 text-[var(--text-muted)]">{new Date(u.created_at).toLocaleDateString('fr-FR')}</td>
                         <td className="p-4 pr-5 text-right">
                           <button onClick={() => handleToggleRole(u)}
-                            className="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-[11px] text-slate-300 hover:text-white transition">
+                            className="px-3 py-1.5 rounded-xl bg-[var(--bg-page)] hover:bg-[var(--bg-card-hover)] border border-[var(--border)] text-[11px] text-[var(--text-body)] hover:text-[var(--text-dark)] transition">
                             {u.role === 'admin' ? '↓ Client' : '↑ Admin'}
                           </button>
                         </td>
@@ -1037,13 +1045,13 @@ export default function AdminPage() {
                 { label: 'Devise', value: 'Dirham Marocain (MAD)' },
                 { label: 'Mode de paiement', value: 'Cash on Delivery — validation WhatsApp', badge: 'Opérationnel' },
               ].map(({ label, value, note, badge }) => (
-                <div key={label} className="bg-[#0D0D20] border border-white/5 rounded-2xl p-5 space-y-2">
-                  <p className="text-[11px] font-bold text-slate-500 uppercase tracking-wider">{label}</p>
+                <div key={label} className="bg-[var(--bg-card)] border border-[var(--border)] rounded-2xl p-5 space-y-2 shadow-xs">
+                  <p className="text-[11px] font-bold text-[var(--text-muted)] uppercase tracking-wider">{label}</p>
                   <div className="flex items-center justify-between gap-3">
-                    <p className="text-sm font-semibold text-white">{value}</p>
-                    {badge && <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 shrink-0">{badge}</span>}
+                    <p className="text-sm font-semibold text-[var(--text-dark)]">{value}</p>
+                    {badge && <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 shrink-0">{badge}</span>}
                   </div>
-                  {note && <p className="text-[11px] text-slate-600">{note}</p>}
+                  {note && <p className="text-[11px] text-[var(--text-body)]">{note}</p>}
                 </div>
               ))}
             </div>
@@ -1055,55 +1063,55 @@ export default function AdminPage() {
       {/* ══════════ MODALE PRODUIT ══════════ */}
       {productModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
-          <div className="w-full max-w-lg bg-[#0D0D20] border border-white/10 rounded-3xl shadow-2xl max-h-[90vh] overflow-y-auto">
-            <div className="px-6 py-5 border-b border-white/5 flex items-center justify-between">
-              <h3 className="font-bold text-white">{editProduct ? 'Modifier le produit' : 'Nouveau produit'}</h3>
-              <button onClick={() => setProductModal(false)} className="p-1.5 rounded-lg text-slate-500 hover:text-white hover:bg-white/5 transition"><X className="w-5 h-5" /></button>
+          <div className="w-full max-w-lg bg-[var(--bg-card)] border border-[var(--border)] rounded-3xl shadow-2xl max-h-[90vh] overflow-y-auto">
+            <div className="px-6 py-5 border-b border-[var(--border)] flex items-center justify-between">
+              <h3 className="font-bold text-[var(--text-dark)]">{editProduct ? 'Modifier le produit' : 'Nouveau produit'}</h3>
+              <button onClick={() => setProductModal(false)} className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-dark)] hover:bg-[var(--bg-card-hover)] transition"><X className="w-5 h-5" /></button>
             </div>
             <form onSubmit={handleSaveProduct} className="p-6 space-y-4">
               <div>
-                <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Nom *</label>
+                <label className="block text-[11px] font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1.5">Nom *</label>
                 <input type="text" required value={productForm.name} onChange={e => setProductForm({...productForm, name: e.target.value})}
                   placeholder="Apple iPhone 16 Pro Max (256 Go)"
-                  className="w-full px-4 py-2.5 rounded-xl bg-[#060614] border border-white/10 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-amber-500 transition" />
+                  className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-page)] border border-[var(--border)] text-sm text-[var(--text-dark)] placeholder-[var(--text-muted)] focus:outline-none focus:border-amber-500 transition" />
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Prix (MAD) *</label>
+                  <label className="block text-[11px] font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1.5">Prix (MAD) *</label>
                   <input type="number" step="0.01" required value={productForm.price} onChange={e => setProductForm({...productForm, price: e.target.value})}
                     placeholder="16490"
-                    className="w-full px-4 py-2.5 rounded-xl bg-[#060614] border border-white/10 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-amber-500 transition font-mono" />
+                    className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-page)] border border-[var(--border)] text-sm text-[var(--text-dark)] placeholder-[var(--text-muted)] focus:outline-none focus:border-amber-500 transition font-mono" />
                 </div>
                 <div>
-                  <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Stock *</label>
+                  <label className="block text-[11px] font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1.5">Stock *</label>
                   <input type="number" required value={productForm.stock} onChange={e => setProductForm({...productForm, stock: e.target.value})}
                     placeholder="15"
-                    className="w-full px-4 py-2.5 rounded-xl bg-[#060614] border border-white/10 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-amber-500 transition font-mono" />
+                    className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-page)] border border-[var(--border)] text-sm text-[var(--text-dark)] placeholder-[var(--text-muted)] focus:outline-none focus:border-amber-500 transition font-mono" />
                 </div>
               </div>
               <div>
-                <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Catégorie</label>
+                <label className="block text-[11px] font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1.5">Catégorie</label>
                 <select value={productForm.category_id} onChange={e => setProductForm({...productForm, category_id: e.target.value})}
-                  className="w-full px-4 py-2.5 rounded-xl bg-[#060614] border border-white/10 text-sm text-white focus:outline-none focus:border-amber-500">
+                  className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-page)] border border-[var(--border)] text-sm text-[var(--text-dark)] focus:outline-none focus:border-amber-500">
                   <option value="">— Sélectionner —</option>
                   {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                 </select>
               </div>
               <div>
-                <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">URL Image</label>
+                <label className="block text-[11px] font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1.5">URL Image</label>
                 <input type="url" value={productForm.image_url} onChange={e => setProductForm({...productForm, image_url: e.target.value})}
                   placeholder="https://…"
-                  className="w-full px-4 py-2.5 rounded-xl bg-[#060614] border border-white/10 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-amber-500 transition" />
+                  className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-page)] border border-[var(--border)] text-sm text-[var(--text-dark)] placeholder-[var(--text-muted)] focus:outline-none focus:border-amber-500 transition" />
               </div>
               <div>
-                <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">Description</label>
+                <label className="block text-[11px] font-bold text-[var(--text-muted)] uppercase tracking-wider mb-1.5">Description</label>
                 <textarea rows={3} value={productForm.description} onChange={e => setProductForm({...productForm, description: e.target.value})}
                   placeholder="Écran 6.9'' OLED 120Hz, puce A18 Pro…"
-                  className="w-full px-4 py-2.5 rounded-xl bg-[#060614] border border-white/10 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-amber-500 transition resize-none" />
+                  className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-page)] border border-[var(--border)] text-sm text-[var(--text-dark)] placeholder-[var(--text-muted)] focus:outline-none focus:border-amber-500 transition resize-none" />
               </div>
               <div className="flex gap-3 pt-2">
-                <button type="button" onClick={() => setProductModal(false)} className="flex-1 py-2.5 rounded-xl border border-white/10 text-sm text-slate-400 hover:text-white hover:bg-white/5 transition">Annuler</button>
-                <button type="submit" className="flex-1 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-[#060614] text-sm font-bold transition">
+                <button type="button" onClick={() => setProductModal(false)} className="flex-1 py-2.5 rounded-xl border border-[var(--border)] text-sm text-[var(--text-body)] hover:text-[var(--text-dark)] hover:bg-[var(--bg-card-hover)] transition">Annuler</button>
+                <button type="submit" className="flex-1 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-sm font-bold transition">
                   {editProduct ? 'Mettre à jour' : 'Créer'}
                 </button>
               </div>
@@ -1115,18 +1123,18 @@ export default function AdminPage() {
       {/* ══════════ MODALE CATÉGORIE ══════════ */}
       {catModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
-          <div className="w-full max-w-sm bg-[#0D0D20] border border-white/10 rounded-3xl shadow-2xl">
-            <div className="px-6 py-5 border-b border-white/5 flex items-center justify-between">
-              <h3 className="font-bold text-white">{editCat ? 'Renommer' : 'Nouvelle catégorie'}</h3>
-              <button onClick={() => setCatModal(false)} className="p-1.5 rounded-lg text-slate-500 hover:text-white hover:bg-white/5 transition"><X className="w-5 h-5" /></button>
+          <div className="w-full max-w-sm bg-[var(--bg-card)] border border-[var(--border)] rounded-3xl shadow-2xl">
+            <div className="px-6 py-5 border-b border-[var(--border)] flex items-center justify-between">
+              <h3 className="font-bold text-[var(--text-dark)]">{editCat ? 'Renommer' : 'Nouvelle catégorie'}</h3>
+              <button onClick={() => setCatModal(false)} className="p-1.5 rounded-lg text-[var(--text-muted)] hover:text-[var(--text-dark)] hover:bg-[var(--bg-card-hover)] transition"><X className="w-5 h-5" /></button>
             </div>
             <form onSubmit={handleSaveCat} className="p-6 space-y-4">
               <input type="text" required value={catName} onChange={e => setCatName(e.target.value)}
                 placeholder="Ex: Apple iPhone"
-                className="w-full px-4 py-2.5 rounded-xl bg-[#060614] border border-white/10 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-amber-500 transition" />
+                className="w-full px-4 py-2.5 rounded-xl bg-[var(--bg-page)] border border-[var(--border)] text-sm text-[var(--text-dark)] placeholder-[var(--text-muted)] focus:outline-none focus:border-amber-500 transition" />
               <div className="flex gap-3">
-                <button type="button" onClick={() => setCatModal(false)} className="flex-1 py-2.5 rounded-xl border border-white/10 text-sm text-slate-400 hover:text-white hover:bg-white/5 transition">Annuler</button>
-                <button type="submit" className="flex-1 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-[#060614] text-sm font-bold transition">
+                <button type="button" onClick={() => setCatModal(false)} className="flex-1 py-2.5 rounded-xl border border-[var(--border)] text-sm text-[var(--text-body)] hover:text-[var(--text-dark)] hover:bg-[var(--bg-card-hover)] transition">Annuler</button>
+                <button type="submit" className="flex-1 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-sm font-bold transition">
                   {editCat ? 'Sauvegarder' : 'Créer'}
                 </button>
               </div>

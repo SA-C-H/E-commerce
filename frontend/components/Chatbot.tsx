@@ -365,7 +365,7 @@ export default function Chatbot() {
         <div
           role="dialog"
           aria-label="Fenêtre de chat"
-          className="fixed bottom-24 right-4 sm:right-6 z-50 w-[92vw] sm:w-[410px] h-[560px] max-h-[82vh] bg-white rounded-3xl shadow-2xl border border-slate-200 flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-5 duration-200"
+          className="fixed bottom-24 right-4 sm:right-6 z-50 w-[92vw] sm:w-[410px] h-[560px] max-h-[82vh] bg-[var(--bg-card)] rounded-3xl shadow-2xl border border-[var(--border)] flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-5 duration-200"
         >
           {/* EN-TÊTE DU CHATBOT */}
           <div
@@ -424,12 +424,12 @@ export default function Chatbot() {
 
           {/* BANDEAU CONTEXTUEL INFORMATIF */}
           <div
-            className={`px-3.5 py-1.5 text-[11px] font-medium flex items-center justify-between ${
-              isAdminArea ? 'bg-indigo-50 text-indigo-900 border-b border-indigo-100' : 'bg-amber-50 text-amber-900 border-b border-amber-100'
+            className={`px-3.5 py-1.5 text-[11px] font-medium flex items-center justify-between bg-[var(--bg-page)] border-b border-[var(--border)] ${
+              isAdminArea ? 'text-indigo-500' : 'text-amber-500'
             }`}
           >
             <span className="flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-amber-600" />
+              <Sparkles className="w-3.5 h-3.5 text-amber-500" />
               {isAdminArea
                 ? 'Mode Administration actif (Commandes, Stocks, Rôles)'
                 : 'Mode Boutique client actif (Livraison, SAV, Produits)'}
@@ -437,7 +437,7 @@ export default function Chatbot() {
           </div>
 
           {/* CORPS DE DISCUSSION (MESSAGES) */}
-          <div className="flex-1 p-4 overflow-y-auto space-y-3.5 bg-slate-50/60 text-sm">
+          <div className="flex-1 p-4 overflow-y-auto space-y-3.5 bg-[var(--bg-page)] text-sm">
             {messages.map((msg) => (
               <div
                 key={msg.id}
@@ -446,18 +446,18 @@ export default function Chatbot() {
                 <div
                   className={`max-w-[85%] rounded-2xl px-4 py-3 leading-relaxed shadow-sm text-[13px] ${
                     msg.sender === 'user'
-                      ? 'bg-slate-900 text-white rounded-br-xs'
-                      : 'bg-white text-slate-800 border border-slate-200/80 rounded-bl-xs'
+                      ? 'bg-amber-500 text-slate-950 font-medium rounded-br-xs'
+                      : 'bg-[var(--bg-card)] text-[var(--text-dark)] border border-[var(--border)] rounded-bl-xs'
                   }`}
                 >
                   <div className="whitespace-pre-line">{msg.text}</div>
 
                   {/* Lien contextuel direct si applicable */}
                   {msg.link && (
-                    <div className="mt-2.5 pt-2 border-t border-slate-100">
+                    <div className="mt-2.5 pt-2 border-t border-[var(--border)]">
                       <a
                         href={msg.link.url}
-                        className="inline-flex items-center gap-1.5 text-[12px] font-semibold text-indigo-600 hover:text-indigo-800 transition"
+                        className="inline-flex items-center gap-1.5 text-[12px] font-semibold text-amber-500 hover:text-amber-400 transition"
                       >
                         <span>{msg.link.label}</span>
                         <ExternalLink className="w-3.5 h-3.5" />
@@ -467,9 +467,9 @@ export default function Chatbot() {
                 </div>
 
                 <div className="flex items-center gap-1.5 px-1 mt-1">
-                  <span className="text-[10px] text-slate-400">{msg.timestamp}</span>
+                  <span className="text-[10px] text-[var(--text-muted)]">{msg.timestamp}</span>
                   {msg.isAi && (
-                    <span className="inline-flex items-center gap-0.5 text-[9px] font-bold text-indigo-600 bg-indigo-50 border border-indigo-200/60 rounded-full px-1.5 py-0.2">
+                    <span className="inline-flex items-center gap-0.5 text-[9px] font-bold text-amber-500 bg-amber-500/15 border border-amber-500/30 rounded-full px-1.5 py-0.2">
                       ✦ IA Cadrée
                     </span>
                   )}
@@ -482,7 +482,7 @@ export default function Chatbot() {
                       <button
                         key={idx}
                         onClick={() => handleSendMessage(sug)}
-                        className="text-[11px] font-medium bg-white hover:bg-slate-100 text-slate-700 border border-slate-200 rounded-full px-3 py-1 shadow-xs transition hover:border-slate-300 text-left"
+                        className="text-[11px] font-medium bg-[var(--bg-card)] hover:bg-[var(--bg-card-hover)] text-[var(--text-body)] hover:text-[var(--text-dark)] border border-[var(--border)] rounded-full px-3 py-1 shadow-xs transition text-left"
                       >
                         {sug}
                       </button>
@@ -494,14 +494,14 @@ export default function Chatbot() {
 
             {/* Indicateur de frappe */}
             {isTyping && (
-              <div className="flex items-center gap-2 text-slate-400 text-xs py-1">
-                <div className="w-7 h-7 rounded-xl bg-slate-200/80 flex items-center justify-center">
-                  <Bot className="w-4 h-4 text-slate-600 animate-pulse" />
+              <div className="flex items-center gap-2 text-[var(--text-muted)] text-xs py-1">
+                <div className="w-7 h-7 rounded-xl bg-[var(--bg-card)] border border-[var(--border)] flex items-center justify-center">
+                  <Bot className="w-4 h-4 text-amber-500 animate-pulse" />
                 </div>
-                <div className="flex items-center gap-1 bg-white border border-slate-200 px-3 py-1.5 rounded-full shadow-xs">
-                  <span className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
-                  <span className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce [animation-delay:-0.15s]"></span>
-                  <span className="w-1.5 h-1.5 bg-slate-400 rounded-full animate-bounce"></span>
+                <div className="flex items-center gap-1 bg-[var(--bg-card)] border border-[var(--border)] px-3 py-1.5 rounded-full shadow-xs">
+                  <span className="w-1.5 h-1.5 bg-amber-500 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
+                  <span className="w-1.5 h-1.5 bg-amber-500 rounded-full animate-bounce [animation-delay:-0.15s]"></span>
+                  <span className="w-1.5 h-1.5 bg-amber-500 rounded-full animate-bounce"></span>
                 </div>
               </div>
             )}
@@ -515,14 +515,14 @@ export default function Chatbot() {
               e.preventDefault();
               handleSendMessage();
             }}
-            className="p-3 bg-white border-t border-slate-100 flex items-center gap-2"
+            className="p-3 bg-[var(--bg-card)] border-t border-[var(--border)] flex items-center gap-2"
           >
             <input
               type="text"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               placeholder={isAdminArea ? "Poser une question sur le Back-Office..." : "Poser une question sur le site..."}
-              className="flex-1 bg-slate-100/80 border border-slate-200 text-slate-800 text-xs sm:text-sm rounded-full px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition"
+              className="flex-1 bg-[var(--bg-page)] border border-[var(--border)] text-[var(--text-dark)] placeholder-[var(--text-muted)] text-xs sm:text-sm rounded-full px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-amber-500 transition"
             />
             <button
               type="submit"
@@ -530,8 +530,8 @@ export default function Chatbot() {
               aria-label="Envoyer"
               className={`p-2.5 rounded-full transition shadow-xs ${
                 inputValue.trim()
-                  ? 'bg-slate-900 text-white hover:bg-slate-800 active:scale-95'
-                  : 'bg-slate-100 text-slate-300 cursor-not-allowed'
+                  ? 'bg-amber-500 text-slate-950 font-bold hover:bg-amber-400 active:scale-95'
+                  : 'bg-[var(--bg-page)] text-[var(--text-muted)] border border-[var(--border)] cursor-not-allowed'
               }`}
             >
               <Send className="w-4 h-4" />

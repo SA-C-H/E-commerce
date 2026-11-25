@@ -94,11 +94,11 @@ export default function ProductCard({ product }: { product: Product }) {
           {/* Badge Catégorie / Authenticité */}
           <div className="absolute top-2.5 left-2.5 z-10 flex flex-col gap-1 items-start">
             {product.categories?.name ? (
-              <span className="px-2.5 py-1 rounded-full text-[9px] font-extrabold tracking-wider uppercase bg-white/95 text-slate-900 shadow-sm border border-slate-200/80 backdrop-blur-md">
+              <span className="px-2.5 py-1 rounded-full text-[9px] font-extrabold tracking-wider uppercase bg-[var(--bg-card)]/90 text-[var(--text-dark)] shadow-sm border border-[var(--border)] backdrop-blur-md">
                 {product.categories.name}
               </span>
             ) : (
-              <span className="px-2.5 py-0.5 rounded-full text-[9px] font-black tracking-widest uppercase bg-amber-500 text-white shadow-xs">
+              <span className="px-2.5 py-0.5 rounded-full text-[9px] font-black tracking-widest uppercase bg-amber-500 text-slate-950 shadow-xs">
                 ✦ OFFICIEL
               </span>
             )}
@@ -107,8 +107,8 @@ export default function ProductCard({ product }: { product: Product }) {
           {/* Badge Stock avec point statut */}
           <span className={`absolute top-2.5 right-2.5 z-10 px-2.5 py-1 rounded-full text-[10px] font-bold shadow-sm backdrop-blur-md flex items-center gap-1.5 ${
             isOutOfStock
-              ? 'bg-red-50/95 text-red-600 border border-red-200'
-              : 'bg-white/95 text-emerald-700 border border-emerald-200'
+              ? 'bg-red-500/15 text-red-600 dark:text-red-400 border border-red-500/30'
+              : 'bg-[var(--bg-card)]/90 text-emerald-600 dark:text-emerald-400 border border-[var(--border)]'
           }`}>
             <span className={`w-1.5 h-1.5 rounded-full ${isOutOfStock ? 'bg-red-500' : 'bg-emerald-500 animate-pulse'}`} />
             {isOutOfStock ? 'Épuisé' : `En stock`}
