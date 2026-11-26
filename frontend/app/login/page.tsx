@@ -40,8 +40,13 @@ function LoginForm() {
   };
 
   const inputClass =
-    'w-full px-5 py-3.5 rounded-xl text-sm text-white placeholder-[#64748B] outline-none transition focus:ring-2 focus:ring-amber-500/40';
-  const inputStyle = { backgroundColor: '#1E2435', border: '1px solid #2A3045' };
+    'w-full px-5 py-3.5 rounded-xl text-sm outline-none transition focus:ring-2 focus:ring-amber-500/40';
+  const inputStyle = {
+    backgroundColor: '#1E2435',
+    border: '1px solid #2A3045',
+    color: '#F8FAFC',
+    colorScheme: 'dark' as const,
+  };
 
   return (
     <div
