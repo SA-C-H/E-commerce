@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import {
-  ShoppingBag, User as UserIcon, LogOut, Menu, X,
+  ShoppingBag, User as UserIcon, Menu, X,
   Search, MessageCircle, Grid, ChevronDown, ChevronRight,
   MapPin, Smartphone, Laptop, Tablet, Gamepad2, Star,
 } from 'lucide-react';
@@ -11,6 +11,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useCartStore } from '@/store/cartStore';
 import { useAuthStore } from '@/store/authStore';
 import ThemeSwitch from '@/components/ThemeSwitch';
+import ProfileModal from '@/components/ProfileModal';
 
 /* ── Catégories du mega menu ── */
 const megaCategories = [
@@ -73,11 +74,12 @@ export default function Navbar() {
   const [hoveredCat, setHoveredCat] = useState(0);
   const [mounted, setMounted] = useState(false);
   const [navBottom, setNavBottom] = useState(105);
+  const [profileOpen, setProfileOpen] = useState(false);
   const megaRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLElement>(null);
 
   const totalCount = useCartStore((state) => state.getTotalCount());
-  const { user, isAuthenticated, logout } = useAuthStore();
+  const { user, isAuthenticated } = useAuthStore();
 
   useEffect(() => { setMounted(true); }, []);
 
@@ -188,15 +190,13 @@ export default function Navbar() {
 
               {mounted && isAuthenticated ? (
                 <div className="flex items-center gap-1">
-                  <Link href="/orders"
-                    className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-[var(--text-dark)] hover:text-amber-500 transition rounded-xl hover:bg-[var(--bg-page)]">
+                  <button
+                    onClick={() => setProfileOpen(true)}
+                    className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-[var(--text-dark)] hover:text-amber-500 transition rounded-xl hover:bg-[var(--bg-page)]"
+                    title="Voir mon profil"
+                  >
                     <UserIcon className="w-4 h-4 stroke-[2]" />
                     <span className="hidden sm:inline">{user?.name?.split(' ')[0]}</span>
-                  </Link>
-                  <button onClick={logout}
-                    className="flex items-center justify-center w-9 h-9 text-[var(--text-muted)] hover:text-red-500 transition rounded-xl hover:bg-[var(--bg-page)]"
-                    title="Se déconnecter">
-                    <LogOut className="w-4 h-4" />
                   </button>
                 </div>
               ) : (
@@ -434,6 +434,9 @@ export default function Navbar() {
           </div>
         )}
       </header>
+
+      {/* ── Modal Profil ── */}
+      <ProfileModal open={profileOpen} onClose={() => setProfileOpen(false)} />
     </>
   );
 }

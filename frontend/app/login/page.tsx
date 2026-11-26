@@ -1,23 +1,24 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useState, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
 import { api, ApiError } from '@/lib/api';
 import { toast } from 'sonner';
-import { Lock, Mail, ArrowRight, ShieldCheck, Zap, Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, ArrowRight } from 'lucide-react';
 
 function LoginForm() {
-  const router = useRouter();
+  const router       = useRouter();
   const searchParams = useSearchParams();
-  const rawRedirect = searchParams.get('redirect') || '/';
-  const redirectUrl = rawRedirect.startsWith('/') && !rawRedirect.startsWith('//') ? rawRedirect : '/';
+  const rawRedirect  = searchParams.get('redirect') || '/';
+  const redirectUrl  = rawRedirect.startsWith('/') && !rawRedirect.startsWith('//') ? rawRedirect : '/';
 
-  const [email, setEmail]       = useState('');
+  const [email,    setEmail]    = useState('');
   const [password, setPassword] = useState('');
-  const [showPwd, setShowPwd]   = useState(false);
-  const [loading, setLoading]   = useState(false);
+  const [showPwd,  setShowPwd]  = useState(false);
+  const [loading,  setLoading]  = useState(false);
   const loginStore = useAuthStore((s) => s.login);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -38,98 +39,153 @@ function LoginForm() {
     }
   };
 
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-[var(--bg-page)] px-4 py-12">
-      <div className="w-full max-w-md">
+  const inputClass =
+    'w-full px-5 py-3.5 rounded-xl text-sm text-white placeholder-[#64748B] outline-none transition focus:ring-2 focus:ring-amber-500/40';
+  const inputStyle = { backgroundColor: '#1E2435', border: '1px solid #2A3045' };
 
-        {/* Logo */}
-        <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-baseline gap-1 mb-6">
-            <span className="font-black text-2xl text-amber-500 tracking-tight">TechNova</span>
-            <span className="px-1.5 py-0.5 bg-amber-500 text-white text-[9px] font-black rounded tracking-widest uppercase">.ma</span>
+  return (
+    <div
+      className="min-h-screen flex items-center justify-center p-4"
+      style={{ backgroundColor: '#0B0F1A' }}
+    >
+      <div
+        className="flex w-full overflow-hidden rounded-2xl shadow-2xl"
+        style={{ maxWidth: '780px', minHeight: '480px', border: '1px solid #1E2435' }}
+      >
+
+        {/* ── PANNEAU GAUCHE — Formulaire ── */}
+        <div
+          className="flex flex-1 flex-col justify-center px-10 py-12"
+          style={{ backgroundColor: '#141926' }}
+        >
+          {/* Logo */}
+          <Link href="/" className="inline-flex items-baseline gap-1 mb-10 w-fit">
+            <span className="font-black text-xl text-amber-500 tracking-tight">TechNova</span>
+            <span className="px-1.5 py-0.5 bg-amber-500 text-[#0B0F1A] text-[8px] font-black rounded tracking-widest uppercase">.ma</span>
           </Link>
 
-          <div className="w-12 h-12 rounded-2xl bg-[var(--bg-card)] border border-[var(--border)] flex items-center justify-center mx-auto mb-5 shadow-sm">
-            <Zap className="w-6 h-6 text-amber-500" />
+          {/* Titre */}
+          <div className="mb-7">
+            <h1 className="text-2xl font-black text-white leading-tight mb-1">
+              Welcome Back!
+            </h1>
+            <p className="text-sm" style={{ color: '#94A3B8' }}>
+              Enter your info to Sign In
+            </p>
           </div>
-          <h1 className="text-3xl font-black text-[var(--text-dark)] leading-tight">
-            Bon retour !
-          </h1>
-          <p className="text-[var(--text-body)] mt-2 text-sm">
-            Connectez-vous pour accéder à vos commandes et votre panier sauvegardé.
-          </p>
-        </div>
 
-        {/* Card formulaire */}
-        <div className="bg-[var(--bg-card)] rounded-3xl border border-[var(--border)] shadow-sm p-8">
-          <form onSubmit={handleSubmit} className="space-y-5">
+          {/* Formulaire */}
+          <form onSubmit={handleSubmit} className="space-y-3 w-full">
 
             {/* Email */}
-            <div>
-              <label className="block text-xs font-bold tracking-wider uppercase text-[var(--text-dark)] mb-2">
-                Adresse email
-              </label>
-              <div className="relative">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)]" />
-                <input
-                  type="email" required
-                  value={email} onChange={(e) => setEmail(e.target.value)}
-                  placeholder="nom@exemple.com"
-                  className="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-[var(--bg-page)] border border-[var(--border)] text-sm text-[var(--text-dark)] placeholder-[var(--text-muted)] focus:outline-none focus:border-amber-500 transition"
-                />
-              </div>
-            </div>
+            <input
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Email"
+              className={inputClass}
+              style={inputStyle}
+            />
 
             {/* Mot de passe */}
-            <div>
-              <label className="block text-xs font-bold tracking-wider uppercase text-[var(--text-dark)] mb-2">
-                Mot de passe
-              </label>
-              <div className="relative">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)]" />
-                <input
-                  type={showPwd ? 'text' : 'password'} required
-                  value={password} onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  className="w-full pl-11 pr-12 py-3.5 rounded-2xl bg-[var(--bg-page)] border border-[var(--border)] text-sm text-[var(--text-dark)] placeholder-[var(--text-muted)] focus:outline-none focus:border-amber-500 transition"
-                />
-                <button type="button" onClick={() => setShowPwd(!showPwd)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-[var(--text-dark)] transition">
-                  {showPwd ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
-              </div>
+            <div className="relative">
+              <input
+                type={showPwd ? 'text' : 'password'}
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Password"
+                className={`${inputClass} pr-12`}
+                style={inputStyle}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPwd(!showPwd)}
+                className="absolute right-4 top-1/2 -translate-y-1/2 transition"
+                style={{ color: '#64748B' }}
+              >
+                {showPwd ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
             </div>
 
-            {/* Bouton */}
+            {/* Bouton Sign In */}
             <button
-              type="submit" disabled={loading}
-              className="w-full py-4 rounded-2xl bg-[#0F172A] hover:bg-amber-500 hover:text-[#0F172A] text-white font-bold text-sm flex items-center justify-center gap-2 transition shadow-sm disabled:opacity-50 mt-2"
+              type="submit"
+              disabled={loading}
+              className="w-full py-3.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all disabled:opacity-50"
+              style={{
+                background: loading
+                  ? '#374151'
+                  : 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)',
+                color: '#0B0F1A',
+                boxShadow: '0 4px 20px rgba(245,158,11,0.25)',
+              }}
             >
               {loading ? (
-                <span className="flex items-center gap-2">
-                  <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                <>
+                  <span className="w-4 h-4 border-2 border-[#0B0F1A]/30 border-t-[#0B0F1A] rounded-full animate-spin" />
                   Connexion...
-                </span>
+                </>
               ) : (
-                <>Se connecter <ArrowRight className="w-4 h-4" /></>
+                <>
+                  Sign In
+                  <ArrowRight className="w-4 h-4" />
+                </>
               )}
             </button>
           </form>
 
-          <div className="mt-6 pt-6 border-t border-[var(--border)]">
-            <p className="text-sm text-center text-[var(--text-body)]">
-              Pas encore de compte ?{' '}
-              <Link href="/register" className="text-amber-500 font-bold hover:underline">
-                Créer un compte gratuit
-              </Link>
-            </p>
-          </div>
+          {/* Lien inscription */}
+          <p className="mt-6 text-sm" style={{ color: '#64748B' }}>
+            Pas encore de compte ?{' '}
+            <Link href="/register" className="font-bold hover:underline" style={{ color: '#F59E0B' }}>
+              Créer un compte
+            </Link>
+          </p>
         </div>
 
-        {/* Sécurité */}
-        <div className="flex items-center justify-center gap-2 mt-6 text-xs text-[var(--text-muted)]">
-          <ShieldCheck className="w-4 h-4 text-amber-500" />
-          Connexion sécurisée — données protégées
+        {/* ── PANNEAU DROIT — Visuel ── */}
+        <div
+          className="hidden lg:flex w-64 relative items-center justify-center overflow-hidden shrink-0"
+          style={{ backgroundColor: '#0D1117' }}
+        >
+          {/* Orbes lumineux */}
+          <div
+            className="absolute w-72 h-72 rounded-full blur-3xl opacity-20"
+            style={{ background: 'radial-gradient(circle, #F59E0B, #92400E)', top: '-5%', right: '-20%' }}
+          />
+          <div
+            className="absolute w-48 h-48 rounded-full blur-3xl opacity-15"
+            style={{ background: 'radial-gradient(circle, #D97706, #0B0F1A)', bottom: '5%', left: '-10%' }}
+          />
+
+          {/* Disque central — Logo */}
+          <div className="relative z-10 flex items-center justify-center">
+            <div className="absolute w-56 h-56 rounded-full border opacity-10" style={{ borderColor: '#F59E0B' }} />
+            <div className="absolute w-40 h-40 rounded-full border opacity-15" style={{ borderColor: '#F59E0B' }} />
+            <div
+              className="relative w-36 h-36 rounded-full flex items-center justify-center overflow-hidden"
+              style={{
+                background: 'radial-gradient(circle at 40% 35%, #1E2435, #0D1117)',
+                boxShadow: '0 0 60px rgba(245,158,11,0.3)',
+              }}
+            >
+              <Image
+                src="/logo.png"
+                alt="TechNova Logo"
+                width={110}
+                height={110}
+                className="object-contain drop-shadow-xl"
+              />
+            </div>
+          </div>
+
+          <div className="absolute bottom-6 left-0 right-0 text-center">
+            <p className="text-[9px] font-semibold tracking-widest uppercase" style={{ color: '#374151' }}>
+              L'Expert Tech
+            </p>
+          </div>
         </div>
 
       </div>
@@ -140,7 +196,7 @@ function LoginForm() {
 export default function LoginPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-[var(--bg-page)]">
+      <div className="min-h-screen flex items-center justify-center" style={{ backgroundColor: '#0B0F1A' }}>
         <div className="w-8 h-8 border-2 border-amber-500 border-t-transparent rounded-full animate-spin" />
       </div>
     }>

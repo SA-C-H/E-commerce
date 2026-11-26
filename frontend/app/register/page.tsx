@@ -1,28 +1,33 @@
 'use client';
+'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/authStore';
 import { api, ApiError } from '@/lib/api';
 import { toast } from 'sonner';
-import { Lock, Mail, User, ArrowRight, ShieldCheck, Eye, EyeOff, UserPlus } from 'lucide-react';
+import { Eye, EyeOff, ArrowRight } from 'lucide-react';
 
 export default function RegisterPage() {
   const router = useRouter();
 
-  const [name, setName]         = useState('');
-  const [email, setEmail]       = useState('');
+  const [name,     setName]     = useState('');
+  const [email,    setEmail]    = useState('');
   const [password, setPassword] = useState('');
-  const [showPwd, setShowPwd]   = useState(false);
-  const [loading, setLoading]   = useState(false);
+  const [showPwd,  setShowPwd]  = useState(false);
+  const [loading,  setLoading]  = useState(false);
 
   const loginStore = useAuthStore((s) => s.login);
 
   /* Force mot de passe */
-  const pwdStrength = password.length === 0 ? 0 : password.length < 8 ? 1 : password.length < 12 ? 2 : 3;
+  const pwdStrength =
+    password.length === 0 ? 0 :
+    password.length < 8   ? 1 :
+    password.length < 12  ? 2 : 3;
+  const strengthColor = ['', '#EF4444', '#F59E0B', '#10B981'];
   const strengthLabel = ['', 'Trop court', 'Correct', 'Fort'];
-  const strengthColor = ['', 'bg-red-500', 'bg-amber-400', 'bg-emerald-500'];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,7 +44,7 @@ export default function RegisterPage() {
       });
       loginStore(res.user, res.token);
       toast.success('Compte créé avec succès ! Bienvenue 🎉');
-      router.push('/orders');
+      router.push('/');
     } catch (err: unknown) {
       toast.error(err instanceof ApiError ? err.message : "Échec de l'inscription.");
     } finally {
@@ -47,98 +52,106 @@ export default function RegisterPage() {
     }
   };
 
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-[var(--bg-page)] px-4 py-12">
-      <div className="w-full max-w-md">
+  const inputClass =
+    'w-full px-5 py-3.5 rounded-xl text-sm text-white placeholder-[#64748B] outline-none transition focus:ring-2 focus:ring-amber-500/40';
+  const inputStyle = { backgroundColor: '#1E2435', border: '1px solid #2A3045' };
 
-        {/* Logo */}
-        <div className="text-center mb-8">
-          <Link href="/" className="inline-flex items-baseline gap-1 mb-6">
-            <span className="font-black text-2xl text-amber-500 tracking-tight">TechNova</span>
-            <span className="px-1.5 py-0.5 bg-amber-500 text-white text-[9px] font-black rounded tracking-widest uppercase">.ma</span>
+  return (
+    <div
+      className="min-h-screen flex items-center justify-center p-4"
+      style={{ backgroundColor: '#0B0F1A' }}
+    >
+      <div
+        className="flex w-full overflow-hidden rounded-2xl shadow-2xl"
+        style={{ maxWidth: '780px', minHeight: '520px', border: '1px solid #1E2435' }}
+      >
+
+        {/* ── PANNEAU GAUCHE — Formulaire ── */}
+        <div
+          className="flex flex-1 flex-col justify-center px-10 py-10"
+          style={{ backgroundColor: '#141926' }}
+        >
+          {/* Logo */}
+          <Link href="/" className="inline-flex items-baseline gap-1 mb-8 w-fit">
+            <span className="font-black text-xl text-amber-500 tracking-tight">TechNova</span>
+            <span className="px-1.5 py-0.5 bg-amber-500 text-[#0B0F1A] text-[8px] font-black rounded tracking-widest uppercase">.ma</span>
           </Link>
 
-          <div className="w-12 h-12 rounded-2xl bg-[var(--bg-card)] border border-[var(--border)] flex items-center justify-center mx-auto mb-5 shadow-sm">
-            <UserPlus className="w-6 h-6 text-amber-500" />
+          {/* Titre */}
+          <div className="mb-6">
+            <h1 className="text-2xl font-black text-white leading-tight mb-1">
+              Create Account
+            </h1>
+            <p className="text-sm" style={{ color: '#94A3B8' }}>
+              Fill in your details to Sign Up
+            </p>
           </div>
-          <h1 className="text-3xl font-black text-[var(--text-dark)] leading-tight">
-            Créer un compte
-          </h1>
-          <p className="text-[var(--text-body)] mt-2 text-sm">
-            Gratuit et sans engagement — votre compte en 30 secondes.
-          </p>
-        </div>
 
-        {/* Card formulaire */}
-        <div className="bg-[var(--bg-card)] rounded-3xl border border-[var(--border)] shadow-sm p-8">
-          <form onSubmit={handleSubmit} className="space-y-5">
+          {/* Formulaire */}
+          <form onSubmit={handleSubmit} className="space-y-3 w-full">
 
             {/* Nom */}
-            <div>
-              <label className="block text-xs font-bold tracking-wider uppercase text-[var(--text-dark)] mb-2">
-                Nom complet
-              </label>
-              <div className="relative">
-                <User className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)]" />
-                <input
-                  type="text" required
-                  value={name} onChange={(e) => setName(e.target.value)}
-                  placeholder="Ex : Youssef Bennani"
-                  className="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-[var(--bg-page)] border border-[var(--border)] text-sm text-[var(--text-dark)] placeholder-[var(--text-muted)] focus:outline-none focus:border-amber-500 transition"
-                />
-              </div>
-            </div>
+            <input
+              type="text"
+              required
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Full Name"
+              className={inputClass}
+              style={inputStyle}
+            />
 
             {/* Email */}
-            <div>
-              <label className="block text-xs font-bold tracking-wider uppercase text-[var(--text-dark)] mb-2">
-                Adresse email
-              </label>
-              <div className="relative">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)]" />
-                <input
-                  type="email" required
-                  value={email} onChange={(e) => setEmail(e.target.value)}
-                  placeholder="nom@exemple.com"
-                  className="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-[var(--bg-page)] border border-[var(--border)] text-sm text-[var(--text-dark)] placeholder-[var(--text-muted)] focus:outline-none focus:border-amber-500 transition"
-                />
-              </div>
-            </div>
+            <input
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Email"
+              className={inputClass}
+              style={inputStyle}
+            />
 
             {/* Mot de passe */}
-            <div>
-              <label className="block text-xs font-bold tracking-wider uppercase text-[var(--text-dark)] mb-2">
-                Mot de passe
-              </label>
+            <div className="space-y-1.5">
               <div className="relative">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)]" />
                 <input
-                  type={showPwd ? 'text' : 'password'} required minLength={8}
-                  value={password} onChange={(e) => setPassword(e.target.value)}
-                  placeholder="8 caractères minimum"
-                  className="w-full pl-11 pr-12 py-3.5 rounded-2xl bg-[var(--bg-page)] border border-[var(--border)] text-sm text-[var(--text-dark)] placeholder-[var(--text-muted)] focus:outline-none focus:border-amber-500 transition"
+                  type={showPwd ? 'text' : 'password'}
+                  required
+                  minLength={8}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Password (min. 8 caractères)"
+                  className={`${inputClass} pr-12`}
+                  style={inputStyle}
                 />
-                <button type="button" onClick={() => setShowPwd(!showPwd)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-[var(--text-dark)] transition">
+                <button
+                  type="button"
+                  onClick={() => setShowPwd(!showPwd)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 transition"
+                  style={{ color: '#64748B' }}
+                >
                   {showPwd ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
 
               {/* Barre de force */}
               {password.length > 0 && (
-                <div className="mt-2.5 flex items-center gap-2">
-                  <div className="flex-1 flex gap-1">
+                <div className="flex items-center gap-2">
+                  <div className="flex flex-1 gap-1">
                     {[1, 2, 3].map((lvl) => (
-                      <div key={lvl}
-                        className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${
-                          pwdStrength >= lvl ? strengthColor[pwdStrength] : 'bg-[var(--border)]'
-                        }`} />
+                      <div
+                        key={lvl}
+                        className="h-1 flex-1 rounded-full transition-all"
+                        style={{
+                          backgroundColor: pwdStrength >= lvl
+                            ? strengthColor[pwdStrength]
+                            : '#2A3045',
+                        }}
+                      />
                     ))}
                   </div>
-                  <span className={`text-[11px] font-bold ${
-                    pwdStrength === 1 ? 'text-red-500' :
-                    pwdStrength === 2 ? 'text-amber-500' : 'text-emerald-500'
-                  }`}>
+                  <span className="text-[11px] font-bold" style={{ color: strengthColor[pwdStrength] }}>
                     {strengthLabel[pwdStrength]}
                   </span>
                 </div>
@@ -147,34 +160,81 @@ export default function RegisterPage() {
 
             {/* Bouton */}
             <button
-              type="submit" disabled={loading}
-              className="w-full py-4 rounded-2xl bg-amber-500 hover:bg-amber-400 text-[#0F172A] font-bold text-sm flex items-center justify-center gap-2 transition shadow-sm disabled:opacity-50 mt-2"
+              type="submit"
+              disabled={loading}
+              className="w-full py-3.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all disabled:opacity-50"
+              style={{
+                background: loading
+                  ? '#374151'
+                  : 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)',
+                color: '#0B0F1A',
+                boxShadow: '0 4px 20px rgba(245,158,11,0.25)',
+              }}
             >
               {loading ? (
-                <span className="flex items-center gap-2">
-                  <span className="w-4 h-4 border-2 border-[#0F172A]/30 border-t-[#0F172A] rounded-full animate-spin" />
-                  Création du compte...
-                </span>
+                <>
+                  <span className="w-4 h-4 border-2 border-[#0B0F1A]/30 border-t-[#0B0F1A] rounded-full animate-spin" />
+                  Création...
+                </>
               ) : (
-                <>Créer mon compte <ArrowRight className="w-4 h-4" /></>
+                <>
+                  Sign Up
+                  <ArrowRight className="w-4 h-4" />
+                </>
               )}
             </button>
           </form>
 
-          <div className="mt-6 pt-6 border-t border-[var(--border)]">
-            <p className="text-sm text-center text-[var(--text-body)]">
-              Vous avez déjà un compte ?{' '}
-              <Link href="/login" className="text-amber-500 font-bold hover:underline">
-                Se connecter
-              </Link>
-            </p>
-          </div>
+          {/* Lien connexion */}
+          <p className="mt-5 text-sm" style={{ color: '#64748B' }}>
+            Déjà un compte ?{' '}
+            <Link href="/login" className="font-bold hover:underline" style={{ color: '#F59E0B' }}>
+              Se connecter
+            </Link>
+          </p>
         </div>
 
-        {/* Sécurité */}
-        <div className="flex items-center justify-center gap-2 mt-6 text-xs text-[var(--text-muted)]">
-          <ShieldCheck className="w-4 h-4 text-amber-500" />
-          Inscription sécurisée — vos données sont protégées
+        {/* ── PANNEAU DROIT — Visuel ── */}
+        <div
+          className="hidden lg:flex w-64 relative items-center justify-center overflow-hidden shrink-0"
+          style={{ backgroundColor: '#0D1117' }}
+        >
+          {/* Orbe ambre */}
+          <div
+            className="absolute w-72 h-72 rounded-full blur-3xl opacity-20"
+            style={{ background: 'radial-gradient(circle, #F59E0B, #92400E)', top: '-5%', right: '-20%' }}
+          />
+          <div
+            className="absolute w-48 h-48 rounded-full blur-3xl opacity-15"
+            style={{ background: 'radial-gradient(circle, #D97706, #0B0F1A)', bottom: '5%', left: '-10%' }}
+          />
+
+          {/* Disque central — Logo */}
+          <div className="relative z-10 flex items-center justify-center">
+            <div className="absolute w-56 h-56 rounded-full border opacity-10" style={{ borderColor: '#F59E0B' }} />
+            <div className="absolute w-40 h-40 rounded-full border opacity-15" style={{ borderColor: '#F59E0B' }} />
+            <div
+              className="relative w-36 h-36 rounded-full flex items-center justify-center overflow-hidden"
+              style={{
+                background: 'radial-gradient(circle at 40% 35%, #1E2435, #0D1117)',
+                boxShadow: '0 0 60px rgba(245,158,11,0.3)',
+              }}
+            >
+              <Image
+                src="/logo.png"
+                alt="TechNova Logo"
+                width={110}
+                height={110}
+                className="object-contain drop-shadow-xl"
+              />
+            </div>
+          </div>
+
+          <div className="absolute bottom-6 left-0 right-0 text-center">
+            <p className="text-[9px] font-semibold tracking-widest uppercase" style={{ color: '#374151' }}>
+              L'Expert Tech
+            </p>
+          </div>
         </div>
 
       </div>

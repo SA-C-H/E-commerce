@@ -53,9 +53,7 @@ export const getMe = async (req, res, next) => {
   try {
     res.status(200).json({
       success: true,
-      data: {
-        user: req.user,
-      },
+      data: req.user,
     });
   } catch (error) {
     next(error);
@@ -99,5 +97,80 @@ export const updateUserRole = async (req, res, next) => {
   }
 };
 
+/**
+ * Contrôleur : Mettre à jour le profil (nom, email)
+ * PATCH /api/auth/profile
+ */
+export const updateProfile = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+    const { name, email } = req.body;
+
+    // Validation basique
+    if (name && typeof name !== 'string') {
+      return res.status(400).json({
+        success: false,
+        message: 'Le nom doit être une chaîne de caractères',
+        details: [],
+      });
+    }
+
+    if (email && typeof email !== 'string') {
+      return res.status(400).json({
+        success: false,
+        message: 'L\'email doit être une chaîne de caractères',
+        details: [],
+      });
+    }
+
+    const updatedUser = await authService.updateProfile(userId, { name, email });
+
+    res.status(200).json({
+      success: true,
+      data: updatedUser,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * Contrôleur : Changer le mot de passe
+ * PATCH /api/auth/change-password
+ */
+export const changePassword = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+    const { oldPassword, newPassword } = req.body;
+
+    // Validation basique
+    if (!oldPassword || !newPassword) {
+      return res.status(400).json({
+        success: false,
+        message: 'Les anciens et nouveaux mots de passe sont requis',
+        details: [],
+      });
+    }
+
+    if (newPassword.length < 8) {
+      return res.status(400).json({
+        success: false,
+        message: 'Le nouveau mot de passe doit contenir au moins 8 caractères',
+        details: [],
+      });
+    }
+
+    await authService.changePassword(userId, oldPassword, newPassword);
+
+    res.status(200).json({
+      success: true,
+      data: {
+        message: 'Mot de passe changé avec succès',
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 

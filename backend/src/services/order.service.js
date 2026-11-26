@@ -97,26 +97,30 @@ export const createOrder = async (userId, userDefaultName, { customer_name, cust
     throw new AppError('Échec lors de l\'enregistrement des articles', 500);
   }
 
-  // A2 — Décrémentation atomique : stock = stock - qty seulement si stock >= qty
-  //       Évite la survente en cas de commandes simultanées.
+  // A2 — Décrémentation atomique : UPDATE stock = stock - qty WHERE stock >= qty
+  //       Si aucune ligne n'est mise à jour → stock insuffisant au moment de l'écriture (race condition)
   for (const item of enrichedItems) {
-    const { error: stockError } = await supabase.rpc('decrement_stock', {
-      p_product_id: item.product_id,
-      p_quantity: item.quantity,
-    });
+    const currentStock = productMap.get(item.product_id).stock;
 
-    if (stockError) {
-      // Rollback manuel : on annule les décrémentations déjà faites et on supprime la commande
+    const { error: decrementError } = await supabase
+      .from('products')
+      .update({ stock: currentStock - item.quantity })
+      .eq('id', item.product_id)
+      .gte('stock', item.quantity); // garde atomique anti-survente
+
+    if (decrementError) {
+      // Rollback : remettre les stocks des articles déjà décrémentés
       for (const done of enrichedItems.slice(0, enrichedItems.indexOf(item))) {
-        await supabase.rpc('increment_stock', {
-          p_product_id: done.product_id,
-          p_quantity: done.quantity,
-        });
+        const prev = productMap.get(done.product_id);
+        await supabase
+          .from('products')
+          .update({ stock: prev.stock })
+          .eq('id', done.product_id);
       }
       await supabase.from('order_items').delete().eq('order_id', order.id);
       await supabase.from('orders').delete().eq('id', order.id);
       throw new AppError(
-        `Stock insuffisant ou erreur lors de la réservation pour "${item.product_name}"`,
+        `Erreur lors de la réservation du stock pour "${item.product_name}"`,
         409
       );
     }
@@ -215,15 +219,23 @@ export const updateOrderStatus = async (orderId, status) => {
     );
   }
 
-  // A4 — Si on annule, remettre le stock en base de manière atomique
+  // A4 — Si on annule, remettre le stock en base
   if (status === 'cancelled' && existing.order_items?.length) {
     for (const item of existing.order_items) {
-      await supabase.rpc('increment_stock', {
-        p_product_id: item.product_id,
-        p_quantity: item.quantity,
-      });
+      // Récupérer le stock actuel puis incrémenter
+      const { data: prod } = await supabase
+        .from('products')
+        .select('stock')
+        .eq('id', item.product_id)
+        .maybeSingle();
+
+      if (prod) {
+        await supabase
+          .from('products')
+          .update({ stock: prod.stock + item.quantity })
+          .eq('id', item.product_id);
+      }
     }
-    // Invalider le cache pour que les stocks soient à jour
     invalidate('products:*');
   }
 

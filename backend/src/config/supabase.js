@@ -11,6 +11,7 @@ if (!supabaseUrl || !supabaseServiceKey || supabaseUrl.includes('your-project-id
 }
 
 // Client Supabase avec la clé de service (droits administrateur serveur)
+// La clé de service bypasse le RLS automatiquement
 export const supabase = createClient(
   supabaseUrl || 'https://placeholder.supabase.co',
   supabaseServiceKey || 'placeholder-key',
@@ -18,6 +19,15 @@ export const supabase = createClient(
     auth: {
       persistSession: false,
       autoRefreshToken: false,
+    },
+    global: {
+      headers: {
+        // Force le rôle service_role pour bypasser le RLS sur toutes les requêtes
+        'X-Supabase-Auth-Role': 'service_role',
+      },
+    },
+    db: {
+      schema: 'public',
     },
   }
 );

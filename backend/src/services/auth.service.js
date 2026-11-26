@@ -157,4 +157,99 @@ export const updateUserRole = async (userId, role) => {
   return data;
 };
 
+/**
+ * Service d'authentification : Mettre à jour le profil (nom, email)
+ */
+export const updateProfile = async (userId, updates) => {
+  const { name, email } = updates;
+  const updateData = {};
+
+  if (name) {
+    updateData.name = name.trim();
+  }
+
+  if (email) {
+    const normalizedEmail = email.trim().toLowerCase();
+
+    // Vérifier si l'email est déjà utilisé par un autre utilisateur
+    const { data: existingUser, error: checkError } = await supabase
+      .from('users')
+      .select('id')
+      .eq('email', normalizedEmail)
+      .neq('id', userId)
+      .maybeSingle();
+
+    if (checkError) {
+      throw new AppError('Erreur lors de la vérification de l\'email', 500);
+    }
+
+    if (existingUser) {
+      throw new AppError('Cette adresse email est déjà utilisée par un autre compte', 409);
+    }
+
+    updateData.email = normalizedEmail;
+  }
+
+  if (Object.keys(updateData).length === 0) {
+    // Aucune mise à jour
+    return await getUserById(userId);
+  }
+
+  const { data: updatedUser, error } = await supabase
+    .from('users')
+    .update(updateData)
+    .eq('id', userId)
+    .select('id, name, email, role, created_at')
+    .single();
+
+  if (error) {
+    throw new AppError('Erreur lors de la mise à jour du profil', 500);
+  }
+
+  if (!updatedUser) {
+    throw new AppError('Utilisateur introuvable', 404);
+  }
+
+  return updatedUser;
+};
+
+/**
+ * Service d'authentification : Changer le mot de passe
+ */
+export const changePassword = async (userId, oldPassword, newPassword) => {
+  // 1. Récupérer l'utilisateur
+  const { data: user, error: fetchError } = await supabase
+    .from('users')
+    .select('id, password_hash')
+    .eq('id', userId)
+    .maybeSingle();
+
+  if (fetchError) {
+    throw new AppError('Erreur lors de la récupération du profil', 500);
+  }
+
+  if (!user) {
+    throw new AppError('Utilisateur introuvable', 404);
+  }
+
+  // 2. Vérifier que l'ancien mot de passe est correct
+  const isMatch = await bcrypt.compare(oldPassword, user.password_hash);
+  if (!isMatch) {
+    throw new AppError('L\'ancien mot de passe est incorrect', 401);
+  }
+
+  // 3. Hasher le nouveau mot de passe
+  const salt = await bcrypt.genSalt(10);
+  const newPasswordHash = await bcrypt.hash(newPassword, salt);
+
+  // 4. Mettre à jour le mot de passe
+  const { error: updateError } = await supabase
+    .from('users')
+    .update({ password_hash: newPasswordHash })
+    .eq('id', userId);
+
+  if (updateError) {
+    throw new AppError('Erreur lors du changement de mot de passe', 500);
+  }
+};
 
