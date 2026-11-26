@@ -71,7 +71,10 @@ function LoginForm() {
 
           {/* Titre */}
           <div className="mb-7">
-            <h1 className="text-2xl font-black text-white leading-tight mb-1">
+            <h1
+              className="text-2xl font-black leading-tight mb-1"
+              style={{ color: '#FFFFFF' }}
+            >
               Welcome Back!
             </h1>
             <p className="text-sm" style={{ color: '#94A3B8' }}>

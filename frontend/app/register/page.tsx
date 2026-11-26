@@ -84,7 +84,10 @@ export default function RegisterPage() {
 
           {/* Titre */}
           <div className="mb-6">
-            <h1 className="text-2xl font-black text-white leading-tight mb-1">
+            <h1
+              className="text-2xl font-black leading-tight mb-1"
+              style={{ color: '#FFFFFF' }}
+            >
               Create Account
             </h1>
             <p className="text-sm" style={{ color: '#94A3B8' }}>
