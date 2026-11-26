@@ -419,3 +419,13 @@ h3 {
     @apply font-sans;
   }
 }
+
+/* ── Fix autofill navigateur (Chrome, Safari) sur pages login/register ── */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px #1E2435 inset !important;
+  -webkit-text-fill-color: #F8FAFC !important;
+  caret-color: #F8FAFC;
+}
