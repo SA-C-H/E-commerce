@@ -124,6 +124,7 @@ export default function ProfileModal({ open, onClose }: ProfileModalProps) {
   const pwdColors = ['bg-border', 'bg-red-500', 'bg-amber-500', 'bg-amber-400', 'bg-green-500'];
 
   return (
+    <>
     <Dialog open={open} onOpenChange={(v) => { if (!v) onClose(); }}>
       <DialogContent
         showCloseButton={false}
@@ -421,5 +422,6 @@ export default function ProfileModal({ open, onClose }: ProfileModalProps) {
 
     {/* ── Drawer Historique Commandes ── */}
     <OrdersDrawer open={ordersOpen} onClose={() => setOrdersOpen(false)} />
+  </>
   );
 }
