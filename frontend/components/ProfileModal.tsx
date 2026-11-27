@@ -1,4 +1,5 @@
 'use client';
+// v2 — drawer latéral
 
 import { useState, useEffect } from 'react';
 import {
