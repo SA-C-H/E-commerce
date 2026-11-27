@@ -12,6 +12,7 @@ import { useCartStore } from '@/store/cartStore';
 import { useAuthStore } from '@/store/authStore';
 import ThemeSwitch from '@/components/ThemeSwitch';
 import ProfileModal from '@/components/ProfileModal';
+import CartDrawer from '@/components/CartDrawer';
 
 /* ── Catégories du mega menu ── */
 const megaCategories = [
@@ -75,6 +76,7 @@ export default function Navbar() {
   const [mounted, setMounted] = useState(false);
   const [navBottom, setNavBottom] = useState(105);
   const [profileOpen, setProfileOpen] = useState(false);
+  const [cartOpen, setCartOpen] = useState(false);
   const megaRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLElement>(null);
 
@@ -215,14 +217,17 @@ export default function Navbar() {
                 </div>
               )}
 
-              <Link href="/cart" className="relative flex items-center justify-center w-10 h-10 text-[var(--text-dark)] hover:text-amber-500 transition rounded-xl hover:bg-[var(--bg-page)] border border-[var(--border)] sm:border-transparent">
+              <button
+                onClick={() => setCartOpen(true)}
+                className="relative flex items-center justify-center w-10 h-10 text-[var(--text-dark)] hover:text-amber-500 transition rounded-xl hover:bg-[var(--bg-page)] border border-[var(--border)] sm:border-transparent"
+              >
                 <ShoppingBag className="w-5 h-5 stroke-[2]" />
                 {mounted && totalCount > 0 && (
                   <span className="absolute -top-1 -right-1 bg-amber-500 text-slate-950 text-[10px] font-black w-4.5 h-4.5 rounded-full flex items-center justify-center shadow-xs">
                     {totalCount}
                   </span>
                 )}
-              </Link>
+              </button>
             </div>
           </div>
 
@@ -437,6 +442,9 @@ export default function Navbar() {
 
       {/* ── Modal Profil ── */}
       <ProfileModal open={profileOpen} onClose={() => setProfileOpen(false)} />
+
+      {/* ── Drawer Panier ── */}
+      <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
     </>
   );
 }
