@@ -68,11 +68,17 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
       });
       clearCart();
       onClose();
-      toast.success('Commande validée ! Redirection vers WhatsApp...');
+      toast.success('Commande validée !', {
+        description: 'Redirection vers WhatsApp...',
+        action: {
+          label: 'Voir mes commandes',
+          onClick: () => router.push('/orders'),
+        },
+      });
       setTimeout(() => {
         if (result.whatsappUrl) window.location.href = result.whatsappUrl;
         else router.push('/orders');
-      }, 800);
+      }, 1200);
     } catch (err: any) {
       toast.error(err instanceof ApiError ? err.message : 'Une erreur est survenue.');
     } finally {
