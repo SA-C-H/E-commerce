@@ -1,14 +1,16 @@
 'use client';
+'use client';
 
 import { useState, useEffect } from 'react';
 import {
   X, User, Mail, Shield, Calendar, Lock,
-  Pencil, Check, Eye, EyeOff, LogOut,
+  Pencil, Check, Eye, EyeOff, LogOut, ClipboardList,
 } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { useAuthStore } from '@/store/authStore';
 import { getUserProfile, updateUserProfile, changePassword, type UserProfile } from '@/lib/profileApi';
+import OrdersDrawer from '@/components/OrdersDrawer';
 
 import {
   Dialog,
@@ -33,6 +35,7 @@ export default function ProfileModal({ open, onClose }: ProfileModalProps) {
 
   const [profile, setProfile]     = useState<UserProfile | null>(null);
   const [loading, setLoading]     = useState(false);
+  const [ordersOpen, setOrdersOpen] = useState(false);
 
   /* ── Infos ── */
   const [editing, setEditing]     = useState(false);
@@ -250,16 +253,15 @@ export default function ProfileModal({ open, onClose }: ProfileModalProps) {
 
                   {/* Lien mes commandes */}
                   {!editing && (
-                    <a
-                      href="/orders"
-                      className="flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-semibold transition"
+                    <button
+                      type="button"
+                      onClick={() => setOrdersOpen(true)}
+                      className="flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-semibold transition w-full"
                       style={{ backgroundColor: 'rgba(245,158,11,0.1)', color: '#F59E0B', border: '1px solid rgba(245,158,11,0.3)' }}
                     >
-                      <svg className="w-4 h-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                      </svg>
+                      <ClipboardList className="w-4 h-4 shrink-0" />
                       Voir mon historique de commandes
-                    </a>
+                    </button>
                   )}
 
                   {/* Boutons */}
@@ -416,5 +418,8 @@ export default function ProfileModal({ open, onClose }: ProfileModalProps) {
 
       </DialogContent>
     </Dialog>
+
+    {/* ── Drawer Historique Commandes ── */}
+    <OrdersDrawer open={ordersOpen} onClose={() => setOrdersOpen(false)} />
   );
 }
