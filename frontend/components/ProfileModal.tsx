@@ -1,47 +1,36 @@
 'use client';
-'use client';
 
 import { useState, useEffect } from 'react';
 import {
   X, User, Mail, Shield, Calendar, Lock,
-  Pencil, Check, Eye, EyeOff, LogOut, ClipboardList,
+  Pencil, Check, Eye, EyeOff, LogOut, ClipboardList, ChevronRight,
 } from 'lucide-react';
 import { toast } from 'sonner';
-
 import { useAuthStore } from '@/store/authStore';
 import { getUserProfile, updateUserProfile, changePassword, type UserProfile } from '@/lib/profileApi';
 import OrdersDrawer from '@/components/OrdersDrawer';
-
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { Input }  from '@/components/ui/input';
-import { Label }  from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
-import { Badge }  from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
 
 interface ProfileModalProps {
   open: boolean;
   onClose: () => void;
 }
 
+type Tab = 'info' | 'password';
+
 export default function ProfileModal({ open, onClose }: ProfileModalProps) {
   const { logout } = useAuthStore();
 
-  const [profile, setProfile]     = useState<UserProfile | null>(null);
-  const [loading, setLoading]     = useState(false);
+  const [profile, setProfile]       = useState<UserProfile | null>(null);
+  const [loading, setLoading]       = useState(false);
+  const [tab, setTab]               = useState<Tab>('info');
   const [ordersOpen, setOrdersOpen] = useState(false);
+  const [mounted, setMounted]       = useState(false);
 
   /* ── Infos ── */
-  const [editing, setEditing]     = useState(false);
-  const [name,    setName]        = useState('');
-  const [email,   setEmail]       = useState('');
-  const [saving,  setSaving]      = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [name,    setName]    = useState('');
+  const [email,   setEmail]   = useState('');
+  const [saving,  setSaving]  = useState(false);
 
   /* ── Mot de passe ── */
   const [oldPwd,      setOldPwd]      = useState('');
@@ -51,36 +40,39 @@ export default function ProfileModal({ open, onClose }: ProfileModalProps) {
   const [showNew,     setShowNew]     = useState(false);
   const [changingPwd, setChangingPwd] = useState(false);
 
-  /* ── Charger le profil à l'ouverture ── */
+  useEffect(() => { setMounted(true); }, []);
+
+  /* Bloquer le scroll */
+  useEffect(() => {
+    document.body.style.overflow = open ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [open]);
+
+  /* Fermer avec Escape */
   useEffect(() => {
     if (!open) return;
+    const h = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', h);
+    return () => window.removeEventListener('keydown', h);
+  }, [open, onClose]);
+
+  /* Charger le profil */
+  useEffect(() => {
+    if (!open) return;
+    setTab('info');
     setEditing(false);
     setOldPwd(''); setNewPwd(''); setConfirmPwd('');
-
-    const load = async () => {
-      setLoading(true);
-      try {
-        const p = await getUserProfile();
-        setProfile(p);
-        setName(p.name);
-        setEmail(p.email);
-      } catch {
-        toast.error('Impossible de charger le profil');
-        onClose();
-      } finally {
-        setLoading(false);
-      }
-    };
-    load();
+    setLoading(true);
+    getUserProfile()
+      .then((p) => { setProfile(p); setName(p.name); setEmail(p.email); })
+      .catch(() => { toast.error('Impossible de charger le profil'); onClose(); })
+      .finally(() => setLoading(false));
   }, [open]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  /* ── Enregistrer les infos ── */
+  /* Enregistrer infos */
   const handleSaveInfo = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (name.trim().length < 2) {
-      toast.error('Le nom doit comporter au moins 2 caractères');
-      return;
-    }
+    if (name.trim().length < 2) { toast.error('Le nom doit comporter au moins 2 caractères'); return; }
     setSaving(true);
     try {
       const updated = await updateUserProfile({ name: name.trim(), email: email.trim() });
@@ -94,334 +86,346 @@ export default function ProfileModal({ open, onClose }: ProfileModalProps) {
     }
   };
 
-  /* ── Changer le mot de passe ── */
+  /* Changer mot de passe */
   const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault();
     if (newPwd !== confirmPwd) { toast.error('Les mots de passe ne correspondent pas'); return; }
-    if (newPwd.length < 8)    { toast.error('Minimum 8 caractères requis'); return; }
+    if (newPwd.length < 8)    { toast.error('Minimum 8 caractères'); return; }
     setChangingPwd(true);
     try {
       await changePassword(oldPwd, newPwd);
       setOldPwd(''); setNewPwd(''); setConfirmPwd('');
-      toast.success('Mot de passe changé avec succès !');
+      toast.success('Mot de passe changé !');
+      setTab('info');
     } catch (err: any) {
-      toast.error(err?.message ?? 'Erreur lors du changement de mot de passe');
+      toast.error(err?.message ?? 'Erreur');
     } finally {
       setChangingPwd(false);
     }
   };
 
-  /* ── Initiales avatar ── */
   const initials = profile?.name
     ? profile.name.split(' ').map(w => w[0]).slice(0, 2).join('').toUpperCase()
     : '?';
 
-  /* ── Force du mot de passe ── */
-  const pwdStrength = newPwd.length === 0 ? 0
-    : newPwd.length < 8  ? 1
-    : newPwd.length < 12 ? 2
-    : newPwd.length < 16 ? 3 : 4;
-  const pwdColors = ['bg-border', 'bg-red-500', 'bg-amber-500', 'bg-amber-400', 'bg-green-500'];
+  const pwdStrength = newPwd.length === 0 ? 0 : newPwd.length < 8 ? 1 : newPwd.length < 12 ? 2 : newPwd.length < 16 ? 3 : 4;
+  const pwdColor   = ['', '#EF4444', '#F59E0B', '#F59E0B', '#10B981'][pwdStrength];
+  const pwdLabel   = ['', 'Trop court', 'Correct', 'Bon', 'Fort'][pwdStrength];
+
+  const inputStyle = {
+    backgroundColor: '#1E2435',
+    border: '1px solid #2A3045',
+    color: '#F8FAFC',
+    borderRadius: '10px',
+    padding: '10px 14px',
+    width: '100%',
+    fontSize: '14px',
+    outline: 'none',
+  };
+
+  if (!mounted) return null;
 
   return (
     <>
-    <Dialog open={open} onOpenChange={(v) => { if (!v) onClose(); }}>
-      <DialogContent
-        showCloseButton={false}
-        className="p-0 gap-0 max-w-md overflow-hidden border-border"
-      >
-        {/* ── En-tête gradient ── */}
-        <div className="relative bg-gradient-to-br from-slate-900 via-slate-800 to-amber-950 px-6 pt-6 pb-10">
-          {/* Bouton fermer */}
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            onClick={onClose}
-            className="absolute top-3 right-3 text-white/60 hover:text-white hover:bg-white/10"
-          >
-            <X className="size-4" />
-            <span className="sr-only">Fermer</span>
-          </Button>
+      {/* ── Backdrop ── */}
+      <div
+        className="fixed inset-0 z-[100] transition-all duration-300"
+        style={{
+          backgroundColor: open ? 'rgba(0,0,0,0.6)' : 'transparent',
+          backdropFilter:   open ? 'blur(3px)' : 'none',
+          pointerEvents:    open ? 'auto' : 'none',
+        }}
+        onClick={onClose}
+      />
 
+      {/* ── Drawer ── */}
+      <div
+        className="fixed top-0 right-0 h-full z-[101] flex flex-col shadow-2xl transition-transform duration-300 ease-in-out"
+        style={{
+          width: 'min(400px, 95vw)',
+          transform: open ? 'translateX(0)' : 'translateX(100%)',
+          backgroundColor: '#0F1A2E',
+          borderLeft: '1px solid #1E293B',
+        }}
+      >
+
+        {/* ── En-tête avec avatar ── */}
+        <div
+          className="shrink-0 px-5 pt-5 pb-6"
+          style={{ background: 'linear-gradient(135deg, #0F1A2E 0%, #1a1f3a 50%, #2d1a0a 100%)', borderBottom: '1px solid #1E293B' }}
+        >
+          {/* Bouton fermer */}
+          <div className="flex justify-end mb-4">
+            <button
+              onClick={onClose}
+              className="w-8 h-8 flex items-center justify-center rounded-full transition hover:bg-white/10"
+              style={{ color: '#94A3B8' }}
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+
+          {/* Avatar + infos */}
           <div className="flex items-center gap-4">
-            {/* Avatar initiales */}
-            <div className="size-16 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-white text-2xl font-black shadow-lg shrink-0 select-none">
+            <div
+              className="w-16 h-16 rounded-full flex items-center justify-center text-white text-2xl font-black shadow-lg shrink-0 select-none"
+              style={{ background: 'linear-gradient(135deg, #F59E0B, #D97706)' }}
+            >
               {initials}
             </div>
-
             <div className="min-w-0">
-              <p className="text-white font-black text-lg leading-tight truncate">
+              <p className="font-black text-lg leading-tight truncate" style={{ color: '#F8FAFC' }}>
                 {profile?.name ?? '—'}
               </p>
-              <p className="text-amber-300/80 text-xs font-medium truncate mt-0.5">
+              <p className="text-xs truncate mt-0.5" style={{ color: '#94A3B8' }}>
                 {profile?.email ?? '—'}
               </p>
-              <div className="mt-2">
-                <Badge
-                  variant={profile?.role === 'admin' ? 'secondary' : 'default'}
-                  className={
-                    profile?.role === 'admin'
-                      ? 'bg-purple-500/30 text-purple-200 border-purple-500/20'
-                      : 'bg-amber-500/25 text-amber-200 border-amber-500/20'
-                  }
-                >
-                  <Shield className="size-3" />
-                  {profile?.role === 'admin' ? 'Administrateur' : 'Client'}
-                </Badge>
-              </div>
+              <span
+                className="inline-flex items-center gap-1 mt-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider"
+                style={profile?.role === 'admin'
+                  ? { backgroundColor: 'rgba(168,85,247,0.25)', color: '#D8B4FE', border: '1px solid rgba(168,85,247,0.3)' }
+                  : { backgroundColor: 'rgba(245,158,11,0.2)', color: '#FCD34D', border: '1px solid rgba(245,158,11,0.3)' }
+                }
+              >
+                <Shield className="w-3 h-3" />
+                {profile?.role === 'admin' ? 'Administrateur' : 'Client'}
+              </span>
             </div>
           </div>
         </div>
 
         {/* ── Onglets ── */}
-        <Tabs defaultValue="info" className="px-6 -mt-4 relative z-10">
-          <TabsList
-            variant="default"
-            className="w-full h-auto rounded-xl bg-background border border-border p-1"
-          >
-            <TabsTrigger value="info" className="flex-1 gap-1.5 py-2 text-xs font-bold">
-              <User className="size-3.5" />
-              Mes informations
-            </TabsTrigger>
-            <TabsTrigger value="password" className="flex-1 gap-1.5 py-2 text-xs font-bold">
-              <Lock className="size-3.5" />
-              Mot de passe
-            </TabsTrigger>
-          </TabsList>
-
-          {/* ── Chargement ── */}
-          {loading ? (
-            <div className="flex justify-center py-10">
-              <div className="size-8 rounded-full border-2 border-amber-500 border-t-transparent animate-spin" />
-            </div>
-          ) : (
-            <>
-              {/* ───────────── ONGLET INFOS ───────────── */}
-              <TabsContent value="info" className="mt-5 pb-2 space-y-4">
-                <form onSubmit={handleSaveInfo} className="space-y-4">
-
-                  {/* Nom */}
-                  <div className="space-y-1.5">
-                    <Label htmlFor="profile-name" className="text-xs text-muted-foreground">
-                      <User className="size-3.5" />
-                      Nom complet
-                    </Label>
-                    <Input
-                      id="profile-name"
-                      value={name}
-                      onChange={e => setName(e.target.value)}
-                      disabled={!editing}
-                      className={!editing ? 'bg-muted/50 cursor-default' : ''}
-                      minLength={2}
-                      required
-                    />
-                  </div>
-
-                  {/* Email */}
-                  <div className="space-y-1.5">
-                    <Label htmlFor="profile-email" className="text-xs text-muted-foreground">
-                      <Mail className="size-3.5" />
-                      Email
-                    </Label>
-                    <Input
-                      id="profile-email"
-                      type="email"
-                      value={email}
-                      onChange={e => setEmail(e.target.value)}
-                      disabled={!editing}
-                      className={!editing ? 'bg-muted/50 cursor-default' : ''}
-                      required
-                    />
-                  </div>
-
-                  {/* Membre depuis */}
-                  {!editing && profile?.created_at && (
-                    <div className="space-y-1.5">
-                      <Label className="text-xs text-muted-foreground">
-                        <Calendar className="size-3.5" />
-                        Membre depuis
-                      </Label>
-                      <Input
-                        value={new Date(profile.created_at).toLocaleDateString('fr-FR', {
-                          year: 'numeric', month: 'long', day: 'numeric',
-                        })}
-                        disabled
-                        className="bg-muted/50 cursor-default"
-                        readOnly
-                      />
-                    </div>
-                  )}
-
-                  {/* Lien mes commandes */}
-                  {!editing && (
-                    <button
-                      type="button"
-                      onClick={() => setOrdersOpen(true)}
-                      className="flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-semibold transition w-full"
-                      style={{ backgroundColor: 'rgba(245,158,11,0.1)', color: '#F59E0B', border: '1px solid rgba(245,158,11,0.3)' }}
-                    >
-                      <ClipboardList className="w-4 h-4 shrink-0" />
-                      Voir mon historique de commandes
-                    </button>
-                  )}
-
-                  {/* Boutons */}
-                  {editing ? (
-                    <div className="flex gap-2 pt-1">
-                      <Button type="submit" disabled={saving} className="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 font-black">
-                        {saving
-                          ? <span className="size-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
-                          : <Check className="size-4" />
-                        }
-                        Enregistrer
-                      </Button>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        className="flex-1"
-                        onClick={() => {
-                          setEditing(false);
-                          setName(profile?.name ?? '');
-                          setEmail(profile?.email ?? '');
-                        }}
-                      >
-                        Annuler
-                      </Button>
-                    </div>
-                  ) : (
-                    <Button
-                      type="button"
-                      variant="outline"
-                      className="gap-2"
-                      onClick={() => setEditing(true)}
-                    >
-                      <Pencil className="size-3.5" />
-                      Modifier mes informations
-                    </Button>
-                  )}
-                </form>
-              </TabsContent>
-
-              {/* ───────────── ONGLET MOT DE PASSE ───────────── */}
-              <TabsContent value="password" className="mt-5 pb-2 space-y-4">
-                <form onSubmit={handleChangePassword} className="space-y-4">
-
-                  {/* Ancien mot de passe */}
-                  <div className="space-y-1.5">
-                    <Label htmlFor="old-pwd" className="text-xs text-muted-foreground">
-                      Mot de passe actuel
-                    </Label>
-                    <div className="relative">
-                      <Input
-                        id="old-pwd"
-                        type={showOld ? 'text' : 'password'}
-                        value={oldPwd}
-                        onChange={e => setOldPwd(e.target.value)}
-                        placeholder="••••••••"
-                        className="pr-9"
-                        required
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowOld(v => !v)}
-                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition"
-                      >
-                        {showOld ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Nouveau mot de passe */}
-                  <div className="space-y-1.5">
-                    <Label htmlFor="new-pwd" className="text-xs text-muted-foreground">
-                      Nouveau mot de passe
-                    </Label>
-                    <div className="relative">
-                      <Input
-                        id="new-pwd"
-                        type={showNew ? 'text' : 'password'}
-                        value={newPwd}
-                        onChange={e => setNewPwd(e.target.value)}
-                        placeholder="Minimum 8 caractères"
-                        className="pr-9"
-                        minLength={8}
-                        required
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowNew(v => !v)}
-                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition"
-                      >
-                        {showNew ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
-                      </button>
-                    </div>
-                    {/* Barre de force */}
-                    {newPwd.length > 0 && (
-                      <div className="flex gap-1 mt-1">
-                        {[1, 2, 3, 4].map(i => (
-                          <div
-                            key={i}
-                            className={`h-1 flex-1 rounded-full transition-all ${i <= pwdStrength ? pwdColors[pwdStrength] : 'bg-border'}`}
-                          />
-                        ))}
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Confirmation */}
-                  <div className="space-y-1.5">
-                    <Label htmlFor="confirm-pwd" className="text-xs text-muted-foreground">
-                      Confirmer le mot de passe
-                    </Label>
-                    <Input
-                      id="confirm-pwd"
-                      type="password"
-                      value={confirmPwd}
-                      onChange={e => setConfirmPwd(e.target.value)}
-                      placeholder="••••••••"
-                      aria-invalid={confirmPwd.length > 0 && confirmPwd !== newPwd}
-                      required
-                    />
-                    {confirmPwd.length > 0 && confirmPwd !== newPwd && (
-                      <p className="text-xs text-destructive">Les mots de passe ne correspondent pas</p>
-                    )}
-                  </div>
-
-                  <Button
-                    type="submit"
-                    disabled={changingPwd || newPwd !== confirmPwd || newPwd.length < 8}
-                    className="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 font-black"
-                  >
-                    {changingPwd
-                      ? <span className="size-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
-                      : <Lock className="size-4" />
-                    }
-                    Changer le mot de passe
-                  </Button>
-                </form>
-              </TabsContent>
-            </>
-          )}
-        </Tabs>
-
-        {/* ── Pied — déconnexion ── */}
-        <div className="px-6 pb-5 pt-3">
-          <Separator className="mb-4" />
-          <Button
-            variant="destructive"
-            className="w-full gap-2"
-            onClick={() => { onClose(); logout(); }}
-          >
-            <LogOut className="size-4" />
-            Se déconnecter
-          </Button>
+        <div className="flex shrink-0 mx-4 mt-4 rounded-xl overflow-hidden" style={{ border: '1px solid #1E293B', backgroundColor: '#0A1120' }}>
+          {(['info', 'password'] as Tab[]).map((t) => (
+            <button
+              key={t}
+              onClick={() => { setTab(t); setEditing(false); }}
+              className="flex-1 py-2.5 text-xs font-bold transition flex items-center justify-center gap-1.5"
+              style={{
+                backgroundColor: tab === t ? '#1E293B' : 'transparent',
+                color: tab === t ? '#F59E0B' : '#64748B',
+                borderBottom: tab === t ? '2px solid #F59E0B' : '2px solid transparent',
+              }}
+            >
+              {t === 'info' ? <><User className="w-3.5 h-3.5" />Mes infos</> : <><Lock className="w-3.5 h-3.5" />Mot de passe</>}
+            </button>
+          ))}
         </div>
 
-      </DialogContent>
-    </Dialog>
+        {/* ── Corps scrollable ── */}
+        <div className="flex-1 overflow-y-auto px-4 py-4">
 
-    {/* ── Drawer Historique Commandes ── */}
-    <OrdersDrawer open={ordersOpen} onClose={() => setOrdersOpen(false)} />
-  </>
+          {loading ? (
+            <div className="flex justify-center py-10">
+              <div className="w-8 h-8 rounded-full border-2 border-amber-500 border-t-transparent animate-spin" />
+            </div>
+
+          ) : tab === 'info' ? (
+
+            /* ── INFOS ── */
+            <form onSubmit={handleSaveInfo} className="space-y-4">
+
+              <div>
+                <label className="text-xs font-bold mb-1.5 flex items-center gap-1.5" style={{ color: '#64748B' }}>
+                  <User className="w-3.5 h-3.5" /> Nom complet
+                </label>
+                <input
+                  value={name}
+                  onChange={e => setName(e.target.value)}
+                  disabled={!editing}
+                  minLength={2}
+                  required
+                  style={{ ...inputStyle, opacity: editing ? 1 : 0.6, cursor: editing ? 'text' : 'default', border: editing ? '1px solid #F59E0B' : '1px solid #2A3045' }}
+                />
+              </div>
+
+              <div>
+                <label className="text-xs font-bold mb-1.5 flex items-center gap-1.5" style={{ color: '#64748B' }}>
+                  <Mail className="w-3.5 h-3.5" /> Email
+                </label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  disabled={!editing}
+                  required
+                  style={{ ...inputStyle, opacity: editing ? 1 : 0.6, cursor: editing ? 'text' : 'default', border: editing ? '1px solid #F59E0B' : '1px solid #2A3045' }}
+                />
+              </div>
+
+              {!editing && profile?.created_at && (
+                <div>
+                  <label className="text-xs font-bold mb-1.5 flex items-center gap-1.5" style={{ color: '#64748B' }}>
+                    <Calendar className="w-3.5 h-3.5" /> Membre depuis
+                  </label>
+                  <input
+                    readOnly
+                    value={new Date(profile.created_at).toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' })}
+                    style={{ ...inputStyle, opacity: 0.6, cursor: 'default' }}
+                  />
+                </div>
+              )}
+
+              {/* Bouton commandes */}
+              {!editing && (
+                <button
+                  type="button"
+                  onClick={() => setOrdersOpen(true)}
+                  className="w-full flex items-center justify-between px-4 py-3 rounded-xl transition font-semibold text-sm"
+                  style={{ backgroundColor: 'rgba(245,158,11,0.1)', color: '#F59E0B', border: '1px solid rgba(245,158,11,0.25)' }}
+                >
+                  <span className="flex items-center gap-2">
+                    <ClipboardList className="w-4 h-4" />
+                    Mes commandes
+                  </span>
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              )}
+
+              {/* Boutons action */}
+              <div className="pt-1">
+                {editing ? (
+                  <div className="flex gap-2">
+                    <button
+                      type="submit"
+                      disabled={saving}
+                      className="flex-1 py-2.5 rounded-xl font-black text-sm flex items-center justify-center gap-2 transition disabled:opacity-60"
+                      style={{ backgroundColor: '#F59E0B', color: '#0A1128' }}
+                    >
+                      {saving
+                        ? <span className="w-4 h-4 border-2 border-[#0A1128]/30 border-t-[#0A1128] rounded-full animate-spin" />
+                        : <Check className="w-4 h-4" />}
+                      Enregistrer
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => { setEditing(false); setName(profile?.name ?? ''); setEmail(profile?.email ?? ''); }}
+                      className="flex-1 py-2.5 rounded-xl font-bold text-sm transition"
+                      style={{ backgroundColor: '#1E293B', color: '#94A3B8', border: '1px solid #2A3045' }}
+                    >
+                      Annuler
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setEditing(true)}
+                    className="flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-sm transition"
+                    style={{ backgroundColor: '#1E293B', color: '#F1F5F9', border: '1px solid #2A3045' }}
+                  >
+                    <Pencil className="w-3.5 h-3.5" />
+                    Modifier mes informations
+                  </button>
+                )}
+              </div>
+            </form>
+
+          ) : (
+
+            /* ── MOT DE PASSE ── */
+            <form onSubmit={handleChangePassword} className="space-y-4">
+
+              <div>
+                <label className="text-xs font-bold mb-1.5 block" style={{ color: '#64748B' }}>
+                  Mot de passe actuel
+                </label>
+                <div className="relative">
+                  <input
+                    type={showOld ? 'text' : 'password'}
+                    value={oldPwd}
+                    onChange={e => setOldPwd(e.target.value)}
+                    placeholder="••••••••"
+                    required
+                    style={{ ...inputStyle, paddingRight: '40px' }}
+                  />
+                  <button type="button" onClick={() => setShowOld(v => !v)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 transition"
+                    style={{ color: '#64748B' }}>
+                    {showOld ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label className="text-xs font-bold mb-1.5 block" style={{ color: '#64748B' }}>
+                  Nouveau mot de passe
+                </label>
+                <div className="relative">
+                  <input
+                    type={showNew ? 'text' : 'password'}
+                    value={newPwd}
+                    onChange={e => setNewPwd(e.target.value)}
+                    placeholder="Minimum 8 caractères"
+                    minLength={8}
+                    required
+                    style={{ ...inputStyle, paddingRight: '40px' }}
+                  />
+                  <button type="button" onClick={() => setShowNew(v => !v)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 transition"
+                    style={{ color: '#64748B' }}>
+                    {showNew ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+                {newPwd.length > 0 && (
+                  <div className="mt-1.5">
+                    <div className="flex gap-1 mb-1">
+                      {[1,2,3,4].map(i => (
+                        <div key={i} className="h-1 flex-1 rounded-full transition-all"
+                          style={{ backgroundColor: i <= pwdStrength ? pwdColor : '#2A3045' }} />
+                      ))}
+                    </div>
+                    <span className="text-[11px] font-bold" style={{ color: pwdColor }}>{pwdLabel}</span>
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <label className="text-xs font-bold mb-1.5 block" style={{ color: '#64748B' }}>
+                  Confirmer le mot de passe
+                </label>
+                <input
+                  type="password"
+                  value={confirmPwd}
+                  onChange={e => setConfirmPwd(e.target.value)}
+                  placeholder="••••••••"
+                  required
+                  style={{ ...inputStyle, border: confirmPwd && confirmPwd !== newPwd ? '1px solid #EF4444' : '1px solid #2A3045' }}
+                />
+                {confirmPwd && confirmPwd !== newPwd && (
+                  <p className="text-xs mt-1" style={{ color: '#EF4444' }}>Les mots de passe ne correspondent pas</p>
+                )}
+              </div>
+
+              <button
+                type="submit"
+                disabled={changingPwd || newPwd !== confirmPwd || newPwd.length < 8}
+                className="w-full py-3 rounded-xl font-black text-sm flex items-center justify-center gap-2 transition disabled:opacity-50"
+                style={{ background: 'linear-gradient(135deg, #F59E0B, #D97706)', color: '#0A1128', boxShadow: '0 4px 16px rgba(245,158,11,0.3)' }}
+              >
+                {changingPwd
+                  ? <span className="w-4 h-4 border-2 border-[#0A1128]/30 border-t-[#0A1128] rounded-full animate-spin" />
+                  : <Lock className="w-4 h-4" />}
+                Changer le mot de passe
+              </button>
+            </form>
+          )}
+        </div>
+
+        {/* ── Pied — déconnexion ── */}
+        <div className="px-4 pb-5 pt-3 shrink-0" style={{ borderTop: '1px solid #1E293B' }}>
+          <button
+            onClick={() => { onClose(); logout(); }}
+            className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-bold text-sm transition"
+            style={{ backgroundColor: 'rgba(239,68,68,0.1)', color: '#EF4444', border: '1px solid rgba(239,68,68,0.25)' }}
+          >
+            <LogOut className="w-4 h-4" />
+            Se déconnecter
+          </button>
+        </div>
+      </div>
+
+      {/* ── Drawer Commandes ── */}
+      <OrdersDrawer open={ordersOpen} onClose={() => setOrdersOpen(false)} />
+    </>
   );
 }
