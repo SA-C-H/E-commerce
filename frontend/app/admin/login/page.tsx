@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { useAuthStore } from '@/store/authStore';
 import { api, ApiError } from '@/lib/api';
 import { toast } from 'sonner';
@@ -53,11 +54,17 @@ export default function AdminLoginPage() {
 
         {/* Logo + titre */}
         <div className="text-center mb-10">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-amber-500/10 border border-amber-500/30 mb-5">
-            <ShieldCheck className="w-8 h-8 text-amber-400" />
+          <div className="inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-amber-500/10 border border-amber-500/30 mb-5 overflow-hidden">
+            <Image
+              src="/logo.png"
+              alt="TechNova Logo"
+              width={72}
+              height={72}
+              className="object-contain"
+            />
           </div>
           <div className="flex items-center justify-center gap-2 mb-2">
-            <span className="font-black text-3xl tracking-tight text-white">TechNova</span>
+            <span className="font-black text-3xl tracking-tight" style={{ color: '#FFFFFF' }}>TechNova</span>
             <span className="px-1.5 py-0.5 bg-amber-500 text-[#0A1128] text-[10px] font-black rounded tracking-widest uppercase">.ma</span>
           </div>
           <p className="text-[11px] font-bold tracking-widest uppercase text-amber-500 mt-1">
