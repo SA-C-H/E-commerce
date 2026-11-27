@@ -184,11 +184,11 @@ export default function PromoCarouselBanner() {
               {slide.badge}
             </span>
 
-            <h2 className="font-serif-title text-xl sm:text-3xl lg:text-4xl text-white font-normal leading-tight">
+            <h2 className="font-serif-title text-xl sm:text-3xl lg:text-4xl font-normal leading-tight" style={{ color: '#FFFFFF' }}>
               {slide.title}
             </h2>
 
-            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed font-light line-clamp-3 sm:line-clamp-none">
+            <p className="text-xs sm:text-sm leading-relaxed font-light line-clamp-3 sm:line-clamp-none" style={{ color: '#CBD5E1' }}>
               {slide.description}
             </p>
 

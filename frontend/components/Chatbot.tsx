@@ -437,7 +437,7 @@ export default function Chatbot() {
           </div>
 
           {/* CORPS DE DISCUSSION (MESSAGES) */}
-          <div className="flex-1 p-4 overflow-y-auto space-y-3.5 bg-[var(--bg-page)] text-sm">
+          <div className="flex-1 p-4 overflow-y-auto space-y-3.5 text-sm" style={{ backgroundColor: '#0F172A' }}>
             {messages.map((msg) => (
               <div
                 key={msg.id}
@@ -447,10 +447,19 @@ export default function Chatbot() {
                   className={`max-w-[85%] rounded-2xl px-4 py-3 leading-relaxed shadow-sm text-[13px] ${
                     msg.sender === 'user'
                       ? 'bg-amber-500 text-slate-950 font-medium rounded-br-xs'
-                      : 'bg-[var(--bg-card)] text-[var(--text-dark)] border border-[var(--border)] rounded-bl-xs'
+                      : 'rounded-bl-xs'
                   }`}
+                  style={msg.sender !== 'user' ? {
+                    backgroundColor: '#1E293B',
+                    color: '#F1F5F9',
+                    border: '1px solid #334155',
+                  } : {}}
                 >
-                  <div className="whitespace-pre-line">{msg.text}</div>
+                  <div className="whitespace-pre-line" dangerouslySetInnerHTML={{
+                    __html: msg.text
+                      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                      .replace(/\n/g, '<br/>')
+                  }} />
 
                   {/* Lien contextuel direct si applicable */}
                   {msg.link && (

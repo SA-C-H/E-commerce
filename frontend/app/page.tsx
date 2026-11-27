@@ -177,13 +177,13 @@ export default async function HomePage() {
               </div>
 
               {/* Grand Titre Ultra-Lisible et Impactant */}
-              <h1 className="text-3xl sm:text-5xl lg:text-6xl text-white font-black leading-[1.08] tracking-tight">
-                L&apos;excellence technologique <span className="text-amber-400">sans compromis.</span>
+              <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black leading-[1.08] tracking-tight" style={{ color: '#FFFFFF' }}>
+                L&apos;excellence technologique <span style={{ color: '#FBB004' }}>sans compromis.</span>
               </h1>
 
-              {/* Sous-titre orienté Marques Phones & Laptops */}
-              <p className="text-slate-300 text-sm sm:text-base leading-relaxed font-normal max-w-xl">
-                Les fleurons mondiaux à portée de main : <strong className="text-white font-semibold">iPhone 16 Pro, MacBook M3, Galaxy S24 Ultra</strong> et PC Portables d&apos;exception. 100% neufs sous blister avec livraison 24h partout au Maroc.
+              {/* Sous-titre */}
+              <p className="text-sm sm:text-base leading-relaxed font-normal max-w-xl" style={{ color: '#CBD5E1' }}>
+                Les fleurons mondiaux à portée de main : <strong style={{ color: '#FFFFFF', fontWeight: 600 }}>iPhone 16 Pro, MacBook M3, Galaxy S24 Ultra</strong> et PC Portables d&apos;exception. 100% neufs sous blister avec livraison 24h partout au Maroc.
               </p>
 
               {/* Deux boutons arrondis en pilule */}
