@@ -137,28 +137,45 @@ export default function OrdersHistoryPage() {
     <div className="min-h-screen flex flex-col bg-[var(--bg-page)]">
       <Navbar />
 
-      <main className="flex-1 max-w-3xl mx-auto px-4 sm:px-6 py-8 w-full">
+      <main className="flex-1 max-w-4xl mx-auto px-4 sm:px-6 py-8 w-full">
 
-        {/* En-tête compact */}
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <span className="text-[10px] font-bold tracking-widest text-amber-500 uppercase block mb-0.5">
-              SUIVI CLIENT
-            </span>
-            <h1 className="text-2xl font-black text-[var(--text-dark)]">
-              Mes Commandes
-              {!loading && orders.length > 0 && (
-                <span className="ml-2 text-sm font-semibold text-[var(--text-muted)]">
-                  ({orders.length})
-                </span>
-              )}
-            </h1>
+        {/* En-tête avec bandeau info */}
+        <div className="mb-6">
+          <div className="flex items-center justify-between mb-3">
+            <div>
+              <span className="text-[10px] font-bold tracking-widest text-amber-500 uppercase block mb-0.5">
+                SUIVI CLIENT
+              </span>
+              <h1 className="text-2xl font-black text-[var(--text-dark)]">
+                Mes Commandes
+                {!loading && orders.length > 0 && (
+                  <span className="ml-2 text-sm font-semibold text-[var(--text-muted)]">
+                    ({orders.length})
+                  </span>
+                )}
+              </h1>
+            </div>
+            <Link href="/products"
+              className="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold transition hover:text-amber-500 text-[var(--text-muted)]">
+              <ArrowLeft className="w-3.5 h-3.5" />
+              Boutique
+            </Link>
           </div>
-          <Link href="/products"
-            className="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold transition hover:text-amber-500 text-[var(--text-muted)]">
-            <ArrowLeft className="w-3.5 h-3.5" />
-            Boutique
-          </Link>
+
+          {/* Bandeau info */}
+          {!loading && orders.length > 0 && (
+            <div className="p-3 rounded-xl bg-gradient-to-r from-amber-500/10 to-amber-500/5 border border-amber-500/20 flex items-start gap-3">
+              <div className="w-8 h-8 rounded-lg bg-amber-500/20 flex items-center justify-center shrink-0">
+                <Package className="w-4 h-4 text-amber-500" />
+              </div>
+              <div>
+                <p className="text-xs font-bold text-[var(--text-dark)] mb-0.5">Suivi de vos commandes</p>
+                <p className="text-[11px] text-[var(--text-body)]">
+                  Cliquez sur une commande pour voir les détails. Les commandes en attente peuvent être annulées.
+                </p>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Chargement */}
@@ -194,7 +211,7 @@ export default function OrdersHistoryPage() {
               return (
                 <div
                   key={order.id}
-                  className="rounded-2xl overflow-hidden bg-[var(--bg-card)] border border-[var(--border)] transition-shadow hover:shadow-md"
+                  className="rounded-2xl overflow-hidden bg-[var(--bg-card)] border-2 border-[var(--border)] transition-all hover:shadow-lg hover:border-amber-500/30"
                 >
                   {/* ── Ligne résumé cliquable ── */}
                   <button
