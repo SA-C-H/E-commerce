@@ -967,10 +967,21 @@ export default function AdminPage() {
                           <td className="p-4 font-black text-[var(--text-dark)] font-mono">{Number(o.total).toLocaleString('fr-FR')} <span className="text-[var(--text-muted)] font-normal">MAD</span></td>
                           <td className="p-4"><StatusBadge status={o.status} /></td>
                           <td className="p-4 pr-5 text-right">
-                            <button onClick={() => openWhatsApp(o.customer_phone, o.id, o.customer_name)}
-                              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-600 dark:text-emerald-400 text-[11px] font-semibold border border-emerald-500/30 transition">
-                              <MessageCircle className="w-3.5 h-3.5" />WhatsApp
-                            </button>
+                            <div className="inline-flex items-center gap-1.5">
+                              {/* Bouton détail → ouvre le panneau de changement de statut */}
+                              <button
+                                onClick={() => setDetailOrder(o)}
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 text-amber-600 dark:text-amber-400 text-[11px] font-semibold border border-amber-500/30 transition"
+                                title="Voir détail et changer le statut"
+                              >
+                                <Eye className="w-3.5 h-3.5" />Statut
+                              </button>
+                              {/* Bouton WhatsApp */}
+                              <button onClick={() => openWhatsApp(o.customer_phone, o.id, o.customer_name)}
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-600 dark:text-emerald-400 text-[11px] font-semibold border border-emerald-500/30 transition">
+                                <MessageCircle className="w-3.5 h-3.5" />WhatsApp
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       ))
@@ -1239,6 +1250,31 @@ export default function AdminPage() {
 
         </main>
       </div>
+
+      {/* ══════════ PANNEAU DÉTAIL COMMANDE ══════════ */}
+      {detailOrder && (
+        <OrderDetailPanel
+          order={detailOrder}
+          onClose={() => setDetailOrder(null)}
+          onStatusChange={async (id, status) => {
+            await handleOrderStatus(id, status);
+            setDetailOrder(null);
+          }}
+        />
+      )}
+
+      {/* ══════════ BOÎTE DE CONFIRMATION ══════════ */}
+      {confirmState && (
+        <ConfirmDialog
+          open={true}
+          title={confirmState.title}
+          message={confirmState.message}
+          confirmLabel={confirmState.confirmLabel}
+          tone={confirmState.tone}
+          onConfirm={confirmState.onConfirm}
+          onCancel={() => setConfirmState(null)}
+        />
+      )}
 
       {/* ══════════ MODALE PRODUIT ══════════ */}
       {productModal && (
