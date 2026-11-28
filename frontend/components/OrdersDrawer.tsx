@@ -49,6 +49,7 @@ export default function OrdersDrawer({ open, onClose }: OrdersDrawerProps) {
   useEffect(() => {
     if (!open || !isAuthenticated) return;
     if (storeToken && typeof window !== 'undefined') {
+      if (!sessionStorage.getItem('token')) sessionStorage.setItem('token', storeToken);
       if (!localStorage.getItem('token')) localStorage.setItem('token', storeToken);
     }
     setLoading(true);

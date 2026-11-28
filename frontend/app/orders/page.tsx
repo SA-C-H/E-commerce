@@ -71,6 +71,8 @@ export default function OrdersHistoryPage() {
 
   const fetchOrders = async () => {
     if (storeToken && typeof window !== 'undefined') {
+      // Synchroniser sessionStorage ET localStorage pour compatibilité
+      if (!sessionStorage.getItem('token')) sessionStorage.setItem('token', storeToken);
       if (!localStorage.getItem('token')) localStorage.setItem('token', storeToken);
     }
     try {
