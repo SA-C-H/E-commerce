@@ -253,3 +253,33 @@ export const changePassword = async (userId, oldPassword, newPassword) => {
   }
 };
 
+
+/**
+ * Service d'authentification : Supprimer un utilisateur (Admin)
+ */
+export const deleteUser = async (userId) => {
+  // Vérifier que l'utilisateur existe
+  const { data: user, error: fetchError } = await supabase
+    .from('users')
+    .select('id, name')
+    .eq('id', userId)
+    .maybeSingle();
+
+  if (fetchError) {
+    throw new AppError('Erreur lors de la recherche de l\'utilisateur', 500);
+  }
+
+  if (!user) {
+    throw new AppError('Utilisateur introuvable', 404);
+  }
+
+  // Supprimer l'utilisateur (les commandes gardent user_id = null grâce à ON DELETE SET NULL)
+  const { error } = await supabase
+    .from('users')
+    .delete()
+    .eq('id', userId);
+
+  if (error) {
+    throw new AppError('Erreur lors de la suppression de l\'utilisateur', 500);
+  }
+};

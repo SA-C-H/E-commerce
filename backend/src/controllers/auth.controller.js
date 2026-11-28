@@ -174,3 +174,31 @@ export const changePassword = async (req, res, next) => {
 };
 
 
+
+/**
+ * Contrôleur : Supprimer un utilisateur (Admin)
+ * DELETE /api/auth/users/:id
+ */
+export const deleteUser = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    // Empêcher l'admin de se supprimer lui-même
+    if (id === req.user.id) {
+      return res.status(400).json({
+        success: false,
+        message: 'Vous ne pouvez pas supprimer votre propre compte.',
+        details: [],
+      });
+    }
+
+    await authService.deleteUser(id);
+
+    res.status(200).json({
+      success: true,
+      data: { message: 'Utilisateur supprimé avec succès' },
+    });
+  } catch (error) {
+    next(error);
+  }
+};

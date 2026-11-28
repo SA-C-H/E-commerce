@@ -298,6 +298,10 @@ export default function AdminPage() {
   const [orderSearch,       setOrderSearch]       = useState('');
   const [orderStatusFilter, setOrderStatusFilter] = useState<'ALL'|'pending'|'confirmed'|'delivered'|'cancelled'>('ALL');
 
+  /* Filtres utilisateurs */
+  const [userSearch,     setUserSearch]     = useState('');
+  const [userRoleFilter, setUserRoleFilter] = useState<'ALL'|'admin'|'client'>('ALL');
+
   /* Panneau détail + boîte de confirmation */
   const [detailOrder,  setDetailOrder]  = useState<any|null>(null);
   const [confirmState, setConfirmState] = useState<{
@@ -442,10 +446,40 @@ export default function AdminPage() {
   /* ── Utilisateurs ── */
   const handleToggleRole = async (u: any) => {
     const next = u.role === 'admin' ? 'client' : 'admin';
-    if (!confirm(`Changer "${u.name}" → ${next.toUpperCase()} ?`)) return;
-    try { await api.patch(`/auth/users/${u.id}/role`, { role: next }); toast.success('Rôle mis à jour'); loadData(); }
-    catch (err: any) { toast.error(err.message || 'Erreur'); }
+    setConfirmState({
+      title: `Changer le rôle de "${u.name}" ?`,
+      message: `Ce compte passera de ${u.role.toUpperCase()} à ${next.toUpperCase()}.`,
+      confirmLabel: 'Confirmer',
+      tone: 'default',
+      onConfirm: async () => {
+        setConfirmState(null);
+        try { await api.patch(`/auth/users/${u.id}/role`, { role: next }); toast.success('Rôle mis à jour'); loadData(); }
+        catch (err: any) { toast.error(err.message || 'Erreur'); }
+      },
+    });
   };
+
+  const handleDeleteUser = (u: any) => {
+    setConfirmState({
+      title: `Supprimer "${u.name}" ?`,
+      message: `Ce compte sera définitivement supprimé. Cette action est irréversible.`,
+      confirmLabel: 'Supprimer',
+      tone: 'danger',
+      onConfirm: async () => {
+        setConfirmState(null);
+        try { await api.delete(`/auth/users/${u.id}`); toast.success('Utilisateur supprimé'); loadData(); }
+        catch (err: any) { toast.error(err.message || 'Erreur'); }
+      },
+    });
+  };
+
+  /* ── Filtres utilisateurs ── */
+  const filteredUsers = useMemo(() => usersList.filter(u => {
+    const q = userSearch.toLowerCase();
+    const matchQ = !q || u.name?.toLowerCase().includes(q) || u.email?.toLowerCase().includes(q);
+    const matchRole = userRoleFilter === 'ALL' || u.role === userRoleFilter;
+    return matchQ && matchRole;
+  }), [usersList, userSearch, userRoleFilter]);
 
   if (!mounted) return null;
 
@@ -542,14 +576,16 @@ export default function AdminPage() {
       {/* ══════════ SIDEBAR DESKTOP ══════════ */}
       <aside className="hidden md:flex w-60 shrink-0 flex-col bg-[var(--bg-card)] border-r border-[var(--border)] overflow-hidden transition-colors duration-300">
         {/* Logo */}
-        <div className="px-5 py-5 border-b border-[var(--border)]">
-          <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-amber-500 flex items-center justify-center font-black text-slate-950 text-sm shadow">TN</div>
+        <div className="px-4 py-4 border-b border-[var(--border)]">
+          <Link href="/" className="flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-xl overflow-hidden shrink-0 border border-amber-500/30">
+              <Image src="/logo.png" alt="TechNova" width={36} height={36} className="object-contain w-full h-full" />
+            </div>
             <div>
               <p className="font-black text-sm text-[var(--text-dark)] leading-none">TechNova<span className="text-amber-500">.ma</span></p>
-              <p className="text-[10px] text-[var(--text-muted)] mt-0.5">L&apos;Expert Tech</p>
+              <p className="text-[10px] text-[var(--text-muted)] mt-0.5">Console Admin</p>
             </div>
-          </div>
+          </Link>
         </div>
 
         <SidebarNav />
@@ -594,7 +630,9 @@ export default function AdminPage() {
           <div className="relative w-64 bg-[var(--bg-card)] h-full border-r border-[var(--border)] flex flex-col z-10">
             <div className="px-5 py-5 border-b border-[var(--border)] flex items-center justify-between">
               <div className="flex items-center gap-2.5">
-                <div className="w-8 h-8 rounded-xl bg-amber-500 flex items-center justify-center font-black text-slate-950 text-xs">TN</div>
+                <div className="w-8 h-8 rounded-xl overflow-hidden shrink-0 border border-amber-500/30">
+                  <Image src="/logo.png" alt="TechNova" width={32} height={32} className="object-contain w-full h-full" />
+                </div>
                 <p className="font-black text-sm text-[var(--text-dark)]">TechNova<span className="text-amber-500">.ma</span></p>
               </div>
               <div className="flex items-center gap-1">
@@ -994,46 +1032,188 @@ export default function AdminPage() {
 
           {/* ═══════ UTILISATEURS ═══════ */}
           {activeTab === 'users' && (
-            <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-2xl overflow-hidden shadow-xs">
-              <table className="w-full text-xs">
-                <thead><tr className="border-b border-[var(--border)] text-[var(--text-muted)] uppercase tracking-wider">
-                  <th className="text-left p-4 pl-5 font-bold">Utilisateur</th>
-                  <th className="text-left p-4 font-bold">Email</th>
-                  <th className="text-left p-4 font-bold">Rôle</th>
-                  <th className="text-left p-4 font-bold">Inscrit le</th>
-                  <th className="text-right p-4 pr-5 font-bold">Action</th>
-                </tr></thead>
-                <tbody className="divide-y divide-[var(--border)]">
-                  {usersList.length === 0
-                    ? <tr><td colSpan={5} className="p-8 text-center text-[var(--text-muted)]">Aucun utilisateur chargé</td></tr>
-                    : usersList.map(u => (
-                      <tr key={u.id} className="hover:bg-[var(--bg-card-hover)] transition">
-                        <td className="p-4 pl-5">
-                          <div className="flex items-center gap-2.5">
-                            <div className="w-8 h-8 rounded-full bg-amber-500/20 border border-amber-500/30 flex items-center justify-center font-bold text-amber-500 text-xs shrink-0">
-                              {u.name?.[0]?.toUpperCase() || '?'}
-                            </div>
-                            <span className="font-semibold text-[var(--text-dark)]">{u.name}</span>
-                          </div>
-                        </td>
-                        <td className="p-4 text-[var(--text-body)] font-mono">{u.email}</td>
-                        <td className="p-4">
-                          <span className={`px-2.5 py-1 rounded-full text-[10px] font-black border ${u.role === 'admin' ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30' : 'bg-slate-500/15 text-[var(--text-body)] border-slate-500/30'}`}>
-                            {u.role.toUpperCase()}
-                          </span>
-                        </td>
-                        <td className="p-4 text-[var(--text-muted)]">{new Date(u.created_at).toLocaleDateString('fr-FR')}</td>
-                        <td className="p-4 pr-5 text-right">
-                          <button onClick={() => handleToggleRole(u)}
-                            className="px-3 py-1.5 rounded-xl bg-[var(--bg-page)] hover:bg-[var(--bg-card-hover)] border border-[var(--border)] text-[11px] text-[var(--text-body)] hover:text-[var(--text-dark)] transition">
-                            {u.role === 'admin' ? '↓ Client' : '↑ Admin'}
-                          </button>
-                        </td>
+            <div className="space-y-4">
+              {/* En-tête */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <div className="flex items-center gap-2 text-[11px] text-[var(--text-muted)] mb-1">
+                    <span className="text-amber-500 font-semibold">Console</span>
+                    <ChevronRight className="w-3 h-3" />
+                    <span className="text-[var(--text-dark)] font-semibold">Utilisateurs</span>
+                  </div>
+                  <h2 className="text-lg font-black text-[var(--text-dark)]">
+                    Gestion des utilisateurs
+                  </h2>
+                </div>
+                <div className="flex items-center gap-2">
+                  {/* Filtre rôle */}
+                  <select
+                    value={userRoleFilter}
+                    onChange={e => setUserRoleFilter(e.target.value as any)}
+                    className="px-3 py-2 rounded-xl bg-[var(--bg-card)] border border-[var(--border)] text-xs text-[var(--text-dark)] focus:outline-none focus:border-amber-500"
+                  >
+                    <option value="ALL">Tous les rôles</option>
+                    <option value="admin">Admin</option>
+                    <option value="client">Client</option>
+                  </select>
+                  {/* Recherche users */}
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[var(--text-muted)]" />
+                    <input
+                      type="text"
+                      placeholder="Rechercher..."
+                      value={userSearch}
+                      onChange={e => setUserSearch(e.target.value)}
+                      className="pl-9 pr-4 py-2 rounded-xl bg-[var(--bg-card)] border border-[var(--border)] text-xs text-[var(--text-dark)] placeholder-[var(--text-muted)] focus:outline-none focus:border-amber-500 transition w-44"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Compteurs rôles */}
+              <div className="grid grid-cols-3 gap-3">
+                {[
+                  { label: 'Total', count: usersList.length, color: 'text-[var(--text-dark)]', bg: 'bg-[var(--bg-card)]' },
+                  { label: 'Admins', count: usersList.filter(u => u.role === 'admin').length, color: 'text-amber-500', bg: 'bg-amber-500/10' },
+                  { label: 'Clients', count: usersList.filter(u => u.role === 'client').length, color: 'text-blue-500', bg: 'bg-blue-500/10' },
+                ].map(({ label, count, color, bg }) => (
+                  <div key={label} className={`${bg} border border-[var(--border)] rounded-2xl p-4 text-center`}>
+                    <p className={`text-2xl font-black ${color}`}>{count}</p>
+                    <p className="text-[11px] text-[var(--text-muted)] mt-0.5">{label}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* Tableau desktop / Cartes mobile */}
+              <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-2xl overflow-hidden shadow-xs">
+                <div className="px-5 py-3.5 border-b border-[var(--border)] flex items-center justify-between">
+                  <h3 className="text-sm font-bold text-[var(--text-dark)]">Liste des comptes</h3>
+                  <span className="text-[11px] text-[var(--text-muted)]">{filteredUsers.length} résultat(s)</span>
+                </div>
+
+                {/* ── Tableau desktop ── */}
+                <div className="hidden sm:block overflow-x-auto">
+                  <table className="w-full text-xs">
+                    <thead>
+                      <tr className="border-b border-[var(--border)] text-[var(--text-muted)] uppercase tracking-wider">
+                        <th className="text-left p-4 pl-5 font-bold">Utilisateur</th>
+                        <th className="text-left p-4 font-bold">Email</th>
+                        <th className="text-left p-4 font-bold">Rôle</th>
+                        <th className="text-left p-4 font-bold">Inscrit le</th>
+                        <th className="text-right p-4 pr-5 font-bold">Actions</th>
                       </tr>
-                    ))
-                  }
-                </tbody>
-              </table>
+                    </thead>
+                    <tbody className="divide-y divide-[var(--border)]">
+                      {filteredUsers.length === 0 ? (
+                        <tr>
+                          <td colSpan={5} className="p-12 text-center text-[var(--text-muted)]">
+                            Aucun utilisateur trouvé
+                          </td>
+                        </tr>
+                      ) : filteredUsers.map(u => (
+                        <tr key={u.id} className={`hover:bg-[var(--bg-card-hover)] transition ${u.id === user?.id ? 'bg-amber-500/5' : ''}`}>
+                          <td className="p-4 pl-5">
+                            <div className="flex items-center gap-2.5">
+                              <div className="w-8 h-8 rounded-full bg-amber-500/20 border border-amber-500/30 flex items-center justify-center font-bold text-amber-500 text-xs shrink-0">
+                                {u.name?.[0]?.toUpperCase() || '?'}
+                              </div>
+                              <div className="min-w-0">
+                                <span className="font-semibold text-[var(--text-dark)] truncate block max-w-[140px]">{u.name}</span>
+                                {u.id === user?.id && <span className="text-[9px] text-amber-500 font-bold">VOUS</span>}
+                              </div>
+                            </div>
+                          </td>
+                          <td className="p-4 text-[var(--text-body)] font-mono truncate max-w-[180px]">{u.email}</td>
+                          <td className="p-4">
+                            <span className={`px-2.5 py-1 rounded-full text-[10px] font-black border ${
+                              u.role === 'admin'
+                                ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30'
+                                : 'bg-slate-500/15 text-[var(--text-body)] border-slate-500/30'
+                            }`}>
+                              {u.role.toUpperCase()}
+                            </span>
+                          </td>
+                          <td className="p-4 text-[var(--text-muted)]">
+                            {new Date(u.created_at).toLocaleDateString('fr-FR')}
+                          </td>
+                          <td className="p-4 pr-5 text-right">
+                            <div className="inline-flex items-center gap-1">
+                              {/* Basculer rôle */}
+                              <button
+                                onClick={() => handleToggleRole(u)}
+                                disabled={u.id === user?.id}
+                                className="px-3 py-1.5 rounded-xl bg-[var(--bg-page)] hover:bg-[var(--bg-card-hover)] border border-[var(--border)] text-[11px] text-[var(--text-body)] hover:text-[var(--text-dark)] disabled:opacity-30 disabled:cursor-not-allowed transition"
+                                title={u.role === 'admin' ? 'Rétrograder en client' : 'Promouvoir en admin'}
+                              >
+                                {u.role === 'admin' ? '↓ Client' : '↑ Admin'}
+                              </button>
+                              {/* Supprimer */}
+                              <button
+                                onClick={() => handleDeleteUser(u)}
+                                disabled={u.id === user?.id}
+                                className="p-2 rounded-lg text-[var(--text-muted)] hover:text-red-500 hover:bg-red-500/10 disabled:opacity-30 disabled:cursor-not-allowed transition"
+                                title="Supprimer l'utilisateur"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* ── Cartes mobile ── */}
+                <div className="sm:hidden divide-y divide-[var(--border)]">
+                  {filteredUsers.length === 0 ? (
+                    <div className="p-8 text-center text-sm text-[var(--text-muted)]">
+                      Aucun utilisateur trouvé
+                    </div>
+                  ) : filteredUsers.map(u => (
+                    <div key={u.id} className="p-4 space-y-3">
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <div className="w-9 h-9 rounded-full bg-amber-500/20 border border-amber-500/30 flex items-center justify-center font-bold text-amber-500 text-sm shrink-0">
+                            {u.name?.[0]?.toUpperCase() || '?'}
+                          </div>
+                          <div className="min-w-0">
+                            <p className="font-bold text-sm text-[var(--text-dark)] truncate">{u.name}</p>
+                            <p className="text-[11px] text-[var(--text-muted)] font-mono truncate">{u.email}</p>
+                          </div>
+                        </div>
+                        <span className={`px-2.5 py-1 rounded-full text-[10px] font-black border shrink-0 ${
+                          u.role === 'admin'
+                            ? 'bg-amber-500/15 text-amber-600 border-amber-500/30'
+                            : 'bg-slate-500/15 text-[var(--text-body)] border-slate-500/30'
+                        }`}>
+                          {u.role.toUpperCase()}
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between text-[11px] text-[var(--text-muted)]">
+                        <span>Inscrit le {new Date(u.created_at).toLocaleDateString('fr-FR')}</span>
+                        {u.id === user?.id && <span className="text-amber-500 font-bold">VOUS</span>}
+                      </div>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleToggleRole(u)}
+                          disabled={u.id === user?.id}
+                          className="flex-1 py-2 rounded-xl bg-[var(--bg-page)] border border-[var(--border)] text-xs font-semibold text-[var(--text-body)] hover:text-[var(--text-dark)] disabled:opacity-30 transition"
+                        >
+                          {u.role === 'admin' ? '↓ Rétrograder' : '↑ Promouvoir Admin'}
+                        </button>
+                        <button
+                          onClick={() => handleDeleteUser(u)}
+                          disabled={u.id === user?.id}
+                          className="px-3 py-2 rounded-xl border border-red-500/30 text-red-500 hover:bg-red-500/10 disabled:opacity-30 transition"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           )}
 

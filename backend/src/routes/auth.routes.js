@@ -12,6 +12,7 @@ router.post('/login', authController.login);
 router.get('/me', protect, authController.getMe);
 router.get('/users', protect, restrictTo('admin'), authController.getAllUsers);
 router.patch('/users/:id/role', protect, restrictTo('admin'), authController.updateUserRole);
+router.delete('/users/:id', protect, restrictTo('admin'), authController.deleteUser);
 
 // Routes de profil (protégées)
 router.patch('/profile', protect, authController.updateProfile);
