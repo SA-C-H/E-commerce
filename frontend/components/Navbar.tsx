@@ -4,7 +4,7 @@ import Link from 'next/link';
 import {
   ShoppingBag, User as UserIcon, Menu, X,
   Search, MessageCircle, Grid, ChevronDown, ChevronRight,
-  MapPin, Smartphone, Laptop, Tablet, Gamepad2, Star, Monitor, Headphones, Watch,
+  MapPin, Smartphone, Laptop, Tablet, Gamepad2, Star, Monitor, Headphones, Watch, Package,
 } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 import { useCartStore } from '@/store/cartStore';
@@ -165,11 +165,18 @@ export default function Navbar() {
               <div className="lg:hidden"><ThemeSwitch compact /></div>
 
               {mounted && isAuthenticated ? (
-                <button onClick={() => setProfileOpen(true)}
-                  className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-[var(--text-dark)] hover:text-amber-500 transition rounded-xl hover:bg-[var(--bg-page)]">
-                  <UserIcon className="w-4 h-4 stroke-[2]" />
-                  <span className="hidden sm:inline">{user?.name?.split(' ')[0]}</span>
-                </button>
+                <>
+                  <Link href="/orders"
+                    className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-[var(--text-dark)] hover:text-amber-500 transition rounded-xl hover:bg-[var(--bg-page)]">
+                    <Package className="w-4 h-4 stroke-[2]" />
+                    <span className="hidden lg:inline">Mes Commandes</span>
+                  </Link>
+                  <button onClick={() => setProfileOpen(true)}
+                    className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-[var(--text-dark)] hover:text-amber-500 transition rounded-xl hover:bg-[var(--bg-page)]">
+                    <UserIcon className="w-4 h-4 stroke-[2]" />
+                    <span className="hidden sm:inline">{user?.name?.split(' ')[0]}</span>
+                  </button>
+                </>
               ) : (
                 <div className="flex items-center gap-1.5">
                   <Link href="/login"
