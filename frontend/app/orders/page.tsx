@@ -241,7 +241,22 @@ export default function OrdersHistoryPage() {
                   <Package className="w-4 h-4 text-amber-500" />
                   Historique de mes commandes
                 </h3>
-                <button className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-[var(--text-muted)] hover:text-amber-500 bg-[var(--bg-page)] border border-[var(--border)] rounded-lg transition">
+                <button
+                  onClick={() => {
+                    const csv = `N° Commande,Date,Client,Téléphone,Total,Statut\n${orders.map(o =>
+                      `${o.id},${new Date(o.created_at).toLocaleDateString('fr-FR')},${o.customer_name},${o.customer_phone},${o.total},${o.status}`
+                    ).join('\n')}`;
+                    const blob = new Blob([csv], { type: 'text/csv' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `commandes-technova-${new Date().toISOString().slice(0,10)}.csv`;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                    toast.success('Export CSV téléchargé');
+                  }}
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-[var(--text-muted)] hover:text-amber-500 bg-[var(--bg-page)] border border-[var(--border)] rounded-lg transition"
+                >
                   <Download className="w-3.5 h-3.5" />
                   Toutes les commandes
                 </button>
@@ -265,7 +280,14 @@ export default function OrdersHistoryPage() {
                       <tr key={order.id} className="hover:bg-[var(--bg-page)] transition">
                         <td className="p-4 pl-5">
                           <div className="flex items-center gap-2">
-                            <button className="p-1.5 rounded-lg bg-[var(--bg-page)] border border-[var(--border)] text-[var(--text-muted)] hover:text-[var(--text-dark)] transition">
+                            <button
+                              onClick={() => {
+                                navigator.clipboard.writeText(order.id);
+                                toast.success('N° de commande copié');
+                              }}
+                              className="p-1.5 rounded-lg bg-[var(--bg-page)] border border-[var(--border)] text-[var(--text-muted)] hover:text-[var(--text-dark)] transition"
+                              title="Copier le N° de commande"
+                            >
                               <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                               </svg>
