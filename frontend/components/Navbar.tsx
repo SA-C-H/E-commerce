@@ -188,7 +188,7 @@ export default function Navbar() {
                 className="relative flex items-center justify-center w-10 h-10 text-[var(--text-dark)] hover:text-amber-500 transition rounded-xl hover:bg-[var(--bg-page)] border border-[var(--border)] sm:border-transparent">
                 <ShoppingBag className="w-5 h-5 stroke-[2]" />
                 {mounted && totalCount > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-amber-500 text-slate-950 text-[10px] font-black w-4.5 h-4.5 rounded-full flex items-center justify-center">
+                  <span className="absolute -top-1 -right-1 bg-amber-500 text-slate-950 text-[10px] font-black w-5 h-5 rounded-full flex items-center justify-center">
                     {totalCount}
                   </span>
                 )}
@@ -355,10 +355,10 @@ export default function Navbar() {
                 return (
                   <Link key={cat.id} href={`/products?category=${cat.id}`}
                     onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition"
+                    className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition min-w-0"
                     style={{ color: '#F1F5F9' }}>
                     <Icon className="w-4 h-4 shrink-0" style={{ color: '#F59E0B' }} />
-                    {cat.name}
+                    <span className="truncate">{cat.name}</span>
                   </Link>
                 );
               })}

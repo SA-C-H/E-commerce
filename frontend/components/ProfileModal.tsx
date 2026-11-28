@@ -120,7 +120,7 @@ export default function ProfileModal({ open, onClose }: ProfileModalProps) {
     borderRadius: '10px',
     padding: '10px 14px',
     width: '100%',
-    fontSize: '14px',
+    fontSize: '16px', /* ≥16px évite le zoom automatique iOS Safari */
     outline: 'none',
   };
 
@@ -143,7 +143,7 @@ export default function ProfileModal({ open, onClose }: ProfileModalProps) {
       <div
         className="fixed top-0 right-0 h-full z-[101] flex flex-col shadow-2xl transition-transform duration-300 ease-in-out"
         style={{
-          width: 'min(400px, 95vw)',
+          width: 'min(400px, 88vw)',
           transform: open ? 'translateX(0)' : 'translateX(100%)',
           backgroundColor: '#0F1A2E',
           borderLeft: '1px solid #1E293B',

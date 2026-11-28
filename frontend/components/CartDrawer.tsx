@@ -105,7 +105,7 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
       <div
         className="fixed top-0 right-0 h-full z-[101] flex flex-col shadow-2xl transition-transform duration-300 ease-in-out"
         style={{
-          width: 'min(420px, 95vw)',
+          width: 'min(420px, 88vw)',
           transform: open ? 'translateX(0)' : 'translateX(100%)',
           backgroundColor: '#0F1A2E',
           borderLeft: '1px solid #1E293B',
@@ -194,29 +194,29 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
                     <div className="flex items-center gap-2 mt-2">
                       <button
                         onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                        className="w-7 h-7 rounded-lg flex items-center justify-center transition"
+                        className="w-9 h-9 rounded-lg flex items-center justify-center transition"
                         style={{ backgroundColor: '#1E293B', color: '#94A3B8' }}
                       >
-                        <Minus className="w-3 h-3" />
+                        <Minus className="w-3.5 h-3.5" />
                       </button>
-                      <span className="text-xs font-black w-5 text-center tabular-nums" style={{ color: '#F8FAFC' }}>
+                      <span className="text-xs font-black w-6 text-center tabular-nums" style={{ color: '#F8FAFC' }}>
                         {item.quantity}
                       </span>
                       <button
                         onClick={() => updateQuantity(item.id, item.quantity + 1)}
                         disabled={item.quantity >= item.stock}
-                        className="w-7 h-7 rounded-lg flex items-center justify-center transition disabled:opacity-40"
+                        className="w-9 h-9 rounded-lg flex items-center justify-center transition disabled:opacity-40"
                         style={{ backgroundColor: '#1E293B', color: '#94A3B8' }}
                       >
-                        <Plus className="w-3 h-3" />
+                        <Plus className="w-3.5 h-3.5" />
                       </button>
 
                       <button
                         onClick={() => removeItem(item.id)}
-                        className="ml-auto w-7 h-7 rounded-lg flex items-center justify-center transition hover:bg-red-500/20"
+                        className="ml-auto w-9 h-9 rounded-lg flex items-center justify-center transition hover:bg-red-500/20"
                         style={{ color: '#64748B' }}
                       >
-                        <Trash2 className="w-3.5 h-3.5" />
+                        <Trash2 className="w-4 h-4" />
                       </button>
                     </div>
                   </div>

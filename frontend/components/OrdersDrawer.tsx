@@ -88,7 +88,7 @@ export default function OrdersDrawer({ open, onClose }: OrdersDrawerProps) {
       <div
         className="fixed top-0 right-0 h-full z-[301] flex flex-col shadow-2xl transition-transform duration-300 ease-in-out"
         style={{
-          width: 'min(440px, 96vw)',
+          width: 'min(440px, 88vw)',
           transform: open ? 'translateX(0)' : 'translateX(100%)',
           backgroundColor: '#0F1A2E',
           borderLeft: '1px solid #1E293B',

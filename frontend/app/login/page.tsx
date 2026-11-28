@@ -50,17 +50,16 @@ function LoginForm() {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center p-4"
+      className="min-h-screen flex items-start justify-center p-3 sm:p-4 overflow-y-auto"
       style={{ backgroundColor: '#0B0F1A' }}
     >
       <div
-        className="flex w-full overflow-hidden rounded-2xl shadow-2xl"
-        style={{ maxWidth: '780px', minHeight: '480px', border: '1px solid #1E2435' }}
+        className="flex w-full overflow-hidden rounded-2xl shadow-2xl my-auto"
+        style={{ maxWidth: '780px', border: '1px solid #1E2435' }}
       >
-
         {/* ── PANNEAU GAUCHE — Formulaire ── */}
         <div
-          className="flex flex-1 flex-col justify-center px-10 py-12"
+          className="flex flex-1 flex-col justify-center px-5 sm:px-8 lg:px-10 py-8 sm:py-10"
           style={{ backgroundColor: '#141926' }}
         >
           {/* Logo */}

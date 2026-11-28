@@ -95,7 +95,7 @@ export default function OrdersHistoryPage() {
         <Navbar />
         <main className="flex-1 flex items-center justify-center px-4 py-16">
           <div
-            className="p-12 text-center rounded-3xl max-w-md w-full"
+            className="p-8 sm:p-12 text-center rounded-3xl max-w-md w-full"
             style={{ backgroundColor: '#0F1A2E', border: '1px solid #1E293B' }}
           >
             <div
