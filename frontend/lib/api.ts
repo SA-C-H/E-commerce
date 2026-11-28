@@ -54,8 +54,10 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
   const baseUrl = getApiBaseUrl();
   const url = `${baseUrl}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
 
-  // Récupération du jeton JWT dans le localStorage si on est côté navigateur
-  const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+  // Priorité : sessionStorage (isolé par onglet) puis localStorage (fallback)
+  const token = typeof window !== 'undefined'
+    ? (sessionStorage.getItem('token') || localStorage.getItem('token'))
+    : null;
 
   const headers: HeadersInit = {
     'Content-Type': 'application/json',

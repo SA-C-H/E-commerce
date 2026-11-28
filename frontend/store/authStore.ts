@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { persist, createJSONStorage } from 'zustand/middleware';
 
 export interface User {
   id: string;
@@ -26,7 +26,11 @@ export const useAuthStore = create<AuthState>()(
       isAdmin: false,
 
       login: (user: User, token: string) => {
+        // sessionStorage → chaque onglet a sa propre session
+        // deux onglets peuvent être connectés avec des comptes différents
         if (typeof window !== 'undefined') {
+          sessionStorage.setItem('token', token);
+          // Compatibilité api.ts qui lit aussi localStorage
           localStorage.setItem('token', token);
         }
         set({
@@ -39,6 +43,7 @@ export const useAuthStore = create<AuthState>()(
 
       logout: () => {
         if (typeof window !== 'undefined') {
+          sessionStorage.removeItem('token');
           localStorage.removeItem('token');
         }
         set({
@@ -51,6 +56,11 @@ export const useAuthStore = create<AuthState>()(
     }),
     {
       name: 'technova-auth',
+      // sessionStorage : la session est isolée par onglet
+      // fermer l'onglet = déconnexion automatique
+      storage: createJSONStorage(() =>
+        typeof window !== 'undefined' ? sessionStorage : localStorage
+      ),
     }
   )
 );
