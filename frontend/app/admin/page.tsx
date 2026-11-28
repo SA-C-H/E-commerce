@@ -56,8 +56,15 @@ function openWhatsApp(phone: string, orderId: string, name: string) {
   if (!phone) { toast.error('Aucun numéro de téléphone pour ce client'); return; }
   const digits = phone.replace(/[^0-9]/g, '');
   const intl   = digits.startsWith('0') ? `212${digits.slice(1)}` : digits;
-  const msg    = encodeURIComponent(`Bonjour ${name}, votre commande #${orderId.slice(0,8)} TechNova. Confirmez votre adresse svp. Merci !`);
-  window.open(`https://wa.me/${intl}?text=${msg}`, '_blank');
+  if (!intl) { toast.error('Numéro de téléphone invalide'); return; }
+  const msg = encodeURIComponent(`Bonjour ${name}, votre commande #${orderId.slice(0,8)} TechNova. Confirmez votre adresse svp. Merci !`);
+  const url = `https://wa.me/${intl}?text=${msg}`;
+  // Utiliser un lien <a> dynamique pour éviter le blocage popup navigateur
+  const a = document.createElement('a');
+  a.href = url;
+  a.target = '_blank';
+  a.rel = 'noopener noreferrer';
+  a.click();
 }
 
 /* ─── Squelette de chargement pour les tableaux ─── */
@@ -439,8 +446,13 @@ export default function AdminPage() {
     if (!phone) { toast.error('Pas de numéro'); return; }
     const digits = phone.replace(/[^0-9]/g, '');
     const intl   = digits.startsWith('0') ? `212${digits.slice(1)}` : digits;
-    const msg    = encodeURIComponent(`Bonjour ${name}, votre commande #${orderId.slice(0,8)} TechNova. Confirmez votre adresse svp. Merci !`);
-    window.open(`https://wa.me/${intl}?text=${msg}`, '_blank');
+    if (!intl) { toast.error('Numéro invalide'); return; }
+    const msg = encodeURIComponent(`Bonjour ${name}, votre commande #${orderId.slice(0,8)} TechNova. Confirmez votre adresse svp. Merci !`);
+    const a = document.createElement('a');
+    a.href = `https://wa.me/${intl}?text=${msg}`;
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+    a.click();
   };
 
   /* ── Utilisateurs ── */
