@@ -28,6 +28,18 @@ export default function RootLayout({
   return (
     <html lang="fr" data-scroll-behavior="smooth" data-theme="dark" className={cn("font-sans", geist.variable)}>
       <head>
+        {/* ── Anti-FOUC : applique le thème AVANT le premier paint ── */}
+        <script dangerouslySetInnerHTML={{ __html: `
+          (function() {
+            try {
+              var stored = localStorage.getItem('technova-theme');
+              var theme = stored ? (JSON.parse(stored)?.state?.theme ?? 'dark') : 'dark';
+              document.documentElement.setAttribute('data-theme', theme);
+            } catch(e) {
+              document.documentElement.setAttribute('data-theme', 'dark');
+            }
+          })();
+        `}} />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link

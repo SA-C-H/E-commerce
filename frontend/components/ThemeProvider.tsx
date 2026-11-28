@@ -3,9 +3,9 @@
 import { useEffect } from 'react';
 
 /**
- * Applique le thème persisté (localStorage) au <html>
- * dès le premier rendu client — évite le flash FOUC.
- * Défaut : dark (thème TechNova)
+ * Synchronise le store Zustand avec l'attribut data-theme du <html>.
+ * Le script inline dans layout.tsx gère déjà le premier paint (anti-FOUC).
+ * Ce composant ne fait que réécouter les changements de thème après hydration.
  */
 export default function ThemeProvider() {
   useEffect(() => {
