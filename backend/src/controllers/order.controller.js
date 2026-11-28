@@ -55,3 +55,24 @@ export const updateOrderStatus = async (req, res, next) => {
   }
 };
 
+
+/**
+ * Contrôleur : Annulation d'une commande par le CLIENT
+ * PATCH /api/orders/:id/cancel
+ * Règle : uniquement si status = 'pending' ET la commande appartient au client
+ */
+export const cancelOrderByClient = async (req, res, next) => {
+  try {
+    const orderId = req.params.id;
+    const userId  = req.user.id;
+
+    const order = await orderService.cancelOrderByClient(orderId, userId);
+
+    res.status(200).json({
+      success: true,
+      data: order,
+    });
+  } catch (error) {
+    next(error);
+  }
+};

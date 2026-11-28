@@ -16,6 +16,9 @@ router.get('/', orderController.getOrders);
 // Détail d'une commande
 router.get('/:id', orderController.getOrderById);
 
+// Annulation par le CLIENT (seulement si status=pending)
+router.patch('/:id/cancel', orderController.cancelOrderByClient);
+
 // Modification du statut (admin uniquement)
 router.patch('/:id/status', restrictTo('admin'), orderController.updateOrderStatus);
 

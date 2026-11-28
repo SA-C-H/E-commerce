@@ -253,3 +253,67 @@ export const updateOrderStatus = async (orderId, status) => {
   return data;
 };
 
+
+/**
+ * Annulation d'une commande par le CLIENT
+ * - Vérifie que la commande appartient au client
+ * - Vérifie que le statut est encore 'pending'
+ * - Remet le stock en place
+ */
+export const cancelOrderByClient = async (orderId, userId) => {
+  // 1. Récupérer la commande avec ses articles
+  const { data: order, error } = await supabase
+    .from('orders')
+    .select('id, status, user_id, order_items(product_id, quantity)')
+    .eq('id', orderId)
+    .maybeSingle();
+
+  if (error) throw new AppError('Erreur lors de la récupération de la commande', 500);
+  if (!order) throw new AppError('Commande introuvable', 404);
+
+  // 2. Vérifier que la commande appartient bien à ce client
+  if (order.user_id !== userId) {
+    throw new AppError('Accès interdit à cette commande', 403);
+  }
+
+  // 3. Vérifier que la commande est encore annulable (seulement pending)
+  if (order.status !== 'pending') {
+    throw new AppError(
+      order.status === 'confirmed'
+        ? 'Cette commande a déjà été confirmée par l\'admin, annulation impossible.'
+        : 'Cette commande ne peut plus être annulée.',
+      400
+    );
+  }
+
+  // 4. Remettre le stock pour chaque article
+  if (order.order_items?.length) {
+    for (const item of order.order_items) {
+      const { data: prod } = await supabase
+        .from('products')
+        .select('stock')
+        .eq('id', item.product_id)
+        .maybeSingle();
+
+      if (prod) {
+        await supabase
+          .from('products')
+          .update({ stock: prod.stock + item.quantity })
+          .eq('id', item.product_id);
+      }
+    }
+    invalidate('products:*');
+  }
+
+  // 5. Mettre à jour le statut en 'cancelled'
+  const { data: updated, error: updateError } = await supabase
+    .from('orders')
+    .update({ status: 'cancelled' })
+    .eq('id', orderId)
+    .select('*, order_items(*, products(name, image_url))')
+    .single();
+
+  if (updateError) throw new AppError('Impossible d\'annuler la commande', 500);
+
+  return updated;
+};
