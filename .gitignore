@@ -45,3 +45,6 @@ coverage/
 *.mp4
 remotion-video/
 
+# ── Fichiers sensibles à ne JAMAIS committer ──────────
+ENV-POUR-PROF.txt
+*.env.demo

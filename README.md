@@ -495,7 +495,47 @@ Projet réalisé dans le cadre d'un cours de Développement Web & E-Commerce.
 
 ## 📝 Notes pour le Professeur
 
-> Ce README couvre l'installation complète en local. Pour toute question :
-> - Le code source complet est sur GitHub : https://github.com/SA-C-H/E-commerce
-> - La démo en production est accessible 24h/7j aux URLs indiquées ci-dessus
-> - Les comptes de démonstration fonctionnent en production et en local (si la même base Supabase est utilisée)
+### Option A — Utiliser la base de données fournie (recommandé)
+
+Les clés de connexion Supabase du projet de démonstration vous sont transmises **séparément** (par email ou message privé) pour des raisons de sécurité.
+
+Une fois les clés reçues, copiez simplement le contenu dans `backend/.env` :
+
+```env
+PORT=5000
+SUPABASE_URL=<fourni séparément>
+SUPABASE_SERVICE_KEY=<fourni séparément>
+JWT_SECRET=<fourni séparément>
+JWT_EXPIRES_IN=7d
+WHATSAPP_NUMBER=212600000000
+FRONTEND_URL=http://localhost:3000
+```
+
+Et dans `frontend/.env.local` :
+
+```env
+NEXT_PUBLIC_API_URL=http://localhost:5000/api
+```
+
+La base contient déjà les 757 produits, les catégories et les comptes de démonstration.
+
+---
+
+### Option B — Créer sa propre base Supabase (autonome)
+
+Si vous préférez utiliser votre propre instance :
+
+1. Créez un projet gratuit sur [supabase.com](https://supabase.com)
+2. Dans **SQL Editor**, exécutez dans cet ordre :
+   ```
+   database/schema.sql   → crée les 5 tables
+   database/seed.sql     → insère 757 produits
+   ```
+3. Récupérez vos clés dans **Project Settings → API → Legacy API Keys**
+4. Remplissez `backend/.env` avec vos propres valeurs
+
+---
+
+> Le code source complet est sur GitHub : https://github.com/SA-C-H/E-commerce  
+> La démo en production est accessible 24h/7j aux URLs indiquées ci-dessus  
+> Les comptes de démonstration fonctionnent en local si vous utilisez la base fournie
