@@ -13,6 +13,8 @@ import {
   Eye, ChevronLeft, ChevronRight, Download, Truck, AlertCircle,
 } from 'lucide-react';
 
+import OrderDetailModal from '@/components/OrderDetailModal';
+
 const DEFAULT_IMAGE = 'https://images.unsplash.com/photo-1512054502232-10a0a035d672?w=100&auto=format&fit=crop';
 
 type OrderStatus = 'pending' | 'confirmed' | 'delivered' | 'cancelled';
@@ -60,6 +62,7 @@ export default function OrdersHistoryPage() {
   const [loading, setLoading]       = useState(true);
   const [cancelling, setCancelling] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [detailOrder, setDetailOrder] = useState<Order | null>(null);
   const pageSize = 5;
 
   const fetchOrders = async () => {
@@ -302,7 +305,11 @@ export default function OrdersHistoryPage() {
                         </td>
                         <td className="p-4 pr-5">
                           <div className="flex items-center justify-center gap-1.5">
-                            <button className="p-2 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-500 transition" title="Voir détails">
+                            <button
+                              onClick={() => setDetailOrder(order)}
+                              className="p-2 rounded-lg bg-amber-500/10 hover:bg-amber-500/20 text-amber-500 transition"
+                              title="Voir détails"
+                            >
                               <Eye className="w-3.5 h-3.5" />
                             </button>
                             {order.status === 'pending' && (
@@ -348,7 +355,10 @@ export default function OrdersHistoryPage() {
                       </span>
                     </div>
                     <div className="flex gap-2">
-                      <button className="flex-1 py-2 rounded-lg bg-amber-500/10 text-amber-500 text-xs font-semibold transition hover:bg-amber-500/20">
+                      <button
+                        onClick={() => setDetailOrder(order)}
+                        className="flex-1 py-2 rounded-lg bg-amber-500/10 text-amber-500 text-xs font-semibold transition hover:bg-amber-500/20"
+                      >
                         Voir détails
                       </button>
                       {order.status === 'pending' && (
@@ -402,6 +412,8 @@ export default function OrdersHistoryPage() {
           </>
         )}
       </main>
+
+      <OrderDetailModal order={detailOrder} onClose={() => setDetailOrder(null)} />
 
       <Footer />
     </div>
