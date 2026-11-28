@@ -31,13 +31,11 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
   useEffect(() => { setMounted(true); }, []);
   useEffect(() => { if (user?.name) setCustomerName(user.name); }, [user]);
 
-  /* Bloquer le scroll body quand drawer ouvert */
   useEffect(() => {
     document.body.style.overflow = open ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
   }, [open]);
 
-  /* Fermer avec Escape */
   useEffect(() => {
     if (!open) return;
     const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
@@ -70,10 +68,7 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
       onClose();
       toast.success('Commande validée !', {
         description: 'Redirection vers WhatsApp...',
-        action: {
-          label: 'Voir mes commandes',
-          onClick: () => router.push('/orders'),
-        },
+        action: { label: 'Voir mes commandes', onClick: () => router.push('/orders') },
       });
       setTimeout(() => {
         if (result.whatsappUrl) window.location.href = result.whatsappUrl;
@@ -90,7 +85,7 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
 
   return (
     <>
-      {/* ── Backdrop ── */}
+      {/* Backdrop */}
       <div
         className="fixed inset-0 z-[100] transition-all duration-300"
         style={{
@@ -101,120 +96,93 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
         onClick={onClose}
       />
 
-      {/* ── Drawer ── */}
+      {/* Drawer */}
       <div
-        className="fixed top-0 right-0 h-full z-[101] flex flex-col shadow-2xl transition-transform duration-300 ease-in-out"
+        className="fixed top-0 right-0 h-full z-[101] flex flex-col shadow-2xl transition-transform duration-300 ease-in-out bg-[var(--bg-card)] border-l border-[var(--border)]"
         style={{
           width: 'min(420px, 88vw)',
           transform: open ? 'translateX(0)' : 'translateX(100%)',
-          backgroundColor: '#0F1A2E',
-          borderLeft: '1px solid #1E293B',
         }}
       >
-        {/* ── En-tête ── */}
-        <div
-          className="flex items-center justify-between px-5 py-4 shrink-0"
-          style={{ borderBottom: '1px solid #1E293B' }}
-        >
+        {/* En-tête */}
+        <div className="flex items-center justify-between px-5 py-4 shrink-0 border-b border-[var(--border)]">
           <div className="flex items-center gap-2">
             <ShoppingBag className="w-5 h-5 text-amber-500" />
-            <span className="font-black text-base" style={{ color: '#F8FAFC' }}>
-              Mon panier
-            </span>
+            <span className="font-black text-base text-[var(--text-dark)]">Mon panier</span>
             {totalCount > 0 && (
-              <span className="bg-amber-500 text-[#0A1128] text-xs font-black px-2 py-0.5 rounded-full">
+              <span className="bg-amber-500 text-slate-950 text-xs font-black px-2 py-0.5 rounded-full">
                 {totalCount}
               </span>
             )}
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 flex items-center justify-center rounded-full transition hover:bg-white/10"
-            style={{ color: '#94A3B8' }}
+            className="w-8 h-8 flex items-center justify-center rounded-full transition hover:bg-[var(--bg-card-hover)] text-[var(--text-muted)]"
           >
             <X className="w-4 h-4" />
           </button>
         </div>
 
-        {/* ── Corps ── */}
+        {/* Corps */}
         <div className="flex-1 overflow-y-auto">
           {items.length === 0 ? (
-            /* Panier vide */
             <div className="flex flex-col items-center justify-center h-full gap-4 px-6 text-center">
-              <div
-                className="w-16 h-16 rounded-full flex items-center justify-center"
-                style={{ backgroundColor: '#1E293B' }}
-              >
-                <ShoppingBag className="w-7 h-7" style={{ color: '#475569' }} />
+              <div className="w-16 h-16 rounded-full flex items-center justify-center bg-[var(--bg-page)] border border-[var(--border)]">
+                <ShoppingBag className="w-7 h-7 text-[var(--text-muted)]" />
               </div>
-              <p className="font-bold text-base" style={{ color: '#F8FAFC' }}>
-                Votre panier est vide
-              </p>
-              <p className="text-sm" style={{ color: '#64748B' }}>
-                Ajoutez des produits pour commencer
-              </p>
+              <p className="font-bold text-base text-[var(--text-dark)]">Votre panier est vide</p>
+              <p className="text-sm text-[var(--text-body)]">Ajoutez des produits pour commencer</p>
               <button
                 onClick={onClose}
-                className="mt-2 px-6 py-2.5 rounded-xl font-bold text-sm transition"
-                style={{ backgroundColor: '#F59E0B', color: '#0A1128' }}
+                className="mt-2 px-6 py-2.5 rounded-xl font-bold text-sm bg-amber-500 hover:bg-amber-400 text-slate-950 transition"
               >
                 Continuer mes achats
               </button>
             </div>
           ) : (
-            /* Liste articles */
             <div className="p-4 space-y-3">
               {items.map((item) => (
                 <div
                   key={item.id}
-                  className="flex gap-3 p-3 rounded-xl"
-                  style={{ backgroundColor: '#0A1628', border: '1px solid #1E293B' }}
+                  className="flex gap-3 p-3 rounded-xl bg-[var(--bg-page)] border border-[var(--border)]"
                 >
-                  {/* Image */}
-                  <div className="relative w-16 h-16 rounded-lg overflow-hidden shrink-0" style={{ backgroundColor: '#1E293B' }}>
+                  <div className="relative w-16 h-16 rounded-lg overflow-hidden shrink-0 bg-[var(--bg-card)] border border-[var(--border)]">
                     <Image
                       src={item.image_url || DEFAULT_IMAGE}
                       alt={item.name}
-                      fill
-                      sizes="64px"
+                      fill sizes="64px"
                       className="object-cover"
                     />
                   </div>
 
-                  {/* Infos */}
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-semibold leading-tight truncate" style={{ color: '#F1F5F9' }}>
+                    <p className="text-xs font-semibold leading-tight truncate text-[var(--text-dark)]">
                       {item.name}
                     </p>
-                    <p className="text-sm font-black mt-1" style={{ color: '#F59E0B' }}>
+                    <p className="text-sm font-black mt-1 text-amber-500">
                       {(item.price * item.quantity).toLocaleString('fr-FR')} MAD
                     </p>
 
-                    {/* Quantité */}
                     <div className="flex items-center gap-2 mt-2">
                       <button
                         onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                        className="w-9 h-9 rounded-lg flex items-center justify-center transition"
-                        style={{ backgroundColor: '#1E293B', color: '#94A3B8' }}
+                        className="w-9 h-9 rounded-lg flex items-center justify-center transition bg-[var(--bg-card)] border border-[var(--border)] text-[var(--text-muted)] hover:border-amber-500"
                       >
                         <Minus className="w-3.5 h-3.5" />
                       </button>
-                      <span className="text-xs font-black w-6 text-center tabular-nums" style={{ color: '#F8FAFC' }}>
+                      <span className="text-xs font-black w-6 text-center tabular-nums text-[var(--text-dark)]">
                         {item.quantity}
                       </span>
                       <button
                         onClick={() => updateQuantity(item.id, item.quantity + 1)}
                         disabled={item.quantity >= item.stock}
-                        className="w-9 h-9 rounded-lg flex items-center justify-center transition disabled:opacity-40"
-                        style={{ backgroundColor: '#1E293B', color: '#94A3B8' }}
+                        className="w-9 h-9 rounded-lg flex items-center justify-center transition bg-[var(--bg-card)] border border-[var(--border)] text-[var(--text-muted)] hover:border-amber-500 disabled:opacity-40"
                       >
                         <Plus className="w-3.5 h-3.5" />
                       </button>
-
                       <button
                         onClick={() => removeItem(item.id)}
-                        className="ml-auto w-9 h-9 rounded-lg flex items-center justify-center transition hover:bg-red-500/20"
-                        style={{ color: '#64748B' }}
+                        className="ml-auto w-9 h-9 rounded-lg flex items-center justify-center transition hover:bg-red-500/10 text-[var(--text-muted)] hover:text-red-500"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -226,44 +194,34 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
           )}
         </div>
 
-        {/* ── Pied — Formulaire + Checkout ── */}
+        {/* Pied */}
         {items.length > 0 && (
-          <div
-            className="shrink-0 p-4 space-y-3"
-            style={{ borderTop: '1px solid #1E293B', backgroundColor: '#0A1120' }}
-          >
-            {/* Totaux */}
+          <div className="shrink-0 p-4 space-y-3 border-t border-[var(--border)] bg-[var(--bg-page)]">
             <div className="flex justify-between items-center text-sm">
-              <span style={{ color: '#94A3B8' }}>Sous-total ({totalCount} articles)</span>
-              <span className="font-black" style={{ color: '#F8FAFC' }}>
-                {totalPrice.toLocaleString('fr-FR')} MAD
-              </span>
+              <span className="text-[var(--text-muted)]">Sous-total ({totalCount} articles)</span>
+              <span className="font-black text-[var(--text-dark)]">{totalPrice.toLocaleString('fr-FR')} MAD</span>
             </div>
             <div className="flex justify-between items-center text-sm">
-              <span style={{ color: '#94A3B8' }}>Livraison</span>
+              <span className="text-[var(--text-muted)]">Livraison</span>
               <span className="font-bold text-amber-500">Via WhatsApp</span>
             </div>
 
-            {/* Formulaire nom + téléphone */}
-            <form onSubmit={handleCheckout} className="space-y-2 pt-2" style={{ borderTop: '1px solid #1E293B' }}>
+            <form onSubmit={handleCheckout} className="space-y-2 pt-2 border-t border-[var(--border)]">
               <input
                 type="text"
                 required
                 value={customerName}
                 onChange={(e) => setCustomerName(e.target.value)}
                 placeholder="Nom & Prénom *"
-                className="w-full px-3 py-2.5 rounded-xl text-sm outline-none transition focus:ring-2 focus:ring-amber-500/40"
-                style={{ backgroundColor: '#1E2435', border: '1px solid #2A3045', color: '#F8FAFC' }}
+                className="w-full px-3 py-2.5 rounded-xl text-sm outline-none transition focus:ring-2 focus:ring-amber-500/40 bg-[var(--bg-card)] border border-[var(--border)] text-[var(--text-dark)] placeholder-[var(--text-muted)]"
               />
               <input
                 type="tel"
                 value={customerPhone}
                 onChange={(e) => setCustomerPhone(e.target.value)}
                 placeholder="Téléphone WhatsApp"
-                className="w-full px-3 py-2.5 rounded-xl text-sm outline-none transition focus:ring-2 focus:ring-amber-500/40"
-                style={{ backgroundColor: '#1E2435', border: '1px solid #2A3045', color: '#F8FAFC' }}
+                className="w-full px-3 py-2.5 rounded-xl text-sm outline-none transition focus:ring-2 focus:ring-amber-500/40 bg-[var(--bg-card)] border border-[var(--border)] text-[var(--text-dark)] placeholder-[var(--text-muted)]"
               />
-
               <button
                 type="submit"
                 disabled={loading}
@@ -274,21 +232,17 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
                   boxShadow: '0 4px 16px rgba(245,158,11,0.3)',
                 }}
               >
-                {loading ? (
-                  <span className="w-4 h-4 border-2 border-[#0A1128]/30 border-t-[#0A1128] rounded-full animate-spin" />
-                ) : (
-                  <MessageSquare className="w-4 h-4" />
-                )}
+                {loading
+                  ? <span className="w-4 h-4 border-2 border-[#0A1128]/30 border-t-[#0A1128] rounded-full animate-spin" />
+                  : <MessageSquare className="w-4 h-4" />}
                 {loading ? 'Validation...' : 'Commander sur WhatsApp'}
               </button>
             </form>
 
-            {/* Lien vers page panier complète */}
             <Link
               href="/cart"
               onClick={onClose}
-              className="flex items-center justify-center gap-1.5 text-xs font-semibold transition hover:text-amber-500"
-              style={{ color: '#64748B' }}
+              className="flex items-center justify-center gap-1.5 text-xs font-semibold transition hover:text-amber-500 text-[var(--text-muted)]"
             >
               Voir le panier complet
               <ArrowRight className="w-3 h-3" />

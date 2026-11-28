@@ -52,28 +52,15 @@ export default function RegisterPage() {
   };
 
   const inputClass =
-    'w-full px-5 py-3.5 rounded-xl text-sm outline-none transition focus:ring-2 focus:ring-amber-500/40';
-  const inputStyle = {
-    backgroundColor: '#1E2435',
-    border: '1px solid #2A3045',
-    color: '#F8FAFC',
-    colorScheme: 'dark' as const,
-  };
+    'w-full px-5 py-3.5 rounded-xl text-sm outline-none transition focus:ring-2 focus:ring-amber-500/40 bg-[var(--bg-page)] border border-[var(--border)] text-[var(--text-dark)] placeholder-[var(--text-muted)]';
+  const inputStyle = { colorScheme: 'dark' as const, fontSize: '16px' };
 
   return (
-    <div
-      className="min-h-screen flex items-start justify-center p-3 sm:p-4 overflow-y-auto"
-      style={{ backgroundColor: '#0B0F1A' }}
-    >
-      <div
-        className="flex w-full overflow-hidden rounded-2xl shadow-2xl my-auto"
-        style={{ maxWidth: '780px', border: '1px solid #1E2435' }}
-      >
+    <div className="min-h-screen flex items-start justify-center p-3 sm:p-4 overflow-y-auto bg-[var(--bg-page)]">
+      <div className="flex w-full overflow-hidden rounded-2xl shadow-2xl my-auto border border-[var(--border)]"
+        style={{ maxWidth: '780px' }}>
         {/* ── PANNEAU GAUCHE — Formulaire ── */}
-        <div
-          className="flex flex-1 flex-col justify-center px-5 sm:px-8 lg:px-10 py-8 sm:py-10"
-          style={{ backgroundColor: '#141926' }}
-        >
+        <div className="flex flex-1 flex-col justify-center px-5 sm:px-8 lg:px-10 py-8 sm:py-10 bg-[var(--bg-card)]">
           {/* Logo */}
           <Link href="/" className="inline-flex items-baseline gap-1 mb-8 w-fit">
             <span className="font-black text-xl text-amber-500 tracking-tight">TechNova</span>
@@ -82,13 +69,10 @@ export default function RegisterPage() {
 
           {/* Titre */}
           <div className="mb-6">
-            <h1
-              className="text-2xl font-black leading-tight mb-1"
-              style={{ color: '#FFFFFF' }}
-            >
+            <h1 className="text-2xl font-black leading-tight mb-1 text-[var(--text-dark)]">
               Create Account
             </h1>
-            <p className="text-sm" style={{ color: '#94A3B8' }}>
+            <p className="text-sm text-[var(--text-muted)]">
               Fill in your details to Sign Up
             </p>
           </div>
@@ -192,19 +176,16 @@ export default function RegisterPage() {
           </form>
 
           {/* Lien connexion */}
-          <p className="mt-5 text-sm" style={{ color: '#64748B' }}>
+          <p className="mt-5 text-sm text-[var(--text-muted)]">
             Déjà un compte ?{' '}
-            <Link href="/login" className="font-bold hover:underline" style={{ color: '#F59E0B' }}>
+            <Link href="/login" className="font-bold hover:underline text-amber-500">
               Se connecter
             </Link>
           </p>
         </div>
 
         {/* ── PANNEAU DROIT — Visuel ── */}
-        <div
-          className="hidden lg:flex w-64 relative items-center justify-center overflow-hidden shrink-0"
-          style={{ backgroundColor: '#0D1117' }}
-        >
+        <div className="hidden lg:flex w-64 relative items-center justify-center overflow-hidden shrink-0 bg-[var(--bg-page)]">
           {/* Orbe ambre */}
           <div
             className="absolute w-72 h-72 rounded-full blur-3xl opacity-20"
