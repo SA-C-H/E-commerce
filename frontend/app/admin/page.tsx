@@ -249,6 +249,85 @@ function OrderDetailPanel({
               {Number(order.total).toLocaleString('fr-FR')} MAD
             </span>
           </div>
+
+          {/* Bouton imprimer la fiche */}
+          <button
+            onClick={() => {
+              const printContent = `
+                <!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8">
+                <title>Commande #${order.id.slice(0,8).toUpperCase()} — TechNova</title>
+                <style>
+                  * { margin:0; padding:0; box-sizing:border-box; }
+                  body { font-family: -apple-system, sans-serif; color: #0f172a; padding: 32px; font-size:13px; }
+                  .header { display:flex; justify-content:space-between; align-items:start; border-bottom:2px solid #f59e0b; padding-bottom:16px; margin-bottom:24px; }
+                  .logo { font-size:22px; font-weight:900; color:#f59e0b; }
+                  .badge { display:inline-block; padding:4px 10px; border-radius:20px; font-size:11px; font-weight:700; background:#fef3c7; color:#92400e; }
+                  .section { margin-bottom:20px; }
+                  .label { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; color:#64748b; margin-bottom:6px; }
+                  table { width:100%; border-collapse:collapse; margin-top:8px; }
+                  th { text-align:left; padding:8px; background:#f8fafc; font-size:11px; color:#64748b; text-transform:uppercase; border-bottom:1px solid #e2e8f0; }
+                  td { padding:8px; border-bottom:1px solid #f1f5f9; font-size:12px; }
+                  .total-row { font-weight:900; font-size:14px; border-top:2px solid #f59e0b; }
+                  .footer { margin-top:32px; padding-top:16px; border-top:1px solid #e2e8f0; text-align:center; font-size:11px; color:#94a3b8; }
+                </style></head><body>
+                <div class="header">
+                  <div>
+                    <div class="logo">TechNova.ma</div>
+                    <div style="color:#64748b;font-size:11px;margin-top:2px">L'Expert Tech</div>
+                  </div>
+                  <div style="text-align:right">
+                    <div style="font-size:18px;font-weight:900">Bon de commande</div>
+                    <div style="font-size:13px;color:#64748b;margin-top:2px">#${order.id.slice(0,8).toUpperCase()}</div>
+                    <div class="badge" style="margin-top:6px">${STATUS_CFG[order.status as keyof typeof STATUS_CFG]?.label || order.status}</div>
+                  </div>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px">
+                  <div class="section">
+                    <div class="label">Client</div>
+                    <div style="font-weight:700">${order.customer_name}</div>
+                    <div style="color:#64748b">${order.customer_phone || 'Pas de téléphone'}</div>
+                  </div>
+                  <div class="section">
+                    <div class="label">Date</div>
+                    <div>${new Date(order.created_at).toLocaleDateString('fr-FR', {year:'numeric',month:'long',day:'numeric'})}</div>
+                  </div>
+                </div>
+                <div class="section">
+                  <div class="label">Articles commandés</div>
+                  <table>
+                    <thead><tr><th>Produit</th><th style="text-align:center">Qté</th><th style="text-align:right">Prix unit.</th><th style="text-align:right">Total</th></tr></thead>
+                    <tbody>
+                      ${(order.order_items || []).map((it: any) => `
+                        <tr>
+                          <td>${it.products?.name || 'Article supprimé'}</td>
+                          <td style="text-align:center">${it.quantity}</td>
+                          <td style="text-align:right">${Number(it.unit_price).toLocaleString('fr-FR')} MAD</td>
+                          <td style="text-align:right;font-weight:700">${(it.quantity * Number(it.unit_price)).toLocaleString('fr-FR')} MAD</td>
+                        </tr>
+                      `).join('')}
+                      <tr class="total-row">
+                        <td colspan="3" style="text-align:right;padding-right:8px">TOTAL</td>
+                        <td style="text-align:right;color:#f59e0b">${Number(order.total).toLocaleString('fr-FR')} MAD</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="footer">
+                  TechNova.ma — Paiement à la livraison — Merci de votre confiance !<br/>
+                  Imprimé le ${new Date().toLocaleDateString('fr-FR')}
+                </div>
+                </body></html>
+              `;
+              const w = window.open('', '_blank', 'width=800,height=600');
+              if (w) { w.document.write(printContent); w.document.close(); w.focus(); w.print(); }
+            }}
+            className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold border border-[var(--border)] text-[var(--text-body)] hover:text-[var(--text-dark)] hover:bg-[var(--bg-card-hover)] transition"
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+            </svg>
+            Imprimer la fiche commande
+          </button>
         </div>
 
         {/* Pied : changement de statut */}
@@ -739,6 +818,66 @@ export default function AdminPage() {
                 ))}
               </div>
 
+              {/* ── Graphique CA par statut + répartition ── */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                {/* Barres CA 7 derniers jours */}
+                <div className="sm:col-span-2 bg-[var(--bg-card)] border border-[var(--border)] rounded-2xl p-4 shadow-xs">
+                  <p className="text-[11px] font-bold text-[var(--text-muted)] uppercase tracking-wider mb-3">
+                    Commandes — 7 derniers jours
+                  </p>
+                  {(() => {
+                    const days = Array.from({length:7}, (_,i) => {
+                      const d = new Date(); d.setDate(d.getDate()-6+i);
+                      const key = d.toLocaleDateString('fr-FR',{day:'2-digit',month:'2-digit'});
+                      const dayOrders = orders.filter(o => {
+                        const od = new Date(o.created_at);
+                        return od.getDate()===d.getDate() && od.getMonth()===d.getMonth() && od.getFullYear()===d.getFullYear();
+                      });
+                      return { key, count: dayOrders.length, revenue: dayOrders.reduce((s,o)=>s+Number(o.total||0),0) };
+                    });
+                    const maxCount = Math.max(...days.map(d=>d.count), 1);
+                    return (
+                      <div className="flex items-end gap-1.5 h-24">
+                        {days.map((d,i) => (
+                          <div key={i} className="flex-1 flex flex-col items-center gap-1">
+                            <span className="text-[9px] text-[var(--text-muted)]">{d.count>0?d.count:''}</span>
+                            <div className="w-full rounded-t-md transition-all"
+                              style={{ height:`${Math.max(4,(d.count/maxCount)*64)}px`, backgroundColor: d.count>0?'#F59E0B':'var(--border)' }} />
+                            <span className="text-[9px] text-[var(--text-muted)] whitespace-nowrap">{d.key}</span>
+                          </div>
+                        ))}
+                      </div>
+                    );
+                  })()}
+                </div>
+
+                {/* Répartition par statut */}
+                <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-2xl p-4 shadow-xs">
+                  <p className="text-[11px] font-bold text-[var(--text-muted)] uppercase tracking-wider mb-3">
+                    Répartition statuts
+                  </p>
+                  <div className="space-y-2">
+                    {(['pending','confirmed','delivered','cancelled'] as const).map(s => {
+                      const cfg = STATUS_CFG[s];
+                      const n = orders.filter(o=>o.status===s).length;
+                      const pct = orders.length ? Math.round(n/orders.length*100) : 0;
+                      return (
+                        <div key={s}>
+                          <div className="flex items-center justify-between mb-1">
+                            <span className="text-[11px] text-[var(--text-body)]">{cfg.label}</span>
+                            <span className="text-[11px] font-bold text-[var(--text-dark)]">{n}</span>
+                          </div>
+                          <div className="h-1.5 rounded-full bg-[var(--border)] overflow-hidden">
+                            <div className="h-full rounded-full transition-all"
+                              style={{ width:`${pct}%`, backgroundColor: s==='pending'?'#F59E0B':s==='confirmed'?'#3B82F6':s==='delivered'?'#10B981':'#EF4444' }} />
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+
               {/* Dernières commandes + stock faible */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-2xl overflow-hidden shadow-xs">
@@ -833,7 +972,7 @@ export default function AdminPage() {
                   <h3 className="text-sm font-bold text-[var(--text-dark)]">Tous les produits</h3>
                   <span className="text-[11px] text-[var(--text-muted)]">{filteredProducts.length} résultats</span>
                 </div>
-                <div className="overflow-x-auto">
+                <div className="hidden sm:block overflow-x-auto">
                   <table className="w-full text-xs">
                     <thead>
                       <tr className="border-b border-[var(--border)] text-[var(--text-muted)] uppercase tracking-wider">
@@ -886,9 +1025,7 @@ export default function AdminPage() {
                                 </button>
                               </div>
                             </td>
-                            <td className="p-4">
-                              <StockBadge stock={Number(p.stock)} />
-                            </td>
+                            <td className="p-4"><StockBadge stock={Number(p.stock)} /></td>
                             <td className="p-4 pr-5 text-right">
                               <div className="inline-flex items-center gap-1">
                                 <button onClick={() => openEdit(p)} className="p-2 rounded-lg text-[var(--text-muted)] hover:text-amber-500 hover:bg-amber-500/10 transition" title="Modifier"><Edit2 className="w-3.5 h-3.5" /></button>
@@ -900,6 +1037,53 @@ export default function AdminPage() {
                       }
                     </tbody>
                   </table>
+                </div>
+
+                {/* ── Cartes mobile produits ── */}
+                <div className="sm:hidden divide-y divide-[var(--border)]">
+                  {pagedProducts.length === 0 ? (
+                    <div className="p-8 text-center text-sm text-[var(--text-muted)]">Aucun produit</div>
+                  ) : pagedProducts.map(p => (
+                    <div key={p.id} className="p-4 space-y-3">
+                      <div className="flex items-center gap-3">
+                        <div className="w-12 h-12 rounded-xl overflow-hidden bg-[var(--bg-page)] shrink-0 relative border border-[var(--border)]">
+                          {p.image_url
+                            ? <Image src={p.image_url} alt={p.name} fill className="object-cover" sizes="48px"
+                                onError={(e) => { (e.target as HTMLImageElement).src = 'https://images.unsplash.com/photo-1512054502232-10a0a035d672?w=100&auto=format&fit=crop'; }} />
+                            : <div className="w-full h-full flex items-center justify-center"><Package className="w-5 h-5 text-[var(--text-muted)]" /></div>
+                          }
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-bold text-sm text-[var(--text-dark)] truncate">{p.name}</p>
+                          <div className="flex items-center gap-2 mt-1 flex-wrap">
+                            <span className="text-[11px] font-semibold text-amber-500">{Number(p.price).toLocaleString('fr-FR')} MAD</span>
+                            <StockBadge stock={Number(p.stock)} />
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-[11px] px-2.5 py-1 rounded-lg bg-[var(--bg-page)] border border-[var(--border)] text-[var(--text-body)]">
+                          {p.categories?.name || '—'}
+                        </span>
+                        <div className="flex items-center gap-2">
+                          {/* Stock ± */}
+                          <div className="flex items-center gap-1">
+                            <button onClick={() => handleQuickStock(p, -1)} disabled={Number(p.stock) <= 0}
+                              className="w-7 h-7 rounded-lg bg-[var(--bg-page)] border border-[var(--border)] flex items-center justify-center disabled:opacity-30 transition">
+                              <Minus className="w-3 h-3 text-[var(--text-body)]" />
+                            </button>
+                            <span className="text-xs font-bold text-[var(--text-dark)] w-8 text-center tabular-nums">{p.stock}</span>
+                            <button onClick={() => handleQuickStock(p, +1)}
+                              className="w-7 h-7 rounded-lg bg-[var(--bg-page)] border border-[var(--border)] flex items-center justify-center transition">
+                              <Plus className="w-3 h-3 text-[var(--text-body)]" />
+                            </button>
+                          </div>
+                          <button onClick={() => openEdit(p)} className="p-2 rounded-lg text-[var(--text-muted)] hover:text-amber-500 hover:bg-amber-500/10 transition"><Edit2 className="w-4 h-4" /></button>
+                          <button onClick={() => handleDelete(p.id, p.name)} className="p-2 rounded-lg text-[var(--text-muted)] hover:text-red-500 hover:bg-red-500/10 transition"><Trash2 className="w-4 h-4" /></button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
                 {/* Pagination */}
                 {filteredProducts.length > pageSize && (
@@ -947,7 +1131,9 @@ export default function AdminPage() {
               </div>
 
             <div className="bg-[var(--bg-card)] border border-[var(--border)] rounded-2xl overflow-hidden shadow-xs">
-              <div className="overflow-x-auto">
+
+              {/* ── Tableau desktop ── */}
+              <div className="hidden sm:block overflow-x-auto">
                 <table className="w-full text-xs">
                   <thead>
                     <tr className="border-b border-[var(--border)] text-[var(--text-muted)] uppercase tracking-wider">
@@ -972,7 +1158,7 @@ export default function AdminPage() {
                               <div className="w-7 h-7 rounded-full bg-amber-500/20 border border-amber-500/30 flex items-center justify-center font-bold text-amber-500 text-[10px] shrink-0">
                                 {o.customer_name?.[0]?.toUpperCase() || '?'}
                               </div>
-                              <span className="font-semibold text-[var(--text-dark)]">{o.customer_name}</span>
+                              <span className="font-semibold text-[var(--text-dark)] truncate max-w-[140px]">{o.customer_name}</span>
                             </div>
                           </td>
                           <td className="p-4 text-[var(--text-body)] font-mono">{o.customer_phone || '—'}</td>
@@ -980,15 +1166,10 @@ export default function AdminPage() {
                           <td className="p-4"><StatusBadge status={o.status} /></td>
                           <td className="p-4 pr-5 text-right">
                             <div className="inline-flex items-center gap-1.5">
-                              {/* Bouton détail → ouvre le panneau de changement de statut */}
-                              <button
-                                onClick={() => setDetailOrder(o)}
-                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 text-amber-600 dark:text-amber-400 text-[11px] font-semibold border border-amber-500/30 transition"
-                                title="Voir détail et changer le statut"
-                              >
+                              <button onClick={() => setDetailOrder(o)}
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500/15 hover:bg-amber-500/25 text-amber-600 dark:text-amber-400 text-[11px] font-semibold border border-amber-500/30 transition">
                                 <Eye className="w-3.5 h-3.5" />Statut
                               </button>
-                              {/* Bouton WhatsApp */}
                               <button onClick={() => openWhatsApp(o.customer_phone, o.id, o.customer_name)}
                                 className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-600 dark:text-emerald-400 text-[11px] font-semibold border border-emerald-500/30 transition">
                                 <MessageCircle className="w-3.5 h-3.5" />WhatsApp
@@ -1001,9 +1182,50 @@ export default function AdminPage() {
                   </tbody>
                 </table>
               </div>
-              {orders.length > ORDER_PAGE_SIZE && (
+
+              {/* ── Cartes mobile ── */}
+              <div className="sm:hidden divide-y divide-[var(--border)]">
+                {pagedOrders.length === 0 ? (
+                  <div className="p-8 text-center text-sm text-[var(--text-muted)]">Aucune commande</div>
+                ) : pagedOrders.map(o => (
+                  <div key={o.id} className="p-4 space-y-3">
+                    <div className="flex items-center justify-between gap-2">
+                      <div>
+                        <span className="font-mono font-black text-amber-500 text-xs">#{o.id.slice(0,8)}</span>
+                        <p className="text-[11px] text-[var(--text-muted)] mt-0.5">{new Date(o.created_at).toLocaleDateString('fr-FR')}</p>
+                      </div>
+                      <StatusBadge status={o.status} />
+                    </div>
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <div className="w-7 h-7 rounded-full bg-amber-500/20 border border-amber-500/30 flex items-center justify-center font-bold text-amber-500 text-[10px] shrink-0">
+                          {o.customer_name?.[0]?.toUpperCase() || '?'}
+                        </div>
+                        <div className="min-w-0">
+                          <p className="font-semibold text-sm text-[var(--text-dark)] truncate">{o.customer_name}</p>
+                          <p className="text-[11px] text-[var(--text-muted)] font-mono">{o.customer_phone || '—'}</p>
+                        </div>
+                      </div>
+                      <span className="font-black text-sm text-[var(--text-dark)] shrink-0">{Number(o.total).toLocaleString('fr-FR')} MAD</span>
+                    </div>
+                    <div className="flex gap-2">
+                      <button onClick={() => setDetailOrder(o)}
+                        className="flex-1 inline-flex items-center justify-center gap-1.5 py-2 rounded-xl bg-amber-500/15 text-amber-600 text-xs font-semibold border border-amber-500/30">
+                        <Eye className="w-3.5 h-3.5" />Détail / Statut
+                      </button>
+                      <button onClick={() => openWhatsApp(o.customer_phone, o.id, o.customer_name)}
+                        className="flex-1 inline-flex items-center justify-center gap-1.5 py-2 rounded-xl bg-emerald-500/15 text-emerald-600 text-xs font-semibold border border-emerald-500/30">
+                        <MessageCircle className="w-3.5 h-3.5" />WhatsApp
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* ── Pagination (fix : utilise filteredOrders.length) ── */}
+              {filteredOrders.length > ORDER_PAGE_SIZE && (
                 <div className="px-5 py-3.5 border-t border-[var(--border)] flex items-center justify-between">
-                  <span className="text-[11px] text-[var(--text-muted)]">{(orderPage-1)*ORDER_PAGE_SIZE+1}–{Math.min(orderPage*ORDER_PAGE_SIZE, orders.length)} / {orders.length}</span>
+                  <span className="text-[11px] text-[var(--text-muted)]">{(orderPage-1)*ORDER_PAGE_SIZE+1}–{Math.min(orderPage*ORDER_PAGE_SIZE, filteredOrders.length)} / {filteredOrders.length}</span>
                   <div className="flex items-center gap-2">
                     <button onClick={() => setOrderPage(p => Math.max(1,p-1))} disabled={orderPage<=1} className="px-3 py-1.5 rounded-lg bg-[var(--bg-page)] border border-[var(--border)] text-xs text-[var(--text-dark)] disabled:opacity-30 hover:bg-[var(--bg-card-hover)] transition">Préc.</button>
                     <span className="text-xs text-[var(--text-body)] px-2">{orderPage} / {totalOrdPages}</span>
